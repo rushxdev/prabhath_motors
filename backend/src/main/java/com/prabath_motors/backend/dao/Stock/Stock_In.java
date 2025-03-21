@@ -25,6 +25,8 @@ public class Stock_In {
     private int itemID;
     private int supplierID;
     private int qtyAdded;
+    private int qtyInStock;
+    private int recorderLevel;
     private double unitPrice;
     private double totalCost;
     private LocalDate dateAdded;

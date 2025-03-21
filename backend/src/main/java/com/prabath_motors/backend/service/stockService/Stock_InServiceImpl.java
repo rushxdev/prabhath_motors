@@ -45,6 +45,8 @@ public class Stock_InServiceImpl implements Stock_InService {
             existingStockIn.setItemID(stock.getItemID());
             existingStockIn.setSupplierID(stock.getSupplierID());
             existingStockIn.setQtyAdded(stock.getQtyAdded());
+            existingStockIn.setQtyInStock(stock.getQtyInStock());
+            existingStockIn.setRecorderLevel(stock.getRecorderLevel());
             existingStockIn.setUnitPrice(stock.getUnitPrice());
             existingStockIn.setTotalCost(stock.getTotalCost());
             existingStockIn.setDateAdded(stock.getDateAdded());
