@@ -7,6 +7,7 @@ const Navbar = () => {
         <div className='space-x-4'>
             <Link to={"/book-appointment"} className='hover:underline'>Book Appointment</Link>
             <Link to={"/my-appointments"} className='hover:underline'>My Appointments</Link>
+            <Link to={"/appointment-list"} className='hover:underline'>Appointments</Link>
         </div>
     </nav>
   )
