@@ -1,13 +1,18 @@
-
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
+import CustomerDashboard from "./pages/CustomerDashboard"
+import BookAppointment from "./pages/BookAppointment"
 
 
 function App() {
   
 
   return (
-    <div>
-      <h1 className="text-green-500 text-3xl font-bold">Hello</h1>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<CustomerDashboard />} />
+        <Route path="/book-appointment" element={<BookAppointment />} />
+      </Routes>
+    </Router>
   )
 }
 
