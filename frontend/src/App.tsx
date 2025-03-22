@@ -1,6 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
-import CustomerDashboard from "./pages/CustomerDashboard"
-import BookAppointment from "./pages/BookAppointment"
+import CustomerDashboard from "./modules/user/pages/CustomerDashboard"
+import BookAppointment from "./modules/user/pages/BookAppointment"
 
 
 function App() {

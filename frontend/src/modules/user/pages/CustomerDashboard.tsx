@@ -1,4 +1,4 @@
-import Navbar from "../modules/user/components/Navbar"
+import Navbar from "../components/Navbar"
 
 
 const CustomerDashboard = () => {
