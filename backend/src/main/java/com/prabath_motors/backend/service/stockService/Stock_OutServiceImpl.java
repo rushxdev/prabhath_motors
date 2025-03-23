@@ -39,10 +39,11 @@ public class Stock_OutServiceImpl implements Stock_OutService {
 
             //Update only necessary fields
             existingStockOut.setItemID(stock.getItemID());
-            existingStockOut.setServiceID(stock.getServiceID());
-            existingStockOut.setQty(stock.getQty());
-            existingStockOut.setUnitPrice(stock.getUnitPrice());
-            existingStockOut.setTotalCost(stock.getTotalCost());
+            existingStockOut.setJobID(stock.getJobID());
+            existingStockOut.setVehicleID(stock.getVehicleID());
+            existingStockOut.setQtyUsed(stock.getQtyUsed());
+            existingStockOut.setQtyUsed(stock.getQtyUsed());
+            existingStockOut.setSoldPrice(stock.getSoldPrice());
             existingStockOut.setDateUsed(stock.getDateUsed());
 
             return stockOutRepository.save(existingStockOut);

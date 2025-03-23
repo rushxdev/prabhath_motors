@@ -23,9 +23,9 @@ public class Stock_Out {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int stockOutID;
     private int itemID;
-    private int serviceID;
-    private int qty;
-    private double unitPrice;
-    private double totalCost;
+    private int jobID;
+    private int vehicleID;
+    private int qtyUsed;
+    private double soldPrice;
     private LocalDate dateUsed;
 }

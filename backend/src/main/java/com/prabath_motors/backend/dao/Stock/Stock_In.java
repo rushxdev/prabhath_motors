@@ -23,11 +23,10 @@ public class Stock_In {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int stockInID;
     private int itemID;
+    private int ctgryID;
     private int supplierID;
     private int qtyAdded;
-    private int qtyInStock;
-    private int recorderLevel;
     private double unitPrice;
-    private double totalCost;
+    private double sellPrice;
     private LocalDate dateAdded;
 }
