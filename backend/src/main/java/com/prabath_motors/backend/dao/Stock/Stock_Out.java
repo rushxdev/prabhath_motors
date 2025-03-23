@@ -18,15 +18,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Stock_In {
+public class Stock_Out {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int stockInID;
+    private int stockOutID;
     private int itemID;
-    private int ctgryID;
-    private int supplierID;
-    private int qtyAdded;
-    private double unitPrice;
-    private double sellPrice;
-    private LocalDate dateAdded;
+    private int jobID;
+    private int vehicleID;
+    private int qtyUsed;
+    private double soldPrice;
+    private LocalDate dateUsed;
 }

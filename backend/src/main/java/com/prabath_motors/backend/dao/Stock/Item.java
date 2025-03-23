@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Setter
@@ -19,14 +21,16 @@ import lombok.Setter;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int Item_id;
-    private String Item_name;
-    private int Item_barcode;
-    private String Item_group;
-    private String Item_type;
-    private String Item_brand;
-    private double Item_cost;
-    private double Item_sellPrice;
-    private int Supplier_Id;
-    private int Rack_no;
+    private int itemID;
+    private int itemCtgryID;
+    private int supplierId;
+    private String itemName;
+    private int itemBarcode;
+    private int recorderLevel;
+    private int qtyAvailable;
+    private String itemBrand;
+    private double unitPrice;
+    private String stockLevel;
+    private int rackNo;
+    private LocalDate updatedDate;
 }

@@ -5,28 +5,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Stock_In {
+public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int stockInID;
-    private int itemID;
-    private int ctgryID;
-    private int supplierID;
-    private int qtyAdded;
-    private double unitPrice;
-    private double sellPrice;
-    private LocalDate dateAdded;
+    private int supplierId;
+    private String supplierName;
+    private String contactPerson;
+    private int phoneNumber;
 }

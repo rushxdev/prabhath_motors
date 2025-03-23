@@ -42,15 +42,18 @@ public class ItemServiceImpl implements ItemService {
             Item existingItem = optionalItem.get();
 
             // Update only the necessary fields
-            existingItem.setItem_name(item.getItem_name());
-            existingItem.setItem_barcode(item.getItem_barcode());
-            existingItem.setItem_group(item.getItem_group());
-            existingItem.setItem_type(item.getItem_type());
-            existingItem.setItem_brand(item.getItem_brand());
-            existingItem.setItem_cost(item.getItem_cost());
-            existingItem.setItem_sellPrice(item.getItem_sellPrice());
-            existingItem.setSupplier_Id(item.getSupplier_Id());
-            existingItem.setRack_no(item.getRack_no());
+            existingItem.setSupplierId(item.getSupplierId());
+            existingItem.setItemName(item.getItemName());
+            existingItem.setItemBarcode(item.getItemBarcode());
+            existingItem.setRecorderLevel(item.getRecorderLevel());
+            existingItem.setQtyAvailable(item.getQtyAvailable());
+            existingItem.setItemBrand(item.getItemBrand());
+            existingItem.setUnitPrice(item.getUnitPrice());
+            existingItem.setUnitPrice(item.getUnitPrice());
+            existingItem.setStockLevel(item.getStockLevel());
+            existingItem.setRackNo(item.getRackNo());
+            existingItem.setUpdatedDate(item.getUpdatedDate());
+
 
             // Save the updated entity
             return itemRepository.save(existingItem);

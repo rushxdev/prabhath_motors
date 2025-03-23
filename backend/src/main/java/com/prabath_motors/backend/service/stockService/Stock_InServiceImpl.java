@@ -43,10 +43,11 @@ public class Stock_InServiceImpl implements Stock_InService {
 
             //Update only the necessary fields
             existingStockIn.setItemID(stock.getItemID());
+            existingStockIn.setCtgryID(stock.getCtgryID());
             existingStockIn.setSupplierID(stock.getSupplierID());
             existingStockIn.setQtyAdded(stock.getQtyAdded());
             existingStockIn.setUnitPrice(stock.getUnitPrice());
-            existingStockIn.setTotalCost(stock.getTotalCost());
+            existingStockIn.setSellPrice(stock.getSellPrice());
             existingStockIn.setDateAdded(stock.getDateAdded());
 
             return stockInRepository.save(existingStockIn);
