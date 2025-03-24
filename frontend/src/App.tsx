@@ -7,7 +7,10 @@ import {
 import { ScrollToTop } from "./utils/scrollToTop.util";
 import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
+import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 import AppointmentPage from "./modules/user/pages/UserStockPages/AllStocks";
+import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsManager";
+import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -23,11 +26,13 @@ const App: React.FC = () => {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/appointment" element={<AppointmentPage />} />
 
-        {/* Admin Routes 
+        {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Navigate to="dashboard" />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-        </Route>*/}
+          {/*<Route index element={<Navigate to="dashboard" />} />
+          <Route path="dashboard" element={<DashboardPage />} /> */}
+          <Route path="items" element={<AdminItemsManager />} />
+          <Route path="stock-requests" element={<AdminStockReqManager />} />
+        </Route>
       </Routes>
     </Router>
   );
