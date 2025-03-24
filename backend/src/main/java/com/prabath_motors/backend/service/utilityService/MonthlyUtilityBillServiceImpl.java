@@ -1,4 +1,4 @@
-package com.prabath_motors.backend.service.mothlyUtilityBillService;
+package com.prabath_motors.backend.service.utilityService;
 
 import com.prabath_motors.backend.dao.MonthlyUtilityBill;
 import com.prabath_motors.backend.repository.MonthlyUtilityBillRepository;
@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MonthlyUtilityBillServiceImpl implements MonthlyUtilityBillService {

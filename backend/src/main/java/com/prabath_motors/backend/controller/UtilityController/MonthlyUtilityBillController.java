@@ -1,13 +1,12 @@
-package com.prabath_motors.backend.controller;
+package com.prabath_motors.backend.controller.UtilityController;
 
 import com.prabath_motors.backend.dao.MonthlyUtilityBill;
-import com.prabath_motors.backend.service.mothlyUtilityBillService.MonthlyUtilityBillService;
+import com.prabath_motors.backend.service.utilityService.MonthlyUtilityBillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/monthlyutilitybill")

@@ -1,4 +1,4 @@
-package com.prabath_motors.backend.service.mothlyUtilityBillService;
+package com.prabath_motors.backend.service.utilityService;
 
 import com.prabath_motors.backend.dao.MonthlyUtilityBill;
 

@@ -1,7 +1,7 @@
-package com.prabath_motors.backend.controller;
+package com.prabath_motors.backend.controller.UtilityController;
 
 import com.prabath_motors.backend.dao.UtilityBill;
-import com.prabath_motors.backend.service.utilityBillService.UtilityBillService;
+import com.prabath_motors.backend.service.utilityService.UtilityBillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
