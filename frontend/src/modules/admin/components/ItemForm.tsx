@@ -32,7 +32,6 @@ interface ItemCategory {
 
 const ItemForm: React.FC<ItemFormProps> = ({
     initialData,
-    stocks,
     categories,
     onSuccess,
     onCancel,
@@ -69,6 +68,20 @@ const ItemForm: React.FC<ItemFormProps> = ({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+
+        // Add name validation
+        if (name === 'itemName') {
+            if (value.length < 3) {
+                setNameError('Item name must be at least 3 characters long');
+            } else if (value.length > 50) {
+                setNameError('Item name cannot exceed 50 characters');
+            } else if (!/^[a-zA-Z0-9\s-]+$/.test(value)) {
+                setNameError('Item name can only contain letters, numbers, spaces, and hyphens');
+            } else {
+                setNameError(null);
+            }
+        }
+
         setFormData(prev => ({
             ...prev,
             [name]: name.includes('ID') || name.includes('Id') || 
