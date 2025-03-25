@@ -7,7 +7,7 @@ import AppointmentUpdate from "./modules/admin/pages/AppointmentUpdate"
 import React, { useEffect } from "react";
 
 import { ScrollToTop } from "./utils/scrollToTop.util";
-import HomePage from "./modules/user/pages/HomePage";
+// import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 // import AppointmentPage from "./modules/user/pages/UserStockPages/AllStocks";
@@ -29,7 +29,7 @@ const App: React.FC = () => {
          <Route path="/appointment-list" element={<AppointmentPage />} />
         <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
          {/* User Routes */}
-        <Route path="/" element={<HomePage />} />
+        {/* <Route path="/" element={<HomePage />} /> */}
         <Route path="/about" element={<AboutPage />} />
         {/* <Route path="/appointment" element={<AppointmentPage />} /> */}
 
