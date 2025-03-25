@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class Item_CtgryServiceImpl implements Item_CtgryService {
@@ -37,7 +38,19 @@ public class Item_CtgryServiceImpl implements Item_CtgryService {
 
     @Override
     public Item_Ctgry UpdateItemCtgryDetails(Integer id, Item_Ctgry itemCtgry){
-        return item_CtgryRepository.save(itemCtgry);
+        //return item_CtgryRepository.save(itemCtgry);
+        Optional<Item_Ctgry> optionalItemCtgry = item_CtgryRepository.findById(id);
+
+        if(optionalItemCtgry.isPresent()) {
+            Item_Ctgry existingCategory = optionalItemCtgry.get();
+
+            existingCategory.setItemCtgryName(itemCtgry.getItemCtgryName());
+            existingCategory.setItemID(itemCtgry.getItemID());
+
+            return item_CtgryRepository.save(existingCategory);
+        } else {
+            throw new RuntimeException("Item Category not found with ID: " + id);
+        }
     }
 
     @Override

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@headlessui/react";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import StocksLayout from "../../layout/StockLayouts/StocksLayout";
+import Modal from "./../../components/Model";
+import ItemForm from "../../components/ItemForm";
 
 interface StockItem {
     itemID: number;
@@ -18,6 +20,12 @@ interface StockItem {
     updatedDate: string;
 }
 
+interface ItemCategory {
+    itemCtgryId: number;
+    itemID: number;
+    itemCtgryName: string;
+}
+
 const AdminItemsManager: React.FC = () => {
     const [stocks, setStocks] = useState<StockItem[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -25,10 +33,20 @@ const AdminItemsManager: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [currentItem, setCurrentItem] = useState<Partial<StockItem> | undefined>(undefined);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+    const [eventToDelete, setEventToDelete] = useState<number | null>(null);
+    const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
+    const [selectedItem, setSelectedItem] = useState<StockItem | null>(null);
+    const [categories, setCategories] = useState<ItemCategory[]>([]);
     
 
     useEffect(() => {
-        fetchStocks();
+        const fetchData = async () => {
+            setLoading(true);
+            await Promise.all([fetchStocks(), fetchCategories()]);
+            setLoading(false);
+        };
+        fetchData();
     }, []);
 
     const fetchStocks = async () => {
@@ -36,34 +54,126 @@ const AdminItemsManager: React.FC = () => {
         setError(null);
         try {
             const response = await fetch('http://localhost:8081/item/get');
+            const data = await response.json();
             if (response.ok) {
-                const data = await response.json();
                 setStocks(data);
+            } else {
+                setError(data.message || "Failed to fetch items.");
             }
         } catch (error) {
-            console.error('Error fetching stocks:', error);
+            setError((error as Error).message || "An unexpected error occurred.");
+        } finally {
+            setLoading(false);
         }
     };
 
-    
 
+    // Create or Update Item
+    const handleCreateOrUpdateItem = async (item: Partial<StockItem>) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const isUpdate = item.itemID !== undefined;
+            const url = isUpdate 
+                ? `http://localhost:8081/item/update/${item.itemID}`
+                : 'http://localhost:8081/item/save';
+                
+            const response = await fetch(url, {
+                method: isUpdate ? 'PUT' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(item),
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to save item');
+            }
+    
+            await fetchStocks(); // Refresh the list
+            setIsModalOpen(false);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'An error occurred while saving the item';
+            setError(errorMessage);
+            console.error('Error saving stock:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    // Delete Item
     const handleDelete = async (id: number) => {
         try {
-            const response = await fetch(`http://localhost:8081/item/delete/${id}`, {
-                method: 'DELETE',
-            });
-            if (response.ok) {
-                fetchStocks(); // Refresh the list
-            }
+            setIsDeleteModalOpen(true);
+            setEventToDelete(id);
         } catch (error) {
-            console.error('Error deleting stock:', error);
+            console.error('Error setting up delete:', error);
         }
     };
 
+    const confirmDeleteItem = async () => {
+        if (!eventToDelete) return;
+        
+        setLoading(true);
+        try {
+            const response = await fetch(`http://localhost:8081/item/delete/${eventToDelete}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to delete item');
+            }
+    
+            await fetchStocks(); // Refresh the list
+            setIsDeleteModalOpen(false);
+            setEventToDelete(null);
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'Failed to delete item');
+            console.error('Error deleting stock:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    const cancelDelete = () => {
+        setIsDeleteModalOpen(false);
+        setEventToDelete(null);
+    };
+
+    // View Item
+    const handleView = (item: StockItem) => {
+        setSelectedItem(item);
+        setIsViewModalOpen(true);
+    };
+
+    // Filter Stocks
     const filteredStocks = stocks.filter(stock => 
         stock.itemID.toString().includes(searchTerm) ||
         stock.itemName.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Fetch Categories
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/itemCtgry/get');
+            if (response.ok) {
+                const data = await response.json();
+                setCategories(data);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+    const getCategoryName = (categoryId: number) => {
+        const category = categories.find(cat => cat.itemCtgryId === categoryId);
+        return category ? category.itemCtgryName : 'Unknown Category';
+    };
+
 
     return (
         <StocksLayout>
@@ -80,28 +190,35 @@ const AdminItemsManager: React.FC = () => {
                         className="w-full sm:w-1/2 p-2 border border-gray-500 rounded-md mb-4 bg-transparent"
                     />
                     <Button
-                        className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
                         onClick={() => {
-                            setCurrentItem(undefined);
+                            setCurrentItem(undefined); // Clear any existing item
                             setIsModalOpen(true);
                         }}
+                        className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                     >
                         <PlusIcon className="w-5 h-5 mr-2" />
-                        Add Stock
+                        Add Item
                     </Button>
                 </div>
 
                 {/* Stock Items Table */}
+                {loading ? (
+                    <div className="flex justify-center items-center mt-16">
+                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                        Loading Items...
+                    </p>
+                    </div>
+                ) : error ? (
+                    <div className="flex justify-center items-center mt-16">
+                    <p className="text-lg text-red-500">{error}</p>
+                    </div>
+                ) : (
                 <div className="mt-8 overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item CategoryID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">supplier ID</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Category</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">item Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">item Barcode</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">recorder Level</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">qty Available</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">item Brand</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">unit Price</th>
@@ -114,12 +231,8 @@ const AdminItemsManager: React.FC = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {filteredStocks.map((stock) => (
                                 <tr key={stock.itemName}>
-                                    <td className="px-6 py-4 whitespace-nowrap">{stock.itemID}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{stock.itemCtgryID}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{stock.supplierId}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{getCategoryName(stock.itemCtgryID)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.itemName}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{stock.itemBarcode}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{stock.recorderLevel}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.qtyAvailable}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.itemBrand}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.unitPrice}</td>
@@ -127,19 +240,198 @@ const AdminItemsManager: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.rackNo}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.updatedDate}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <button
-                                            onClick={() => handleDelete(stock.itemID)}
-                                            className="text-red-600 hover:text-red-900"
-                                        >
-                                            <TrashIcon className="w-5 h-5" />
-                                        </button>
+                                    <button
+                                        onClick={() => handleView(stock)}
+                                        className="text-blue-600 hover:text-blue-900 font-medium"
+                                    >
+                                        View Item
+                                    </button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
+                )}
             </div>
+
+            
+            {/*ItemForm Modal component*/}
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setCurrentItem(undefined);
+                }}
+                title={currentItem ? 'Edit Item' : 'Add New Item'}
+            >
+                <ItemForm
+                    initialData={currentItem}
+                    stocks={stocks}
+                    categories={categories}
+                    onSuccess={handleCreateOrUpdateItem}
+                    onCancel={() => {
+                        setIsModalOpen(false);
+                        setCurrentItem(undefined);
+                    }}
+                />
+            </Modal>
+
+            {/* View Item Modal */}
+            <Modal
+                isOpen={isViewModalOpen}
+                onClose={() => setIsViewModalOpen(false)}
+                title="Item Details"
+            >
+                {selectedItem && (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Basic Information */}
+                            <div className="col-span-2 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <h3 className="text-lg font-semibold mb-4 text-primary">Basic Information</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Item ID</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.itemID}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Item Name</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.itemName}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Identification */}
+                            <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <h3 className="text-lg font-semibold mb-4 text-primary">Identification</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Category</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">
+                                            {getCategoryName(selectedItem.itemCtgryID)}
+                                            <span className="text-gray-500 text-sm ml-2">
+                                                (ID: {selectedItem.itemCtgryID})
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Supplier ID</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.supplierId}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Barcode</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.itemBarcode}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Stock Details */}
+                            <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <h3 className="text-lg font-semibold mb-4 text-primary">Stock Details</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Stock Level</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.stockLevel}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Quantity Available</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.qtyAvailable}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Recorder Level</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.recorderLevel}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Product Details */}
+                            <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <h3 className="text-lg font-semibold mb-4 text-primary">Product Details</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Brand</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.itemBrand}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Unit Price</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">
+                                            ${selectedItem.unitPrice.toFixed(2)}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Rack No</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.rackNo}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Last Updated */}
+                            <div className="col-span-2 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-500">Last Updated</p>
+                                        <p className="mt-1 text-gray-900 dark:text-gray-100">
+                                            {new Date(selectedItem.updatedDate).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                    <div className="flex space-x-3">
+                                        <button
+                                            onClick={() => {
+                                                setCurrentItem(selectedItem);
+                                                setIsViewModalOpen(false);
+                                                setIsModalOpen(true);
+                                            }}
+                                            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+                                        >
+                                            <PencilIcon className="w-4 h-4 mr-2" />
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                handleDelete(selectedItem.itemID);
+                                                setIsViewModalOpen(false);
+                                            }}
+                                            className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300"
+                                        >
+                                            <TrashIcon className="w-4 h-4 mr-2" />
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </Modal>
+
+            
+            {/* Delete Confirmation Modal */}
+            <Modal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                title="Confirm Deletion"
+            >
+                <p className="text-gray-700 dark:text-gray-300">
+                Are you sure you want to delete this Item?<br/>
+                <a className="text-red-400">This action cannot be undone.</a>
+                </p>
+                <div className="mt-4 flex justify-end">
+                <Button
+                    type="button"
+                    className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md shadow-sm hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+                    onClick={() => setIsDeleteModalOpen(false)}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    type="button"
+                    className="ml-2 px-4 py-2 bg-red-500 text-white rounded-md shadow-sm hover:bg-red-600 transition"
+                    onClick={confirmDeleteItem}
+                >
+                    Delete
+                </Button>
+                </div>
+            </Modal>
         </StocksLayout>
     );
 }

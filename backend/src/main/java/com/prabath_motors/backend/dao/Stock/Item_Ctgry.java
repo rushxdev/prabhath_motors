@@ -18,5 +18,6 @@ public class Item_Ctgry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int itemCtgryId;
+    private int itemID;
     private String itemCtgryName;
 }
