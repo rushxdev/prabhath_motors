@@ -12,7 +12,11 @@ import AppointmentPage from "./modules/user/pages/UserStockPages/AllStocks";
 import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsManager";
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
 
-const App: React.FC = () => {
+// Utility routes
+import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
+import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
+
+function App() {
   useEffect(() => {
     // Always set dark mode as default
     //document.documentElement.classList.add("dark");
@@ -29,13 +33,17 @@ const App: React.FC = () => {
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           {/*<Route index element={<Navigate to="dashboard" />} />
-          <Route path="dashboard" element={<DashboardPage />} /> */}
+            <Route path="dashboard" element={<DashboardPage />} /> */}
           <Route path="items" element={<AdminItemsManager />} />
           <Route path="stock-requests" element={<AdminStockReqManager />} />
+
+          {/*utility routes*/}
+          <Route path="utility" element={<AdminUtilityManager />} />
+          <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
         </Route>
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;

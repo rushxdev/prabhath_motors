@@ -10,17 +10,17 @@ const UtilityNav: React.FC = () => {
             {/* 1st button */}
             <div 
               className="text-center space-y-2 cursor-pointer hover:bg-gray-800 p-2 rounded"
-              onClick={() => navigate('/admin/items')}
+              onClick={() => navigate('/admin/utility')}
             >
-                <p className="uppercase tracking-wide text-xs">All Items</p>
+                <p className="uppercase tracking-wide text-xs">Utility Bills</p>
             </div>
           
             {/* 2nd button */}
             <div 
               className="text-center space-y-2 cursor-pointer hover:bg-gray-800 p-2 rounded"
-              onClick={() => navigate('/admin/stock-requests')}
+              onClick={() => navigate('/admin/monthly-utility')}
             >
-                <p className="uppercase tracking-wide text-xs">Stock Requests</p>
+                <p className="uppercase tracking-wide text-xs">Monthly Utility Bills</p>
             </div>
 
             {/* 3rd button */}
@@ -28,7 +28,7 @@ const UtilityNav: React.FC = () => {
               className="text-center space-y-2 cursor-pointer hover:bg-gray-800 p-2 rounded"
               onClick={() => navigate('/admin/order-stocks')}
             >
-                <p className="uppercase tracking-wide text-xs">Order Stocks</p>
+                <p className="uppercase tracking-wide text-xs">Miscelleneous Items</p>
             </div>
 
             {/* 4th button */}

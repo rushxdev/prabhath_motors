@@ -5,6 +5,8 @@ import com.prabath_motors.backend.repository.UtilityBillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UtilityBillServiceImpl implements UtilityBillService {
     private final UtilityBillRepository utilityBillRepository;
@@ -12,6 +14,15 @@ public class UtilityBillServiceImpl implements UtilityBillService {
     @Autowired
     public UtilityBillServiceImpl(UtilityBillRepository utilityBillRepository) {
         this.utilityBillRepository = utilityBillRepository;
+    }
+
+    @Override
+    public List<UtilityBill> getAllUtilityBills() {
+        List<UtilityBill> utilityBills = utilityBillRepository.findAll();
+        if (utilityBills == null || utilityBills.isEmpty()) {
+            throw new RuntimeException("No utility bills found");
+        }
+        return utilityBills;
     }
 
     @Override

@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @Controller
 @RequestMapping("/utilitybill")
@@ -16,6 +18,12 @@ public class UtilityBillController {
     @Autowired
     public UtilityBillController(UtilityBillService utilityBillService) {
         this.utilityBillService = utilityBillService;
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<List<UtilityBill>> getAllUtilityBills() {
+        List<UtilityBill> utilityBills = utilityBillService.getAllUtilityBills();
+        return ResponseEntity.ok(utilityBills);
     }
 
     @GetMapping("/get/{id}")
