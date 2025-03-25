@@ -35,7 +35,9 @@ build/
 ### VS Code ###
 .vscode/
 
+
 ### certification ###
+
 src/main/resources/cert/*.crt
 src/main/resources/cert/*.pem
 src/main/resources/cert/*.key
