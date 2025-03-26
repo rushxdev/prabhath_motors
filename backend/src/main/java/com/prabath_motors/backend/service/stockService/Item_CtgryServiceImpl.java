@@ -45,7 +45,6 @@ public class Item_CtgryServiceImpl implements Item_CtgryService {
             Item_Ctgry existingCategory = optionalItemCtgry.get();
 
             existingCategory.setItemCtgryName(itemCtgry.getItemCtgryName());
-            existingCategory.setItemID(itemCtgry.getItemID());
 
             return item_CtgryRepository.save(existingCategory);
         } else {

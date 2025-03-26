@@ -14,10 +14,21 @@ interface StockItem {
     recorderLevel: number;
     qtyAvailable: number;
     itemBrand: string;
-    unitPrice: number;
+    sellPrice: number;
     stockLevel: string;
     rackNo: number;
     updatedDate: string;
+}
+
+interface Stock_In {
+    stockInId?: number;
+    itemID: number;
+    ctgryID: number;
+    supplierID: number;
+    qtyAdded: number;
+    unitPrice: number;
+    sellPrice: number;
+    dateAdded: string;
 }
 
 interface ItemCategory {
@@ -69,7 +80,7 @@ const AdminItemsManager: React.FC = () => {
 
 
     // Create or Update Item
-    const handleCreateOrUpdateItem = async (item: Partial<StockItem>) => {
+    const handleCreateOrUpdateItem = async (item: Partial<StockItem>, stockInData: Partial<Stock_In>) => {
         setLoading(true);
         setError(null);
         try {
@@ -78,7 +89,7 @@ const AdminItemsManager: React.FC = () => {
                 ? `http://localhost:8081/item/update/${item.itemID}`
                 : 'http://localhost:8081/item/save';
                 
-            const response = await fetch(url, {
+            const itemResponse = await fetch(url, {
                 method: isUpdate ? 'PUT' : 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -86,13 +97,45 @@ const AdminItemsManager: React.FC = () => {
                 body: JSON.stringify(item),
             });
     
-            if (!response.ok) {
-                const errorData = await response.json();
+            if (!itemResponse.ok) {
+                const errorData = await itemResponse.json();
                 throw new Error(errorData.message || 'Failed to save item');
             }
+
+            const savedItem = await itemResponse.json();
+
+            // Only create stock_in record for new items
+            if (!isUpdate) {
+                const stockInResponse = await fetch('http://localhost:8081/stock_in/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        itemID: savedItem.itemID, 
+                        ctgryID: stockInData.ctgryID,
+                        supplierID: stockInData.supplierID,
+                        qtyAdded: stockInData.qtyAdded,
+                        unitPrice: stockInData.unitPrice,
+                        sellPrice: stockInData.sellPrice,
+                        dateAdded: stockInData.dateAdded
+                    }),
+                });
+
+                if (!stockInResponse.ok) {
+                    throw new Error('Failed to save stock in record');
+                }
+            }
     
-            await fetchStocks(); // Refresh the list
+            
             setIsModalOpen(false);
+            setCurrentItem(undefined);
+
+            await Promise.all([
+                fetchStocks(),
+                fetchCategories()
+            ]);
+
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An error occurred while saving the item';
             setError(errorMessage);
@@ -143,6 +186,10 @@ const AdminItemsManager: React.FC = () => {
     const cancelDelete = () => {
         setIsDeleteModalOpen(false);
         setEventToDelete(null);
+        // Reopen the view modal if there's a selected item
+        if (selectedItem) {
+            setIsViewModalOpen(true);
+        }
     };
 
     // View Item
@@ -174,6 +221,21 @@ const AdminItemsManager: React.FC = () => {
         return category ? category.itemCtgryName : 'Unknown Category';
     };
 
+    // Add this helper function at the top of the component
+    const getStockLevelColor = (stockLevel: string) => {
+        switch (stockLevel.toLowerCase()) {
+            case 'high':
+                return 'text-green-600';
+            case 'medium':
+                return 'text-yellow-600';
+            case 'low':
+                return 'text-orange-600';
+            case 'critical':
+                return 'text-red-600';
+            default:
+                return 'text-gray-600';
+        }
+    };
 
     return (
         <StocksLayout>
@@ -229,14 +291,19 @@ const AdminItemsManager: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {filteredStocks.map((stock) => (
-                                <tr key={stock.itemName}>
+                            {filteredStocks.map((stock, index) => (
+                                <tr 
+                                    key={stock.itemName}
+                                    className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
+                                >
                                     <td className="px-6 py-4 whitespace-nowrap">{getCategoryName(stock.itemCtgryID)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.itemName}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.qtyAvailable}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.itemBrand}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{stock.unitPrice}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{stock.stockLevel}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{stock.sellPrice}</td>
+                                    <td className={`px-6 py-4 whitespace-nowrap font-semibold ${getStockLevelColor(stock.stockLevel)}`}>
+                                        {stock.stockLevel}
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.rackNo}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{stock.updatedDate}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -267,9 +334,27 @@ const AdminItemsManager: React.FC = () => {
             >
                 <ItemForm
                     initialData={currentItem}
-                    stocks={stocks}
                     categories={categories}
-                    onSuccess={handleCreateOrUpdateItem}
+                    onSuccess={(itemData) => {
+                        // Create a stock object from the item data
+                        const stockData = {
+                            itemID: itemData.itemID,
+                            ctgryID: itemData.itemCtgryID,  // This should match exactly
+                            supplierID: itemData.supplierId,
+                            qtyAdded: itemData.qtyAvailable,
+                            unitPrice: itemData.unitPrice,
+                            sellPrice: itemData.sellPrice,
+                            dateAdded: new Date().toISOString().split('T')[0]
+                        };
+
+                        // Ensure itemCtgryID is properly set in the item data
+                        const itemToSave = {
+                            ...itemData,
+                            itemCtgryID: itemData.itemCtgryID, // Make sure this is set correctly
+                        };
+                        
+                        handleCreateOrUpdateItem(itemToSave, stockData);
+                    }}
                     onCancel={() => {
                         setIsModalOpen(false);
                         setCurrentItem(undefined);
@@ -355,7 +440,7 @@ const AdminItemsManager: React.FC = () => {
                                     <div>
                                         <p className="text-sm font-medium text-gray-500">Unit Price</p>
                                         <p className="mt-1 text-gray-900 dark:text-gray-100">
-                                            ${selectedItem.unitPrice.toFixed(2)}
+                                            ${selectedItem.sellPrice.toFixed(2)}
                                         </p>
                                     </div>
                                     <div>

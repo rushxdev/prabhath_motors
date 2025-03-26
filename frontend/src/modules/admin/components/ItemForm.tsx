@@ -3,7 +3,6 @@ import { Button, Combobox } from '@headlessui/react';
 
 interface ItemFormProps {
     initialData?: Partial<StockItem>;
-    stocks: StockItem[];
     categories: ItemCategory[];
     onSuccess: (item: Partial<StockItem>) => void;
     onCancel: () => void;
@@ -18,6 +17,7 @@ interface StockItem {
     recorderLevel: number;
     qtyAvailable: number;
     itemBrand: string;
+    sellPrice: number;
     unitPrice: number;
     stockLevel: string;
     rackNo: number;
@@ -37,19 +37,27 @@ const ItemForm: React.FC<ItemFormProps> = ({
     onCancel,
 }) => {
     const [query, setQuery] = useState('');
-    const [formData, setFormData] = useState<Partial<StockItem>>({
-        itemID: undefined,
-        itemCtgryID: 0,
-        supplierId: 0,
-        itemName: '',
-        itemBarcode: '',
-        recorderLevel: 0,
-        qtyAvailable: 0,
-        itemBrand: '',
-        unitPrice: 0,
-        stockLevel: '',
-        rackNo: 0,
-        updatedDate: new Date().toISOString().split('T')[0]
+    const [formData, setFormData] = useState<Partial<StockItem>>(() => {
+        if (initialData) {
+            // If initialData exists (updating), use it
+            return { ...initialData };
+        } else {
+            // If no initialData (creating new), use empty/undefined values
+            return {
+                itemID: undefined,
+                itemCtgryID: undefined,
+                supplierId: undefined,
+                itemName: '',
+                itemBarcode: '',
+                recorderLevel: undefined,
+                qtyAvailable: undefined,
+                itemBrand: '',
+                sellPrice: undefined,
+                unitPrice: undefined,
+                rackNo: undefined,
+                updatedDate: new Date().toISOString().split('T')[0]
+            };
+        }
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -84,27 +92,62 @@ const ItemForm: React.FC<ItemFormProps> = ({
 
         setFormData(prev => ({
             ...prev,
-            [name]: name.includes('ID') || name.includes('Id') || 
+            [name]: name.includes('itemCtgryID') || name.includes('Id') || 
                     name.includes('Level') || name.includes('Price') || 
                     name.includes('No') || name.includes('Available')
                     ? Number(value) : value
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const createNewCategory = async (categoryName: string): Promise<ItemCategory> => {
+        const response = await fetch('http://localhost:8081/itemCtgry/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                itemCtgryName: categoryName
+            })
+        });
+    
+        if (!response.ok) {
+            throw new Error('Failed to create new category');
+        }
+    
+        return response.json();
+    };
+    
+    // Modify your handleSubmit function to handle new categories
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-
-        if (nameError) {
-            setError('Please fix the errors before submitting.');
+    
+        try {
+            if (nameError) {
+                throw new Error('Please fix the errors before submitting.');
+            }
+    
+            let categoryId = formData.itemCtgryID;
+    
+            // If it's a new category, create it first and get the ID
+            if (selectedCategory && selectedCategory.itemCtgryId === -1) {
+                const newCategory = await createNewCategory(selectedCategory.itemCtgryName);
+                categoryId = newCategory.itemCtgryId; // Get the new category ID
+            }
+    
+            // Now save/update the item with the correct category ID
+            onSuccess({
+                ...formData,
+                itemCtgryID: categoryId // Use the new category ID or existing one
+            });
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'An error occurred');
+        } finally {
             setLoading(false);
-            return;
         }
-
-        onSuccess(formData);
-        setLoading(false);
     };
+
 
     const filteredCategories = query === ''
         ? categories
@@ -127,7 +170,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                             if (category) {
                                 setFormData(prev => ({
                                     ...prev,
-                                    itemCtgryID: category.itemCtgryId
+                                    itemCtgryID: category.itemCtgryId // Make sure this matches exactly
                                 }));
                             }
                         }}
@@ -141,8 +184,18 @@ const ItemForm: React.FC<ItemFormProps> = ({
                                     if (event.target.value === '') {
                                         setSelectedCategory(null);
                                     }
+                                    // Handle new category creation
+                                    if (!filteredCategories.some(cat => 
+                                        cat.itemCtgryName.toLowerCase() === event.target.value.toLowerCase()
+                                    )) {
+                                        setSelectedCategory({
+                                            itemCtgryId: -1, // Temporary ID for new category
+                                            itemID: -1,
+                                            itemCtgryName: event.target.value
+                                        });
+                                    }
                                 }}
-                                placeholder="Search for a category..."
+                                placeholder="Search or enter new category..."
                             />
                             <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                 {filteredCategories.length === 0 && query !== '' ? (
@@ -256,30 +309,34 @@ const ItemForm: React.FC<ItemFormProps> = ({
                     />
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Unit Price<span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        type="number"
-                        name="unitPrice"
-                        value={formData.unitPrice}
-                        onChange={handleChange}
-                        step="0.01"
-                        className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                        required
-                    />
-                </div>
+                {/* Only show unit price field for new items */}
+                {!initialData && (
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Unit Price<span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="number"
+                            name="unitPrice"
+                            value={formData.unitPrice}
+                            onChange={handleChange}
+                            step="0.01"
+                            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                            required
+                        />
+                    </div>
+                )}
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700">
-                        Stock Level<span className="text-red-500">*</span>
+                        Sell Price<span className="text-red-500">*</span>
                     </label>
                     <input
-                        type="text"
-                        name="stockLevel"
-                        value={formData.stockLevel}
+                        type="number"
+                        name="sellPrice"
+                        value={formData.sellPrice}
                         onChange={handleChange}
+                        step="0.01"
                         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                         required
                     />
