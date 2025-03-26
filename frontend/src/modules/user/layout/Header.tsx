@@ -9,7 +9,6 @@ const Header: React.FC = () => {
   const [isAppointmentsMenuOpen, setIsAppointmentsMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
-
   const toggleAppointmentsMenu = () => {
     setIsAppointmentsMenuOpen(!isAppointmentsMenuOpen);
     if (isServicesMenuOpen) setIsServicesMenuOpen(false);
@@ -21,7 +20,7 @@ const Header: React.FC = () => {
   };
 
   const navLinks = [
-    { to: "/discover", label: "DISCOVER" },
+    { to: "/about", label: "DISCOVER" },
     { to: "/services", label: "SERVICES" },
     { to: "/support", label: "SUPPORT" },
   ];
@@ -31,7 +30,10 @@ const Header: React.FC = () => {
       {/* Top Navigation */}
       <nav className="flex items-center px-6 py-4 bg-gray-100 dark:bg-gray-900 border-b border-gray-300 dark:border-gray-700 transition-colors duration-300">
         {/* Left - Logo */}
-        <NavLink to="/" className="text-xl md:text-2xl font-bold dark:text-white">
+        <NavLink
+          to="/"
+          className="text-xl md:text-2xl font-bold dark:text-white"
+        >
           LOGO
         </NavLink>
 
@@ -50,20 +52,22 @@ const Header: React.FC = () => {
 
         {/* Right - Theme Toggle, Search & Signup */}
         <div className="flex items-center space-x-4 ml-auto">
-          
           {/* Search Icon */}
           <button className="text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-300">
             <FiSearch size={18} />
           </button>
 
           {/* Signup Button */}
-          <NavLink to="/signup" className="hidden md:block font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <NavLink
+            to="/signup"
+            className="hidden md:block font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
             SIGNUP
           </NavLink>
 
           {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-300" 
+          <button
+            className="md:hidden text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-300"
             onClick={() => setNavOpen(!navOpen)}
           >
             <HiMenu size={22} />
@@ -77,55 +81,130 @@ const Header: React.FC = () => {
         <div className="hidden md:flex space-x-6 mr-auto">
           {/* Appointments dropdown */}
           <div className="relative">
-            <button 
+            <button
               className="text-gray-700 dark:text-black hover:text-gray-900 dark:hover:text-white transition-colors flex items-center space-x-1"
               onClick={toggleAppointmentsMenu}
             >
               <span className="font-medium">APPOINTMENTS</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m6 9 6 6 6-6"></path>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="m6 9 6 6 6-6"
+                ></path>
               </svg>
             </button>
-            
+
             {isAppointmentsMenuOpen && (
               <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 shadow-md rounded-md p-2 w-48 z-10 border dark:border-gray-700">
                 <ul>
-                  <li><a href="#" className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors">Book Appointment</a></li>
-                  <li><a href="#" className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors">Check Status</a></li>
-                  <li><a href="#" className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors">Cancel Appointment</a></li>
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      Book Appointment
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      Check Status
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      Cancel Appointment
+                    </a>
+                  </li>
                 </ul>
               </div>
             )}
           </div>
-          
+
           {/* Service & Spare Parts dropdown */}
           <div className="relative">
-            <button 
+            <button
               className="text-gray-950 dark:text-black hover:text-gray-900 dark:hover:text-white transition-colors flex items-center space-x-1"
               onClick={toggleServicesMenu}
             >
               <span className="font-medium">SERVICE & SPARE PARTS</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m6 9 6 6 6-6"></path>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="m6 9 6 6 6-6"
+                ></path>
               </svg>
             </button>
-            
+
             {isServicesMenuOpen && (
               <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 shadow-md rounded-md p-2 w-48 z-10 border dark:border-gray-700">
                 <ul>
-                  <li><a href="#" className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors">Maintenance</a></li>
-                  <li><a href="#" className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors">Repairs</a></li>
-                  <li><a href="#" className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors">Spare Parts Catalog</a></li>
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      Maintenance
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      Repairs
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      Spare Parts Catalog
+                    </a>
+                  </li>
                 </ul>
               </div>
             )}
           </div>
         </div>
-        
+
         {/* Mobile Menu Button (Secondary) */}
         <button className="text-gray-700 hover:text-gray-900">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         </button>
       </div>
