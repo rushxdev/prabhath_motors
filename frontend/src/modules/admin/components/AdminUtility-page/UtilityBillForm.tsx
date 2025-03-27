@@ -4,6 +4,8 @@ import React, { useState, useEffect, FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Modal from "../../../../components/Model"; // Import the Modal component
+
 // Configure axios base URL
 axios.defaults.baseURL = "http://localhost:8081";
 
@@ -52,6 +54,7 @@ const UtilityBillForm: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
+  const [isOpen, setIsOpen] = useState(true); // Modal state
 
   const [formValues, setFormValues] = useState<FormValues>({
     Type: "Electricity",
@@ -90,6 +93,7 @@ const UtilityBillForm: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Same existing functionality (fetch, validate, handle changes, submit)
   // Fetch utility bill data if in edit mode
   useEffect(() => {
     if (isEditMode) {
@@ -351,14 +355,13 @@ const UtilityBillForm: React.FC = () => {
         billingAccNo = parseInt(combinedNumber, 10);
       }
 
-      // In the handleSubmit function, update the utilityBillData object:
       const utilityBillData = {
         ...(isEditMode && { id: parseInt(id as string) }),
-        billing_Acc_No: billingAccNo, // Changed from Billing_Acc_No to billing_Acc_No
-        type: formValues.Type, // Changed from Type to type
-        address: formValues.Address, // Changed from Address to address
-        meter_No: formValues.Meter_No, // Changed from Meter_No to meter_No
-        unit_Price: parseFloat(formValues.Unit_Price), // Changed from Unit_Price to unit_Price
+        billing_Acc_No: billingAccNo,
+        type: formValues.Type,
+        address: formValues.Address,
+        meter_No: formValues.Meter_No,
+        unit_Price: parseFloat(formValues.Unit_Price),
       };
 
       if (isEditMode) {
@@ -369,7 +372,7 @@ const UtilityBillForm: React.FC = () => {
         toast.success("Utility bill saved successfully");
       }
 
-      navigate("/admin/utility"); // Adjust this based on your routing structure
+      navigate("/admin/utility");
     } catch (error) {
       toast.error("Error saving utility bill");
       console.error("Error saving utility bill:", error);
@@ -378,13 +381,20 @@ const UtilityBillForm: React.FC = () => {
     }
   };
 
-  return (
-    <div className="p-6 max-w-2xl mx-auto bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold text-center mb-8">
-        {isEditMode ? "Edit Utility Bill" : "New Utility Bill"}
-      </h1>
+  // Handle modal close
+  const handleClose = () => {
+    setIsOpen(false);
+    navigate("/admin/utility");
+  };
 
-      <form onSubmit={handleSubmit}>
+  // Render using the Modal component
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={isEditMode ? "Edit Utility Bill" : "New Utility Bill"}
+    >
+      <form onSubmit={handleSubmit} className="mt-4">
         {/* Billing Type Selection */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -612,15 +622,15 @@ const UtilityBillForm: React.FC = () => {
         <div className="flex justify-end mt-8 gap-4">
           <button
             type="button"
-            onClick={() => navigate("/admin/utility")}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+            onClick={handleClose}
+            className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md shadow-sm hover:bg-gray-400 dark:hover:bg-gray-600 transition"
             disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
             type="submit"
-            className={`px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors ${
+            className={`px-4 py-2 bg-green-500 text-white rounded-md shadow-sm hover:bg-green-600 transition ${
               isSubmitting ? "opacity-70 cursor-not-allowed" : ""
             }`}
             disabled={
@@ -637,7 +647,7 @@ const UtilityBillForm: React.FC = () => {
           </button>
         </div>
       </form>
-    </div>
+    </Modal>
   );
 };
 
