@@ -44,9 +44,13 @@ public class UtilityBillController {
         return ResponseEntity.ok(updatedUtilityBill);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUtilityBill(@RequestBody UtilityBill utilityBill) {
+    
+    
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUtilityBillById(@PathVariable Integer id) {
+        UtilityBill utilityBill = new UtilityBill();
+        utilityBill.setId(id);
         String deleteMessage = utilityBillService.DeleteUtilityBill(utilityBill);
-        return ResponseEntity.ok(deleteMessage); // Return the deletion message as the response body
+        return ResponseEntity.ok(deleteMessage);
     }
 }
