@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Combobox } from '@headlessui/react';
+import { BarcodeScanner } from './BarcodeScanner';
 import { ItemCategory, StockItem, Supplier } from '../../../../types/Stock';
 import { SupplierCombobox } from './SupplierCombox';
 
@@ -44,7 +45,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
     const [nameError, setNameError] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<ItemCategory | null>(null);
     const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
-
+    const [isScanning, setIsScanning] = useState(false);
 
     useEffect(() => {
         if (initialData) {
@@ -138,6 +139,13 @@ const ItemForm: React.FC<ItemFormProps> = ({
         }
     };
 
+    const handleBarcodeScan = useCallback((barcode: string) => {
+        setFormData(prev => ({
+            ...prev,
+            itemBarcode: barcode
+        }));
+        setIsScanning(false);
+    }, []);
 
     const filteredCategories = query === ''
         ? categories
@@ -243,15 +251,31 @@ const ItemForm: React.FC<ItemFormProps> = ({
                     <label className="block text-sm font-medium text-gray-700">
                         Item Barcode<span className="text-red-500">*</span>
                     </label>
-                    <input
-                        type="text"
-                        name="itemBarcode"
-                        value={formData.itemBarcode}
-                        onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                        required
-                    />
+                    <div className="flex gap-2 items-center">
+                        <input
+                            type="text"
+                            name="itemBarcode"
+                            value={formData.itemBarcode}
+                            onChange={handleChange}
+                            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                            placeholder="Scan or enter barcode"
+                        />
+                        <Button
+                            type="button"
+                            onClick={() => setIsScanning(true)}
+                            className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark"
+                        >
+                            Scan
+                        </Button>
+                    </div>
                 </div>
+
+                {isScanning && (
+                    <BarcodeScanner
+                        onScanned={handleBarcodeScan}
+                        onClose={() => setIsScanning(false)}
+                    />
+                )}
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700">

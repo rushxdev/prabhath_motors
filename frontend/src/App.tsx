@@ -12,6 +12,7 @@ import AppointmentPage from "./modules/user/pages/UserStockPages/AllStocks";
 import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsManager";
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
 import AdminSupplierManager from "./modules/admin/pages/AdminStockPages/AdminSupplierManager";
+import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminStockOrderManager";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -34,6 +35,7 @@ const App: React.FC = () => {
           <Route path="items" element={<AdminItemsManager />} />
           <Route path="stock-requests" element={<AdminStockReqManager />} />
           <Route path="supplier-details" element={<AdminSupplierManager />} />
+          <Route path="order-stocks" element={<AdminStockOrderManager />} />
         </Route>
       </Routes>
     </Router>
