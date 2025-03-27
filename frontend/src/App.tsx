@@ -11,6 +11,8 @@ import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 // import AppointmentPage from "./modules/user/pages/UserStockPages/AllStocks";
 import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsManager";
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
+import AdminSupplierManager from "./modules/admin/pages/AdminStockPages/AdminSupplierManager";
+import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminStockOrderManager";
 
 // Utility routes
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
@@ -45,13 +47,17 @@ function App() {
             <Route path="dashboard" element={<DashboardPage />} /> */}
           <Route path="items" element={<AdminItemsManager />} />
           <Route path="stock-requests" element={<AdminStockReqManager />} />
-
+          <Route path="supplier-details" element={<AdminSupplierManager />} />
+          <Route path="order-stocks" element={<AdminStockOrderManager />} />
+          
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
           {/*utility routes- for the form*/}
           <Route path="utility/add" element={<UtilityBillForm />} />
           <Route path="utility/edit/:id" element={<UtilityBillForm />} />
+
+          
         </Route>
       </Routes>
     </Router>
