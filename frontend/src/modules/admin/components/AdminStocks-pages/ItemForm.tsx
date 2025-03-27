@@ -39,7 +39,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
     const [query, setQuery] = useState('');
     const [formData, setFormData] = useState<Partial<StockItem>>(() => {
         if (initialData) {
-            // If initialData exists (updating), use it
+            // If initialData exists (updating)
             return { ...initialData };
         } else {
             // If no initialData (creating new), use empty/undefined values
@@ -77,7 +77,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        // Add name validation
+        //name validation
         if (name === 'itemName') {
             if (value.length < 3) {
                 setNameError('Item name must be at least 3 characters long');
@@ -117,7 +117,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
         return response.json();
     };
     
-    // Modify your handleSubmit function to handle new categories
+    //handle new categories
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -136,7 +136,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                 categoryId = newCategory.itemCtgryId; // Get the new category ID
             }
     
-            // Now save/update the item with the correct category ID
+            //save/update the item with correct category ID
             onSuccess({
                 ...formData,
                 itemCtgryID: categoryId // Use the new category ID or existing one
@@ -170,7 +170,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                             if (category) {
                                 setFormData(prev => ({
                                     ...prev,
-                                    itemCtgryID: category.itemCtgryId // Make sure this matches exactly
+                                    itemCtgryID: category.itemCtgryId 
                                 }));
                             }
                         }}
@@ -189,7 +189,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                                         cat.itemCtgryName.toLowerCase() === event.target.value.toLowerCase()
                                     )) {
                                         setSelectedCategory({
-                                            itemCtgryId: -1, // Temporary ID for new category
+                                            itemCtgryId: -1, // Temporary ID of new category
                                             itemID: -1,
                                             itemCtgryName: event.target.value
                                         });

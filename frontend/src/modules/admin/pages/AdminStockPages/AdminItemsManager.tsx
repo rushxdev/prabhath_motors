@@ -3,7 +3,7 @@ import { Button } from "@headlessui/react";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import StocksLayout from "../../layout/StockLayouts/StocksLayout";
 import Modal from "../../../../components/Model";
-import ItemForm from "../../components/ItemForm";
+import ItemForm from "../../components/AdminStocks-pages/ItemForm";
 import { StockItem, Stock_In, ItemCategory } from "../../../../types/Stock";
 import { itemService } from '../../../../services/stockItemService';
 import { ErrorBoundary } from 'react-error-boundary';
