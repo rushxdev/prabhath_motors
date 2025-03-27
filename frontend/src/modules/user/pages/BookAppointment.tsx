@@ -12,24 +12,48 @@ const BookAppointment = () => {
     mileage: 0,
   });
 
+  const timeSlots = [
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+  ];
+
+  const [avilableTimeSlots] =
+    useState<string[]>(timeSlots);
+
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setAppointment({ ...appointment, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-        await addAppointment({...appointment, mileage:parseFloat(appointment.mileage.toString())});
-        alert("Appointment booked successfully");
-        setAppointment({ vehicleRegistrationNo: "", date: "", time: "", mileage: 0 });
-        navigate("/");
+      await addAppointment({
+        ...appointment,
+        mileage: parseFloat(appointment.mileage.toString()),
+      });
+      alert("Appointment booked successfully");
+      setAppointment({
+        vehicleRegistrationNo: "",
+        date: "",
+        time: "",
+        mileage: 0,
+      });
+      navigate("/");
     } catch (error) {
-        console.error("Error while booking appointment", error);
-        alert("Failed to book appointment");
+      console.error("Error while booking appointment", error);
+      alert("Failed to book appointment");
     }
-  }
+  };
 
   return (
     <div>
@@ -54,14 +78,24 @@ const BookAppointment = () => {
             required
             className="w-full p-2 border rounded"
           />
-          <input
-            type="time"
+
+          {/* Drop down for the time slots */}
+
+          <select
             name="time"
             value={appointment.time}
             onChange={handleChange}
             required
             className="w-full p-2 border rounded"
-          />
+          >
+            <option value="">Select a time</option>
+            {avilableTimeSlots.map((slot) => (
+              <option key={slot} value={slot}>
+                {slot}
+              </option>
+            ))}
+          </select>
+
           <input
             type="number"
             name="mileage"
