@@ -1,33 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Combobox } from '@headlessui/react';
+import { ItemCategory, StockItem, Supplier } from '../../../../types/Stock';
+import { SupplierCombobox } from './SupplierCombox';
 
 interface ItemFormProps {
     initialData?: Partial<StockItem>;
     categories: ItemCategory[];
     onSuccess: (item: Partial<StockItem>) => void;
     onCancel: () => void;
-}
-
-interface StockItem {
-    itemID?: number;
-    itemCtgryID: number;
-    supplierId: number;
-    itemName: string;
-    itemBarcode: string;
-    recorderLevel: number;
-    qtyAvailable: number;
-    itemBrand: string;
-    sellPrice: number;
-    unitPrice: number;
-    stockLevel: string;
-    rackNo: number;
-    updatedDate: string;
-}
-
-interface ItemCategory {
-    itemCtgryId: number;
-    itemID: number;
-    itemCtgryName: string;
 }
 
 const ItemForm: React.FC<ItemFormProps> = ({
@@ -63,6 +43,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [nameError, setNameError] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<ItemCategory | null>(null);
+    const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
 
 
     useEffect(() => {
@@ -73,6 +54,15 @@ const ItemForm: React.FC<ItemFormProps> = ({
             });
         }
     }, [initialData]);
+
+    useEffect(() => {
+        if (selectedSupplier) {
+            setFormData(prev => ({
+                ...prev,
+                supplierId: selectedSupplier.supplierId
+            }));
+        }
+    }, [selectedSupplier]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -222,17 +212,13 @@ const ItemForm: React.FC<ItemFormProps> = ({
                     </Combobox>
                 </div>
 
-                <div>
+                <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700">
-                        Supplier ID<span className="text-red-500">*</span>
+                        Supplier
                     </label>
-                    <input
-                        type="number"
-                        name="supplierId"
-                        value={formData.supplierId}
-                        onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                        required
+                    <SupplierCombobox
+                        selectedSupplier={selectedSupplier}
+                        onSupplierSelect={setSelectedSupplier}
                     />
                 </div>
 

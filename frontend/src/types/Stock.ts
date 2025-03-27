@@ -30,3 +30,10 @@ export interface Stock_In {
     sellPrice: number;
     dateAdded: string;
 }
+
+export interface Supplier {
+    supplierId: number;
+    supplierName: string;
+    email: string;
+    contact: string;
+}
