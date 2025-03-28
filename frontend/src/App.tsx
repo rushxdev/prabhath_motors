@@ -18,13 +18,14 @@ import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminS
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
 import VehicleRegistration from "./modules/user/pages/VehicleRegistration"
-import VehiclePage from "./modules/admin/pages/VehiclePage"
+// import VehiclePage from "./modules/admin/pages/VehiclePage"
 import VehicleUpdate from "./modules/admin/pages/VehicleUpdate"
 //Utilityform
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
 
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeList from "./components/EmployeeList"
+import VehicleDashboard from "./pages/VehicleDashboard";
 
 
 
@@ -43,9 +44,9 @@ function App() {
         <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
 
         {/*Vehicle routes*/}
-        <Route path="vehicle-registration" element={<VehicleRegistration />} />
+        {/* <Route path="vehicle-registration" element={<VehicleRegistration />} />
         <Route path="vehicle-page" element={<VehiclePage />} />
-        <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
+        <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} /> */}
 
          {/* User Routes */}
         <Route path="/" element={<HomePage />} />
@@ -66,6 +67,11 @@ function App() {
           <Route path="stock-requests" element={<AdminStockReqManager />} />
           <Route path="supplier-details" element={<AdminSupplierManager />} />
           <Route path="order-stocks" element={<AdminStockOrderManager />} />
+
+          {/* vehicle routes */}
+          <Route path="vehicle-page" element={<VehicleDashboard />} />
+          <Route path="vehicle-page/vehicle-registration" element={<VehicleRegistration />} />
+          <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
 
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />

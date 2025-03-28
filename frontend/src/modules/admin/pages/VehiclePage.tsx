@@ -35,7 +35,6 @@ const VehiclePage = () => {
 
   return (
     <div>
-      <Navbar />
       <div className="max-w-4xl mx-auto mt-10">
         <h2 className="text-2xl font-bold mb-4">Vehicles</h2>
 
@@ -51,7 +50,7 @@ const VehiclePage = () => {
           />
           {/* Add New button */}
           <button
-            onClick={() => navigate("/vehicle-registration")}
+            onClick={() => navigate(`vehicle-registration`)}
             className="bg-blue-500 text-white px-4 py-2 rounded ml-4"
           >
             Add

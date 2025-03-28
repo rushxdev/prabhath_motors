@@ -67,7 +67,7 @@ const VehicleUpdate = () => {
 
     try {
       await updateVehicle(idNumber, vehicle);
-      navigate("/vehicle-page");
+      navigate("/admin/vehicle-page");
     } catch (error) {
       console.error("Error while updating vehicle", error);
     }
