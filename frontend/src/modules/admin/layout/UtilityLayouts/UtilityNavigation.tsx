@@ -36,7 +36,7 @@ const UtilityNav: React.FC = () => {
               className="text-center space-y-2 cursor-pointer hover:bg-gray-800 p-2 rounded"
               onClick={() => navigate('/admin/supplier-details')}
             >
-                <p className="uppercase tracking-wide text-xs">Supplier details</p>
+                <p className="uppercase tracking-wide text-xs">Report Generation</p>
             </div>
         </div>
     </div>
