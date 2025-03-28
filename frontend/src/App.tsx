@@ -3,7 +3,7 @@ import CustomerDashboard from "./modules/user/pages/CustomerDashboard";
 import BookAppointment from "./modules/user/pages/BookAppointment";
 import AppointmentPage from "./modules/admin/pages/AppointmentPage";
 import AppointmentUpdate from "./modules/admin/pages/AppointmentUpdate";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { ScrollToTop } from "./utils/scrollToTop.util";
 import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
@@ -17,6 +17,9 @@ import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminS
 // Utility routes
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
+import VehicleRegistration from "./modules/user/pages/VehicleRegistration"
+import VehiclePage from "./modules/admin/pages/VehiclePage"
+import VehicleUpdate from "./modules/admin/pages/VehicleUpdate"
 //Utilityform
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
 
@@ -37,10 +40,19 @@ function App() {
         <Route path="/" element={<CustomerDashboard />} />
         <Route path="/book-appointment" element={<BookAppointment />} />
         <Route path="/appointment-list" element={<AppointmentPage />} />
-        <Route
+        <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+
+        {/*Vehicle routes*/}
+        <Route path="vehicle-registration" element={<VehicleRegistration />} />
+        <Route path="vehicle-page" element={<VehiclePage />} />
+        <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
+
+         {/* User Routes */}
+        <Route path="/" element={<HomePage />} />
+        {/* <Route
           path="/appointment-list/update-appointment/:id"
           element={<AppointmentUpdate />}
-        />
+        /> */}
         {/* User Routes */}
         <Route path="/home" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
@@ -63,7 +75,7 @@ function App() {
 
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/get" element={<EmployeeList/>} />
-          {/*utility routes- for the form*/}
+          {/*utility routes-for the form*/}
 
 
         </Route>
