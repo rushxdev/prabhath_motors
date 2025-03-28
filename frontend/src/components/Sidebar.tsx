@@ -33,40 +33,53 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="fixed inset-y-0 left-0 z-50">
       <div
         className={`${
           open ? "w-72" : "w-20"
-        } duration-300 h-screen p-5 pt-8 bg-black text-white relative flex flex-col`}
+        } h-full bg-black text-white transition-all duration-300 flex flex-col`}
       >
         {/* Sidebar Toggle Button */}
-        <div className="flex items-center cursor-pointer gap-x-4" onClick={toggleSidebar}>
-          <FaBars size={24} className="transition-transform duration-300" />
-          <h1 className={`text-white text-xl font-medium transition-all duration-300 ${!open && "opacity-0 scale-0"}`}>
+        <div className="flex items-center p-5 h-16">
+          <div className={`min-w-[24px] ${!open && "mx-auto"}`}>
+            <FaBars 
+              size={24} 
+              className="text-white transition-transform duration-300 hover:scale-110"
+              onClick={toggleSidebar}
+            />
+          </div>
+          <h1 className={`text-white text-xl font-medium ml-4 transition-all duration-300 ${
+            !open && "opacity-0 scale-0"
+          }`}>
             Dashboard
           </h1>
         </div>
 
         {/* Sidebar Menu */}
-        <ul className="mt-6 flex-1">
+        <ul className="flex-1 mt-6 px-3">
           {Menus.map((menu, index) => {
             const isActive = location.pathname === menu.href;
             return (
-              <li
-                key={index}
-                className={`flex items-center gap-x-4 p-2 rounded-md transition-all duration-300 ${
-                  isActive ? "bg-gray-400" : "hover:bg-gray-300"
-                }`}
+              <Link 
+                key={index} 
+                to={menu.href}
+                className="block mb-2"
               >
-                <div className="min-w-[24px]">{menu.icon}</div>
-                <Link to={menu.href} className={`text-white text-sm font-medium transition-all duration-300 ${!open && "hidden"}`}>
-                  {menu.title}
-                </Link>
-              </li>
+                <li className={`flex items-center gap-x-4 p-2 rounded-md transition-all duration-300 ${
+                  isActive ? "bg-gray-400" : "hover:bg-gray-300"
+                }`}>
+                  <div className={`min-w-[24px] ${!open && "mx-auto"}`}>
+                    {menu.icon}
+                  </div>
+                  <span className={`text-white text-sm font-medium transition-all duration-300 ${!open && "hidden"}`}>
+                    {menu.title}
+                  </span>
+                </li>
+              </Link>
             );
           })}
         </ul>
-      </div>  
+      </div>
     </div>
   );
 };
