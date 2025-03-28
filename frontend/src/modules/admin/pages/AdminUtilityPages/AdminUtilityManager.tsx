@@ -40,7 +40,8 @@ const AdminUtilityManager: React.FC = () => {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [utilityToDelete, setUtilityToDelete] = useState<number | null>(null);
   const [monthlyBills, setMonthlyBills] = useState<MonthlyUtilityBill[]>([]);
-  const [isLoadingMonthlyBills, setIsLoadingMonthlyBills] = useState<boolean>(false);
+  const [isLoadingMonthlyBills, setIsLoadingMonthlyBills] =
+    useState<boolean>(false);
 
   useEffect(() => {
     fetchUtilities();
@@ -66,7 +67,9 @@ const AdminUtilityManager: React.FC = () => {
   const fetchMonthlyBills = async () => {
     setIsLoadingMonthlyBills(true);
     try {
-      const response = await axios.get("http://localhost:8081/monthlyutilitybill/get");
+      const response = await axios.get(
+        "http://localhost:8081/monthlyutilitybill/get"
+      );
       if (response.data) {
         setMonthlyBills(response.data);
       }
@@ -87,7 +90,7 @@ const AdminUtilityManager: React.FC = () => {
   // Check if the utility bill can be deleted
   const canDeleteUtilityBill = (billingAccNo: number): boolean => {
     // Check if there are any monthly bills with this billing account number
-    return !monthlyBills.some(bill => bill.billingAccNo === billingAccNo);
+    return !monthlyBills.some((bill) => bill.billingAccNo === billingAccNo);
   };
 
   // Delete function with validation
@@ -96,29 +99,31 @@ const AdminUtilityManager: React.FC = () => {
 
     setLoading(true);
     setDeleteError(null);
-    
+
     try {
       // Find the utility bill to delete
-      const utilityToRemove = utilities.find(utility => utility.id === utilityToDelete);
-      
+      const utilityToRemove = utilities.find(
+        (utility) => utility.id === utilityToDelete
+      );
+
       if (!utilityToRemove) {
         throw new Error("Utility bill not found");
       }
-      
+
       // Check if the utility bill can be deleted
       if (!canDeleteUtilityBill(utilityToRemove.billing_Acc_No)) {
         setDeleteError(
           "Cannot delete this utility bill because it has associated monthly billing records. " +
-          "Please delete all monthly utility bills for this account first."
+            "Please delete all monthly utility bills for this account first."
         );
         return;
       }
-      
+
       // Proceed with deletion
       const response = await axios.delete(
         `http://localhost:8081/utilitybill/delete/${utilityToDelete}`
       );
-      
+
       if (response.data) {
         toast.success("Utility bill deleted successfully");
         fetchUtilities(); // Refresh the list
@@ -217,14 +222,19 @@ const AdminUtilityManager: React.FC = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredUtilities.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                    <td
+                      colSpan={7}
+                      className="px-6 py-4 text-center text-gray-500"
+                    >
                       No utility bills found
                     </td>
                   </tr>
                 ) : (
                   filteredUtilities.map((utility) => (
                     <tr key={utility.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">{utility.id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {utility.id}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {utility.billing_Acc_No}
                       </td>
@@ -243,7 +253,9 @@ const AdminUtilityManager: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2">
                           <button
-                            onClick={() => navigate(`/admin/utility/edit/${utility.id}`)}
+                            onClick={() =>
+                              navigate(`/admin/utility/edit/${utility.id}`)
+                            }
                             className="text-blue-600 hover:text-blue-900"
                             title="Edit"
                           >
@@ -280,10 +292,11 @@ const AdminUtilityManager: React.FC = () => {
             </div>
           ) : (
             <p className="mb-4">
-              Are you sure you want to delete this utility bill? This action cannot be undone.
+              Are you sure you want to delete this utility bill? This action
+              cannot be undone.
             </p>
           )}
-          
+
           <div className="flex justify-end space-x-2 mt-6">
             <Button
               type="button"
