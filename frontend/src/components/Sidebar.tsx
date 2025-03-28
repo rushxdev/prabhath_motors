@@ -60,19 +60,22 @@ const Sidebar: React.FC = () => {
           {Menus.map((menu, index) => {
             const isActive = location.pathname === menu.href;
             return (
-              <li
-                key={index}
-                className={`flex items-center gap-x-4 p-2 rounded-md transition-all duration-300 ${
-                  isActive ? "bg-gray-400" : "hover:bg-gray-300"
-                }`}
+              <Link 
+                key={index} 
+                to={menu.href}
+                className="block"
               >
-                <div className={`min-w-[24px] ${isActive ? "text-white" : "text-white"} ${!open && "mx-auto"}`}>
-                  {menu.icon}
-                </div>
-                <Link to={menu.href} className={`text-white text-sm font-medium transition-all duration-300 ${!open && "hidden"}`}>
-                  {menu.title}
-                </Link>
-              </li>
+                <li className={`flex items-center gap-x-4 p-2 rounded-md transition-all duration-300 ${
+                  isActive ? "bg-gray-400" : "hover:bg-gray-300"
+                }`}>
+                  <div className={`min-w-[24px] ${isActive ? "text-white" : "text-white"} ${!open && "mx-auto"}`}>
+                    {menu.icon}
+                  </div>
+                  <span className={`text-white text-sm font-medium transition-all duration-300 ${!open && "hidden"}`}>
+                    {menu.title}
+                  </span>
+                </li>
+              </Link>
             );
           })}
         </ul>
