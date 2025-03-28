@@ -16,9 +16,14 @@ import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminSto
 // Utility routes
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
-import VehicleRegistration from "./modules/user/pages/VehicleRegistration"
+import VehicleRegistration from "./modules/user/pages/BookAppointment"
 import VehiclePage from "./modules/admin/pages/VehiclePage"
 import VehicleUpdate from "./modules/admin/pages/VehicleUpdate"
+import AdminSupplierManager from "./modules/admin/pages/AdminStockPages/AdminSupplierManager"
+import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminStockOrderManager"
+import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm"
+import EmployeeDashboard from "./pages/EmployeeDashboard"
+import EmployeeList from "./components/EmployeeList"
 
 function App() {
   useEffect(() => {
@@ -41,6 +46,12 @@ function App() {
 
          {/* User Routes */}
         <Route path="/" element={<HomePage />} />
+        <Route
+          path="/appointment-list/update-appointment/:id"
+          element={<AppointmentUpdate />}
+        />
+        {/* User Routes */}
+        <Route path="/home" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         {/*<Route path="/appointment" element={<AppointmentPage />} />*/}
 
@@ -50,10 +61,20 @@ function App() {
             <Route path="dashboard" element={<DashboardPage />} /> */}
           <Route path="items" element={<AdminItemsManager />} />
           <Route path="stock-requests" element={<AdminStockReqManager />} />
+          <Route path="supplier-details" element={<AdminSupplierManager />} />
+          <Route path="order-stocks" element={<AdminStockOrderManager />} />
 
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
+          <Route path="utility/add" element={<UtilityBillForm />} />
+          <Route path="utility/edit/:id" element={<UtilityBillForm />} />
+
+          <Route path="employee/add" element={<EmployeeDashboard />} />
+          <Route path="employee/get" element={<EmployeeList/>} />
+          {/*utility routes- for the form*/}
+
+
         </Route>
       </Routes>
     </Router>
