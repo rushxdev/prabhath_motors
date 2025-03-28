@@ -28,8 +28,13 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/appointment" element={<BookAppointment />} />
-        <Route path="/appointment-list" element={<AppointmentPage />} />
-        <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+        {/* <Route path="/appointment-list" element={<AppointmentPage />} /> */}
+        {/* <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} /> */}
+
+        <Route path="/appointment-list" element={<AppointmentPage />}>
+          <Route path="update-appointment/:id" element={<AppointmentUpdate />} />
+        </Route>
+
          {/* User Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />

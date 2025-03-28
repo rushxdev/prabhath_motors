@@ -77,60 +77,63 @@ const AppointmentUpdate = () => {
   };
 
   return (
-    <div>
-      <Navbar />
-      <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-bold mb-4">Update Appointment</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="vehicleRegistrationNo"
-            placeholder="Vehicle Registration No."
-            value={appointment.vehicleRegistrationNo}
-            onChange={handleChange}
-            readOnly
-            className="w-full p-2 border rounded"
-          />
-          <input
-            type="date"
-            name="date"
-            value={appointment.date}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-          />
-          <select
-            name="time"
-            value={appointment.time}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-          >
-            <option value="">{appointment.time}</option>
-            {timeSlots.map((slot) => (
-              <option key={slot} value={slot}>
-                {slot}
-              </option>
-            ))}
-          </select>
-          <input
-            type="number"
-            name="mileage"
-            placeholder="Mileage"
-            value={appointment.mileage}
-            onChange={handleChange}
-            readOnly
-            className="w-full p-2 border rounded"
-          />
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white p-2 rounded"
-          >
-            Reschedule Appointment
-          </button>
-        </form>
-      </div>
-    </div>
+    <div className="min-h-screen bg-gray-100">
+  <Navbar />
+  <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+    <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+      Update Appointment
+    </h2>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <input
+        type="text"
+        name="vehicleRegistrationNo"
+        placeholder="Vehicle Registration No."
+        value={appointment.vehicleRegistrationNo}
+        onChange={handleChange}
+        readOnly
+        className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100"
+      />
+      <input
+        type="date"
+        name="date"
+        value={appointment.date}
+        onChange={handleChange}
+        required
+        className="w-full p-3 border border-gray-300 rounded-lg"
+      />
+      <select
+        name="time"
+        value={appointment.time}
+        onChange={handleChange}
+        required
+        className="w-full p-3 border border-gray-300 rounded-lg"
+      >
+        <option value="">{appointment.time}</option>
+        {timeSlots.map((slot) => (
+          <option key={slot} value={slot}>
+            {slot}
+          </option>
+        ))}
+      </select>
+      <input
+        type="number"
+        name="mileage"
+        placeholder="Mileage"
+        value={appointment.mileage}
+        onChange={handleChange}
+        readOnly
+        className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100"
+      />
+      <button
+        type="submit"
+        className="w-full bg-green-600 hover:bg-green-700 text-white font-medium p-3 rounded-lg transition duration-300"
+      >
+        Reschedule Appointment
+      </button>
+    </form>
+  </div>
+</div>
+
   );
 };
 
