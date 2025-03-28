@@ -43,6 +43,14 @@ const ItemForm: React.FC<ItemFormProps> = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [nameError, setNameError] = useState<string | null>(null);
+
+    const [brandError, setBrandError] = useState<string | null>(null);
+    const [unitPriceError, setUnitPriceError] = useState<string | null>(null);
+    const [sellPriceError, setSellPriceError] = useState<string | null>(null);
+    const [recorderLevelError, setRecorderLevelError] = useState<string | null>(null);
+    const [qtyAvailableError, setQtyAvailableError] = useState<string | null>(null);
+    const [rackNoError, setRackNoError] = useState<string | null>(null);
+
     const [selectedCategory, setSelectedCategory] = useState<ItemCategory | null>(null);
     const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
     const [isScanning, setIsScanning] = useState(false);
@@ -81,6 +89,95 @@ const ItemForm: React.FC<ItemFormProps> = ({
             }
         }
 
+
+        // Add brand validation
+        if (name === 'itemBrand') {
+            if (value.length === 0) {
+                setBrandError('Brand name is required');
+            } else if (/^[0-9]/.test(value)) {
+                setBrandError('Brand name cannot start with a number');
+            } else if (value.length < 3) {
+                setBrandError('Brand name must be at least 3 characters long');
+            } else if (value.length > 30) {
+                setBrandError('Brand name cannot exceed 30 characters');
+            } else if (!/^[a-zA-Z][a-zA-Z0-9\s-]*$/.test(value)) {
+                setBrandError('Brand name must start with a letter and can only contain letters, numbers, spaces, and hyphens');
+            } else {
+                setBrandError(null);
+            }
+        }
+
+        // Add unit price validation
+        if (name === 'unitPrice') {
+            const price = Number(value);
+            if (value === '') {
+                setUnitPriceError('Unit price is required');
+            } else if (price <= 0) {
+                setUnitPriceError('Unit price must be greater than 0');
+            } else if (!/^\d+(\.\d{0,2})?$/.test(value)) {
+                setUnitPriceError('Enter a valid price (up to 2 decimal places)');
+            } else {
+                setUnitPriceError(null);
+            }
+        }
+
+        // Add sell price validation
+        if (name === 'sellPrice') {
+            const price = Number(value);
+            if (value === '') {
+                setSellPriceError('Sell price is required');
+            } else if (price <= 0) {
+                setSellPriceError('Sell price must be greater than 0');
+            } else if (!/^\d+(\.\d{0,2})?$/.test(value)) {
+                setSellPriceError('Enter a valid price (up to 2 decimal places)');
+            } else {
+                setSellPriceError(null);
+            }
+        }
+
+        // Recorder Level validation
+        if (name === 'recorderLevel') {
+            const level = Number(value);
+            if (value === '') {
+                setRecorderLevelError('Recorder level is required');
+            } else if (!Number.isInteger(level)) {
+                setRecorderLevelError('Recorder level must be a whole number');
+            } else if (level <= 0) {
+                setRecorderLevelError('Recorder level must be greater than 0');
+            } else {
+                setRecorderLevelError(null);
+            }
+        }
+
+        // Quantity Available validation
+        if (name === 'qtyAvailable') {
+            const qty = Number(value);
+            if (value === '') {
+                setQtyAvailableError('Quantity is required');
+            } else if (!Number.isInteger(qty)) {
+                setQtyAvailableError('Quantity must be a whole number');
+            } else if (qty <= 0) {
+                setQtyAvailableError('Quantity must be greater than 0');
+            } else {
+                setQtyAvailableError(null);
+            }
+        }
+
+        // Rack Number validation
+        if (name === 'rackNo') {
+            const rackNo = Number(value);
+            if (value === '') {
+                setRackNoError('Rack number is required');
+            } else if (!Number.isInteger(rackNo)) {
+                setRackNoError('Rack number must be a whole number');
+            } else if (rackNo <= 0) {
+                setRackNoError('Rack number must be greater than 0');
+            } else {
+                setRackNoError(null);
+            }
+        }
+
+
         setFormData(prev => ({
             ...prev,
             [name]: name.includes('itemCtgryID') || name.includes('Id') || 
@@ -115,8 +212,10 @@ const ItemForm: React.FC<ItemFormProps> = ({
         setError(null);
     
         try {
-            if (nameError) {
-                throw new Error('Please fix the errors before submitting.');
+
+            if (nameError || brandError || unitPriceError || sellPriceError) {
+                throw new Error('Please fix the form errors before submitting.');
+
             }
     
             let categoryId = formData.itemCtgryID;
@@ -289,6 +388,9 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                         required
                     />
+
+                    {recorderLevelError && <p className="text-red-500 text-sm mt-1">{recorderLevelError}</p>}
+
                 </div>
 
                 <div>
@@ -303,6 +405,9 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                         required
                     />
+
+                    {qtyAvailableError && <p className="text-red-500 text-sm mt-1">{qtyAvailableError}</p>}
+
                 </div>
 
                 <div>
@@ -314,9 +419,14 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         name="itemBrand"
                         value={formData.itemBrand}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+
+                        className={`mt-1 block w-full rounded-md border p-2 ${
+                            brandError ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                     />
+                    {brandError && <p className="text-red-500 text-sm mt-1">{brandError}</p>}
+
                 </div>
 
                 {/* Only show unit price field for new items */}
@@ -330,10 +440,16 @@ const ItemForm: React.FC<ItemFormProps> = ({
                             name="unitPrice"
                             value={formData.unitPrice}
                             onChange={handleChange}
+
+                            min="0.01"
                             step="0.01"
-                            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                            className={`mt-1 block w-full rounded-md border p-2 ${
+                                unitPriceError ? 'border-red-500' : 'border-gray-300'
+                            }`}
                             required
                         />
+                        {unitPriceError && <p className="text-red-500 text-sm mt-1">{unitPriceError}</p>}
+
                     </div>
                 )}
 
@@ -346,10 +462,17 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         name="sellPrice"
                         value={formData.sellPrice}
                         onChange={handleChange}
+
+                        min="0.01"
                         step="0.01"
-                        className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                        className={`mt-1 block w-full rounded-md border p-2 ${
+                            sellPriceError ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                     />
+                    {sellPriceError && <p className="text-red-500 text-sm mt-1">{sellPriceError}</p>}
+
+ev
                 </div>
 
                 <div>
@@ -364,6 +487,9 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                         required
                     />
+
+                    {rackNoError && <p className="text-red-500 text-sm mt-1">{rackNoError}</p>}
+
                 </div>
 
             </div>

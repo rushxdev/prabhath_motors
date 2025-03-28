@@ -49,7 +49,7 @@ function App() {
           <Route path="stock-requests" element={<AdminStockReqManager />} />
           <Route path="supplier-details" element={<AdminSupplierManager />} />
           <Route path="order-stocks" element={<AdminStockOrderManager />} />
-          
+
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
