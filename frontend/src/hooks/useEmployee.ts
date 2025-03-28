@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Employee } from "../types/Employee";
-import { employeeService } from "../services/employeeService";
+import employeeService from "../services/employeeService"; // Default import
 
 export const useEmployee = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -23,7 +23,7 @@ export const useEmployee = () => {
 
   const fetchEmployees = async () => {
     try {
-      const data = await employeeService.getEmployees();
+      const data = await employeeService.getAllEmployees();
       setEmployees(data);
     } catch (error) {
       console.error("Error fetching employees:", error);
@@ -48,7 +48,7 @@ export const useEmployee = () => {
     } else if (selectedDate > minAllowedDate) {
       newErrors.dob = "Employee must be at least 17 years old.";
     }
-    
+
     if (!/^(\d{12}|\d{9}V)$/.test(employee.nic)) newErrors.nic = "NIC must be 12 digits OR 10 digits + 'V'.";
 
     setErrors(newErrors);
@@ -70,13 +70,14 @@ export const useEmployee = () => {
     if (!validateForm()) return;
 
     try {
-      await employeeService.createEmployee(employee);
-      fetchEmployees();
+      await employeeService.addEmployee(employee);
+      setEmployees((prev) => [...prev, { empId: prev.length + 1, ...employee }]); // Add employee dynamically
       setEmployee({ firstname: "", lastname: "", role: "", contact: "", nic: "", dob: "", gender: "", salary: 0 });
+      console.log("Employee created successfully!");
     } catch (error) {
       console.error("Error creating employee:", error);
     }
   };
 
-  return { employee, employees, errors, handleChange, handleSubmit };
+  return { employee, employees, setEmployees, errors, handleChange, handleSubmit };
 };

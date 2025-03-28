@@ -3,11 +3,11 @@ import { useEmployee } from "../hooks/useEmployee";
 
 const EmployeeForm = () => {
   const { employee, errors, handleChange, handleSubmit } = useEmployee();
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate(); 
 
-  const onSubmit = (e: React.FormEvent) => {
-    handleSubmit(e); // Call existing submit function
-    navigate("/employees"); // Navigate to employee list page
+  const onSubmit = async (e: React.FormEvent) => {
+    await handleSubmit(e); 
+    navigate("/admin/employee/getAll"); 
   };
 
   return (
@@ -51,7 +51,7 @@ const EmployeeForm = () => {
         {errors.salary && <p className="text-red-500 text-sm">{errors.salary}</p>}
 
         <div className="flex justify-center">
-          <button type="submit" className="bg-blue-800 text-white px-4 py-2 rounded">
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
             Add an Employee
           </button>
         </div>

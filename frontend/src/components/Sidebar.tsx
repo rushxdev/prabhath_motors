@@ -25,7 +25,7 @@ const Sidebar: React.FC = () => {
       <div
         className={`${
           open ? "w-72" : "w-20"
-        } duration-300 h-screen p-5 pt-8 bg-blue-500 text-white relative flex flex-col`}
+        } duration-300 h-full p-5 pt-8 bg-blue-500 text-white relative flex flex-col`}
       >
         {/* Sidebar Toggle Button (Bars Icon) */}
         <div className="flex items-center cursor-pointer gap-x-4" onClick={() => setOpen(!open)}>

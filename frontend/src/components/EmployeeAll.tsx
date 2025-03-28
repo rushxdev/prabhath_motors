@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Employee } from "../types/Employee";
-import { employeeService } from "../services/employeeService";
+import employeeService from "../services/employeeService";
 import { Link } from "react-router-dom";
 
 const EmployeeListPage = () => {
@@ -9,7 +9,7 @@ const EmployeeListPage = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const data = await employeeService.getEmployees();
+        const data = await employeeService.getAllEmployees();
         setEmployees(data);
       } catch (error) {
         console.error("Error fetching employees:", error);

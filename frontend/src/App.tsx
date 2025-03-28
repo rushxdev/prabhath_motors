@@ -3,7 +3,7 @@ import CustomerDashboard from "./modules/user/pages/CustomerDashboard";
 import BookAppointment from "./modules/user/pages/BookAppointment";
 import AppointmentPage from "./modules/admin/pages/AppointmentPage";
 import AppointmentUpdate from "./modules/admin/pages/AppointmentUpdate";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { ScrollToTop } from "./utils/scrollToTop.util";
 import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
@@ -20,9 +20,10 @@ import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminM
 //Utilityform
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
 
+//Employee routes
 import EmployeeDashboard from "./pages/EmployeeDashboard";
-import EmployeeList from "./components/EmployeeList"
-
+import EmployeeShow from "./pages/EmployeeShow";
+import EmployeeEdit from "./pages/EmployeeEdit";
 
 
 function App() {
@@ -60,10 +61,11 @@ function App() {
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
           <Route path="utility/add" element={<UtilityBillForm />} />
           <Route path="utility/edit/:id" element={<UtilityBillForm />} />
-
+          
+          {/* Employee routes */}
           <Route path="employee/add" element={<EmployeeDashboard />} />
-          <Route path="employee/get" element={<EmployeeList/>} />
-          {/*utility routes- for the form*/}
+          <Route path="employee/getAll" element={<EmployeeShow />} />
+          <Route path="employee/update/:id" element={<EmployeeEdit />} />
 
 
         </Route>
