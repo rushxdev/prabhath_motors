@@ -43,6 +43,9 @@ const ItemForm: React.FC<ItemFormProps> = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [nameError, setNameError] = useState<string | null>(null);
+    //const [barcodeError, setBarcodeError] = useState<string | null>(null);
+    const [supplierError, setSupplierError] = useState<string | null>(null);
+    const [categoriesError, setCategoriesError] = useState<string | null>(null);
     const [brandError, setBrandError] = useState<string | null>(null);
     const [unitPriceError, setUnitPriceError] = useState<string | null>(null);
     const [sellPriceError, setSellPriceError] = useState<string | null>(null);
@@ -74,6 +77,36 @@ const ItemForm: React.FC<ItemFormProps> = ({
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
+        //category validation
+        if (name === 'itemCtgryID') {
+            if (!value) {
+                setCategoriesError('Category is required');
+            } else if (value.length < 3) {
+                setNameError('Category name must be at least 3 characters long');
+            } else if (value.length > 15) {
+                setNameError('Category name cannot exceed 15 characters');
+            } else if (!/^[a-zA-Z0-9\s-]+$/.test(value)) {
+                setNameError('Category name can only contain letters, numbers, spaces, and hyphens');
+            } else {
+                setCategoriesError(null);
+            }
+        }
+
+        //supplier validation
+        if (name === 'supplierId') {
+            if (!value) {
+                setSupplierError('Supplier is required');
+            } else if (value.length < 3) {
+                setSupplierError('Supplier name must be at least 3 characters long');
+            } else if (value.length > 30) {
+                setSupplierError('Supplier name cannot exceed 30 characters');
+            } else if (!/^[a-zA-Z0-9\s-]+$/.test(value)) {
+                setSupplierError('Supplier name can only contain letters, numbers, spaces, and hyphens');
+            } else {
+                setSupplierError(null);
+            }
+        }
+
         //name validation
         if (name === 'itemName') {
             if (value.length < 3) {
@@ -87,7 +120,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
             }
         }
 
-        // Add brand validation
+        //brand validation
         if (name === 'itemBrand') {
             if (value.length === 0) {
                 setBrandError('Brand name is required');
@@ -104,7 +137,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
             }
         }
 
-        // Add unit price validation
+        //unit price validation
         if (name === 'unitPrice') {
             const price = Number(value);
             if (value === '') {
@@ -118,7 +151,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
             }
         }
 
-        // Add sell price validation
+        //sell price validation
         if (name === 'sellPrice') {
             const price = Number(value);
             if (value === '') {
@@ -132,7 +165,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
             }
         }
 
-        // Recorder Level validation
+        //Recorder Level validation
         if (name === 'recorderLevel') {
             const level = Number(value);
             if (value === '') {
@@ -146,7 +179,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
             }
         }
 
-        // Quantity Available validation
+        //Quantity Available validation
         if (name === 'qtyAvailable') {
             const qty = Number(value);
             if (value === '') {
@@ -160,7 +193,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
             }
         }
 
-        // Rack Number validation
+        //Rack Number validation
         if (name === 'rackNo') {
             const rackNo = Number(value);
             if (value === '') {
@@ -208,8 +241,10 @@ const ItemForm: React.FC<ItemFormProps> = ({
         setError(null);
     
         try {
-            if (nameError || brandError || unitPriceError || sellPriceError) {
+            if (nameError || brandError || unitPriceError || sellPriceError || recorderLevelError || qtyAvailableError || rackNoError || categoriesError || supplierError) {
                 throw new Error('Please fix the form errors before submitting.');
+            } else if (!selectedCategory) {
+                throw new Error('Category is required');
             }
     
             let categoryId = formData.itemCtgryID;
@@ -288,6 +323,9 @@ const ItemForm: React.FC<ItemFormProps> = ({
                                 }}
                                 placeholder="Search or enter new category..."
                             />
+
+                            {categoriesError && <p className="text-red-500 text-sm mt-1">{categoriesError}</p>}
+
                             <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                 {filteredCategories.length === 0 && query !== '' ? (
                                     <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
@@ -321,6 +359,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         selectedSupplier={selectedSupplier}
                         onSupplierSelect={setSelectedSupplier}
                     />
+                    {supplierError && <p className="text-red-500 text-sm mt-1">{supplierError}</p>}
                 </div>
 
                 <div>

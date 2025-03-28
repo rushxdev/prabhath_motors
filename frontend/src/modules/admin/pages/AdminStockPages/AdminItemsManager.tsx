@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@headlessui/react";
-import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import StocksLayout from "../../layout/StockLayouts/StocksLayout";
 import Modal from "../../../../components/Model";
 import ItemForm from "../../components/AdminStocks-pages/ItemForm";
@@ -167,30 +167,37 @@ const AdminItemsManager: React.FC = () => {
     return (
         <ErrorBoundary FallbackComponent={ErrorFallback}>
             <StocksLayout>
-                <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16">
-                    <h2 className="text-2xl sm:text-2xl font-press font-semibold mb-4 mt-10 text-primary">
-                        Manage All Stock Items
-                    </h2>
-                    <div className="flex items-center justify-between mt-12">
-                        <input
-                            type="text"
-                            placeholder="Search items..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full sm:w-1/2 p-2 border border-gray-500 rounded-md mb-4 bg-transparent"
-                        />
-                        <Button
-                            onClick={() => {
-                                setCurrentItem(undefined); // Clear any existing item
-                                setIsModalOpen(true);
-                            }}
-                            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                        >
-                            <PlusIcon className="w-5 h-5 mr-2" />
-                            Add Item
-                        </Button>
+                {/* Sticky header container */}
+                <div className="sticky top-20 z-40 bg-white shadow-md pb-4">
+                    <div className="max-w-7xl mx-auto text-center">
+                        <h2 className="text-2xl sm:text-2xl font-press font-semibold pt-10 text-primary">
+                            Manage All Stock Items
+                        </h2>
+                        
+                        <div className="flex items-center justify-between mt-8 px-4">
+                            <input
+                                type="text"
+                                placeholder="Search items..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full sm:w-1/2 p-2 border border-gray-500 rounded-md bg-transparent"
+                            />
+                            <Button
+                                onClick={() => {
+                                    setCurrentItem(undefined);
+                                    setIsModalOpen(true);
+                                }}
+                                className="flex items-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600"
+                            >
+                                <PlusIcon className="w-5 h-5 mr-2" />
+                                Add Item
+                            </Button>
+                        </div>
                     </div>
+                </div>
 
+                {/* Table container with padding to prevent overlap */}
+                <div className="max-w-7xl mx-auto text-center pt-4 mb-12 sm:mb-16">
                     {/* Stock Items Table */}
                     {loading ? (
                         <div className="flex justify-center items-center mt-16">
@@ -297,29 +304,37 @@ const AdminItemsManager: React.FC = () => {
                 >
                     {selectedItem && (
                         <div className="space-y-6">
+                            {/* Add close button */}
+                            <button
+                                onClick={() => setIsViewModalOpen(false)}
+                                className="absolute top-4 right-4 p-1 text-gray-600 hover:text-gray-800 focus:outline-none"
+                            >
+                                <XMarkIcon className="h-6 w-6" />
+                            </button>
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Basic Information */}
-                                <div className="col-span-2 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <div className="col-span-2 bg-gray-50 dark:bg-gray-200 p-4 rounded-lg">
                                     <h3 className="text-lg font-semibold mb-4 text-primary">Basic Information</h3>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Item ID</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.itemID}</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.itemID}</p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Item Name</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.itemName}</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.itemName}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Identification */}
-                                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <div className="bg-gray-50 dark:bg-gray-200 p-4 rounded-lg">
                                     <h3 className="text-lg font-semibold mb-4 text-primary">Identification</h3>
                                     <div className="space-y-4">
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Category</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">
                                                 {getCategoryName(selectedItem.itemCtgryID)}
                                                 <span className="text-gray-500 text-sm ml-2">
                                                     (ID: {selectedItem.itemCtgryID})
@@ -328,61 +343,61 @@ const AdminItemsManager: React.FC = () => {
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Supplier ID</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.supplierId}</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.supplierId}</p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Barcode</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.itemBarcode}</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.itemBarcode}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Stock Details */}
-                                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <div className="bg-gray-50 dark:bg-gray-200 p-4 rounded-lg">
                                     <h3 className="text-lg font-semibold mb-4 text-primary">Stock Details</h3>
                                     <div className="space-y-4">
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Stock Level</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.stockLevel}</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.stockLevel}</p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Quantity Available</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.qtyAvailable}</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.qtyAvailable}</p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Recorder Level</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.recorderLevel}</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.recorderLevel}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Product Details */}
-                                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <div className="bg-gray-50 dark:bg-gray-200 p-4 rounded-lg">
                                     <h3 className="text-lg font-semibold mb-4 text-primary">Product Details</h3>
                                     <div className="space-y-4">
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Brand</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.itemBrand}</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.itemBrand}</p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Unit Price</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">
                                                 ${selectedItem.sellPrice.toFixed(2)}
                                             </p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Rack No</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedItem.rackNo}</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.rackNo}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Last Updated */}
-                                <div className="col-span-2 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <div className="col-span-2 bg-gray-50 dark:bg-gray-200 p-4 rounded-lg">
                                     <div className="flex justify-between items-center">
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Last Updated</p>
-                                            <p className="mt-1 text-gray-900 dark:text-gray-100">
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">
                                                 {new Date(selectedItem.updatedDate).toLocaleDateString()}
                                             </p>
                                         </div>
@@ -393,7 +408,7 @@ const AdminItemsManager: React.FC = () => {
                                                     setIsViewModalOpen(false);
                                                     setIsModalOpen(true);
                                                 }}
-                                                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+                                                className="flex items-center px-4 py-2 bg-transparent text-green-700 border-2 border-green-400 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300"
                                             >
                                                 <PencilIcon className="w-4 h-4 mr-2" />
                                                 Edit
@@ -405,7 +420,7 @@ const AdminItemsManager: React.FC = () => {
                                                         setIsViewModalOpen(false);
                                                     }
                                                 }}
-                                                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300"
+                                                className="flex items-center px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-900 transition-all duration-300"
                                             >
                                                 <TrashIcon className="w-4 h-4 mr-2" />
                                                 Delete
