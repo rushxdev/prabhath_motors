@@ -7,6 +7,9 @@ target/
 mvnw
 mvnw.cmd
 
+### Application Property ###
+/src/main/resources/application.properties
+
 ### STS ###
 .apt_generated
 .classpath
