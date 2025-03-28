@@ -9,7 +9,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Add your custom colors here if needed
+        "dark-purple": "#081A51",
+        "light-purple": "#rgba(255,255,255,0.17)",
       },
     },
   },
