@@ -323,24 +323,67 @@ const UtilityBillForm: React.FC = () => {
   };
 
   // Handle billing type change
-  const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const type = e.target.value as "Electricity" | "Water";
-    setBillingType(type);
-    setFormValues((prev) => ({
-      ...prev,
-      Type: type,
-      Billing_Acc_No: "",
-    }));
+  // Handle billing type change
+const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const type = e.target.value as "Electricity" | "Water";
+  setBillingType(type);
+  
+  // Reset all form fields when changing billing type
+  setFormValues({
+    Type: type,
+    Address: "",
+    Meter_No: "",
+    Unit_Price: "",
+    Billing_Acc_No: "",
+  });
+  
+  // Clear any existing errors
+  setErrors({});
 
-    if (type === "Water") {
-      setWaterBillingGroups({
-        group2: "",
-        group3: "",
-        group4: "",
-        group5: "",
-      });
-    }
-  };
+  // Reset billing groups/digits
+  if (type === "Water") {
+    setWaterBillingGroups({
+      group2: "",
+      group3: "",
+      group4: "",
+      group5: "",
+    });
+    // Reset electricity digits too in case user switches back
+    setElectricityBillingDigits({
+      digit1: "",
+      digit2: "",
+      digit3: "",
+      digit4: "",
+      digit5: "",
+      digit6: "",
+      digit7: "",
+      digit8: "",
+      digit9: "",
+      digit10: "",
+    });
+  } else {
+    // Reset electricity digits
+    setElectricityBillingDigits({
+      digit1: "",
+      digit2: "",
+      digit3: "",
+      digit4: "",
+      digit5: "",
+      digit6: "",
+      digit7: "",
+      digit8: "",
+      digit9: "",
+      digit10: "",
+    });
+    // Reset water billing groups too
+    setWaterBillingGroups({
+      group2: "",
+      group3: "",
+      group4: "",
+      group5: "",
+    });
+  }
+};
 
   // Handle water billing account number group changes
   const handleWaterGroupChange = (
