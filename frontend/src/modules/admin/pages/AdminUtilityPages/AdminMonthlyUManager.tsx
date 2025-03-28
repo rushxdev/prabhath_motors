@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@headlessui/react";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import UtilityLayout from "../../layout/UtilityLayouts/UtilityLayouts";
+import MonthlyUtilityBillForm from "../../components/AdminUtility-page/MonthlyUtilityBillForm";
 
 interface MonthlyUtilityBill {
     id: number;
@@ -37,22 +38,35 @@ const AdminMonthlyUManager: React.FC = () => {
             }
         } catch (error) {
             console.error('Error fetching monthly utility bills:', error);
+            setError('Failed to fetch monthly utility bills');
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async (id: number) => {
-        try {
-            const response = await fetch(`http://localhost:8081/monthlyutilitybill/delete/${id}`, {
-                method: 'DELETE',
-            });
-            if (response.ok) {
-                fetchMonthlyBills(); // Refresh the list
+        if (window.confirm('Are you sure you want to delete this monthly utility bill?')) {
+            try {
+                const response = await fetch(`http://localhost:8081/monthlyutilitybill/delete/${id}`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    fetchMonthlyBills(); // Refresh the list
+                }
+            } catch (error) {
+                console.error('Error deleting monthly utility bill:', error);
             }
-        } catch (error) {
-            console.error('Error deleting monthly utility bill:', error);
         }
+    };
+
+    const handleEdit = (bill: MonthlyUtilityBill) => {
+        setCurrentBill(bill);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setCurrentBill(undefined);
     };
 
     const filteredBills = monthlyBills.filter(bill => 
@@ -88,47 +102,76 @@ const AdminMonthlyUManager: React.FC = () => {
                     </Button>
                 </div>
 
-                {/* Monthly Utility Bills Table */}
-                <div className="mt-8 overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Acc No</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Month</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Year</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Payment</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Generated Date</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {filteredBills.map((bill) => (
-                                <tr key={bill.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">{bill.id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{bill.invoiceNo}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{bill.billingAccNo}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{bill.billingMonth}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{bill.billingYear}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{bill.units}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{bill.totalPayment}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{bill.generatedDate}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <button
-                                            onClick={() => handleDelete(bill.id)}
-                                            className="text-red-600 hover:text-red-900"
-                                        >
-                                            <TrashIcon className="w-5 h-5" />
-                                        </button>
-                                    </td>
+                {loading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+                    </div>
+                ) : error ? (
+                    <div className="text-red-500 mt-4">{error}</div>
+                ) : (
+                    <div className="mt-8 overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Acc No</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Month</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Year</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Payment</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Generated Date</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {filteredBills.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={9} className="px-6 py-4 text-center text-gray-500">
+                                            No monthly bills found
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredBills.map((bill) => (
+                                        <tr key={bill.id}>
+                                            <td className="px-6 py-4 whitespace-nowrap">{bill.id}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{bill.invoiceNo}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{bill.billingAccNo}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{bill.billingMonth}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{bill.billingYear}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{bill.units}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{bill.totalPayment}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{bill.generatedDate}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
+                                                <button
+                                                    onClick={() => handleEdit(bill)}
+                                                    className="text-blue-600 hover:text-blue-900"
+                                                >
+                                                    <PencilIcon className="w-5 h-5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(bill.id)}
+                                                    className="text-red-600 hover:text-red-900"
+                                                >
+                                                    <TrashIcon className="w-5 h-5" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
+
+            {/* Monthly Utility Bill Form Modal */}
+            <MonthlyUtilityBillForm 
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                currentBill={currentBill}
+                refreshData={fetchMonthlyBills}
+            />
         </UtilityLayout>
     );
 }
