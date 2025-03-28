@@ -40,9 +40,17 @@ const Sidebar: React.FC = () => {
         } duration-300 h-screen p-5 pt-8 bg-black text-white relative flex flex-col`}
       >
         {/* Sidebar Toggle Button */}
-        <div className="flex items-center cursor-pointer gap-x-4" onClick={toggleSidebar}>
-          <FaBars size={24} className="transition-transform duration-300" />
-          <h1 className={`text-white text-xl font-medium transition-all duration-300 ${!open && "opacity-0 scale-0"}`}>
+        <div className="flex items-center cursor-pointer p-2">
+          <div className={`min-w-[24px] ${!open && "mx-auto"}`}>
+            <FaBars 
+              size={24} 
+              className="text-white transition-transform duration-300 hover:scale-110"
+              onClick={toggleSidebar}
+            />
+          </div>
+          <h1 className={`text-white text-xl font-medium ml-4 transition-all duration-300 ${
+            !open && "opacity-0 scale-0"
+          }`}>
             Dashboard
           </h1>
         </div>
@@ -58,7 +66,9 @@ const Sidebar: React.FC = () => {
                   isActive ? "bg-gray-400" : "hover:bg-gray-300"
                 }`}
               >
-                <div className="min-w-[24px]">{menu.icon}</div>
+                <div className={`min-w-[24px] ${isActive ? "text-white" : "text-white"} ${!open && "mx-auto"}`}>
+                  {menu.icon}
+                </div>
                 <Link to={menu.href} className={`text-white text-sm font-medium transition-all duration-300 ${!open && "hidden"}`}>
                   {menu.title}
                 </Link>
