@@ -37,7 +37,7 @@ const Sidebar: React.FC = () => {
       <div
         className={`${
           open ? "w-72" : "w-20"
-        } duration-300 h-screen p-5 pt-8 bg-black text-white relative flex flex-col`}
+        } duration-300 h-full p-5 pt-8 bg-black text-white relative flex flex-col`}
       >
         {/* Sidebar Toggle Button */}
         <div className="flex items-center cursor-pointer gap-x-4" onClick={toggleSidebar}>

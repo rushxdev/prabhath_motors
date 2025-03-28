@@ -26,7 +26,8 @@ import UtilityBillForm from "./modules/admin/components/AdminUtility-page/Utilit
 //Employee routes
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeShow from "./pages/EmployeeShow";
-import EmployeeEdit from "./pages/EmployeeEdit";
+import EmployeeEdit from "./pages/EmployeeUpdate";
+import EmployeeUpdate from "./pages/EmployeeUpdate";
 
 
 function App() {
@@ -77,7 +78,7 @@ function App() {
           {/* Employee routes */}
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
-          <Route path="employee/update/:id" element={<EmployeeEdit />} />
+          <Route path="employee/update/:id" element={<EmployeeUpdate />} />
 
 
         </Route>
