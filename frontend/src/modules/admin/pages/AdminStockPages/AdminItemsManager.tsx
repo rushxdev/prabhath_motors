@@ -196,7 +196,7 @@ const AdminItemsManager: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Table container with padding to prevent overlap */}
+
                 <div className="max-w-7xl mx-auto text-center pt-4 mb-12 sm:mb-16">
                     {/* Stock Items Table */}
                     {loading ? (
@@ -222,26 +222,26 @@ const AdminItemsManager: React.FC = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">stock Level</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">rack No</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">updated Date</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {filteredStocks.map((stock, index) => (
                                     <tr 
-                                        key={stock.itemID} // Using itemName as key is not reliable
+                                        key={stock.itemID}
                                         className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
                                     >
-                                        <td className="px-6 py-4 whitespace-nowrap">{getCategoryName(stock.itemCtgryID)}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{stock.itemName}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{stock.qtyAvailable}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{stock.itemBrand}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{stock.sellPrice}</td>
-                                        <td className={`px-6 py-4 whitespace-nowrap font-semibold ${getStockLevelColor(stock.stockLevel)}`}>
+                                        <td className="px-6 py-4 text-left whitespace-nowrap">{getCategoryName(stock.itemCtgryID)}</td>
+                                        <td className="px-6 py-4 text-left whitespace-nowrap">{stock.itemName}</td>
+                                        <td className="px-6 py-4 text-left whitespace-nowrap">{stock.qtyAvailable}</td>
+                                        <td className="px-6 py-4 text-left whitespace-nowrap">{stock.itemBrand}</td>
+                                        <td className="px-6 py-4 text-left whitespace-nowrap">{stock.sellPrice}</td>
+                                        <td className={`px-6 py-4 text-left whitespace-nowrap font-semibold ${getStockLevelColor(stock.stockLevel)}`}>
                                             {stock.stockLevel}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{stock.rackNo}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{stock.updatedDate}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-6 py-4 text-left whitespace-nowrap">{stock.rackNo}</td>
+                                        <td className="px-6 py-4 text-left whitespace-nowrap">{stock.updatedDate}</td>
+                                        <td className="px-6 py-4 text-center whitespace-nowrap">
                                         <button
                                             onClick={() => handleView(stock)}
                                             className="text-blue-600 hover:text-blue-900 font-medium"
@@ -383,7 +383,7 @@ const AdminItemsManager: React.FC = () => {
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Unit Price</p>
                                             <p className="mt-1 text-gray-900 dark:text-green-700">
-                                                ${selectedItem.sellPrice.toFixed(2)}
+                                                Rs.{selectedItem.sellPrice.toFixed(2)}
                                             </p>
                                         </div>
                                         <div>
