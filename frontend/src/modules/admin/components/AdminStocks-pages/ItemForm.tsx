@@ -43,12 +43,14 @@ const ItemForm: React.FC<ItemFormProps> = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [nameError, setNameError] = useState<string | null>(null);
+
     const [brandError, setBrandError] = useState<string | null>(null);
     const [unitPriceError, setUnitPriceError] = useState<string | null>(null);
     const [sellPriceError, setSellPriceError] = useState<string | null>(null);
     const [recorderLevelError, setRecorderLevelError] = useState<string | null>(null);
     const [qtyAvailableError, setQtyAvailableError] = useState<string | null>(null);
     const [rackNoError, setRackNoError] = useState<string | null>(null);
+
     const [selectedCategory, setSelectedCategory] = useState<ItemCategory | null>(null);
     const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
     const [isScanning, setIsScanning] = useState(false);
@@ -86,6 +88,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                 setNameError(null);
             }
         }
+
 
         // Add brand validation
         if (name === 'itemBrand') {
@@ -174,6 +177,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
             }
         }
 
+
         setFormData(prev => ({
             ...prev,
             [name]: name.includes('itemCtgryID') || name.includes('Id') || 
@@ -208,8 +212,10 @@ const ItemForm: React.FC<ItemFormProps> = ({
         setError(null);
     
         try {
+
             if (nameError || brandError || unitPriceError || sellPriceError) {
                 throw new Error('Please fix the form errors before submitting.');
+
             }
     
             let categoryId = formData.itemCtgryID;
@@ -382,7 +388,9 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                         required
                     />
+
                     {recorderLevelError && <p className="text-red-500 text-sm mt-1">{recorderLevelError}</p>}
+
                 </div>
 
                 <div>
@@ -397,7 +405,9 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                         required
                     />
+
                     {qtyAvailableError && <p className="text-red-500 text-sm mt-1">{qtyAvailableError}</p>}
+
                 </div>
 
                 <div>
@@ -409,12 +419,14 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         name="itemBrand"
                         value={formData.itemBrand}
                         onChange={handleChange}
+
                         className={`mt-1 block w-full rounded-md border p-2 ${
                             brandError ? 'border-red-500' : 'border-gray-300'
                         }`}
                         required
                     />
                     {brandError && <p className="text-red-500 text-sm mt-1">{brandError}</p>}
+
                 </div>
 
                 {/* Only show unit price field for new items */}
@@ -428,6 +440,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                             name="unitPrice"
                             value={formData.unitPrice}
                             onChange={handleChange}
+
                             min="0.01"
                             step="0.01"
                             className={`mt-1 block w-full rounded-md border p-2 ${
@@ -436,6 +449,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                             required
                         />
                         {unitPriceError && <p className="text-red-500 text-sm mt-1">{unitPriceError}</p>}
+
                     </div>
                 )}
 
@@ -448,6 +462,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         name="sellPrice"
                         value={formData.sellPrice}
                         onChange={handleChange}
+
                         min="0.01"
                         step="0.01"
                         className={`mt-1 block w-full rounded-md border p-2 ${
@@ -456,6 +471,8 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         required
                     />
                     {sellPriceError && <p className="text-red-500 text-sm mt-1">{sellPriceError}</p>}
+
+ev
                 </div>
 
                 <div>
@@ -470,7 +487,9 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                         required
                     />
+
                     {rackNoError && <p className="text-red-500 text-sm mt-1">{rackNoError}</p>}
+
                 </div>
 
             </div>
