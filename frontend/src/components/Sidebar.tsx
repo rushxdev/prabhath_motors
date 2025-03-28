@@ -33,14 +33,14 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="flex fixed">
+    <div className="fixed inset-y-0 left-0 z-50">
       <div
         className={`${
           open ? "w-72" : "w-20"
-        } duration-300 h-screen p-5 pt-8 bg-black text-white sticky top-0 flex flex-col`}
+        } h-full bg-black text-white transition-all duration-300 flex flex-col`}
       >
         {/* Sidebar Toggle Button */}
-        <div className="flex items-center cursor-pointer p-2">
+        <div className="flex items-center p-5 h-16">
           <div className={`min-w-[24px] ${!open && "mx-auto"}`}>
             <FaBars 
               size={24} 
@@ -56,19 +56,19 @@ const Sidebar: React.FC = () => {
         </div>
 
         {/* Sidebar Menu */}
-        <ul className="mt-6 flex-1">
+        <ul className="flex-1 mt-6 px-3">
           {Menus.map((menu, index) => {
             const isActive = location.pathname === menu.href;
             return (
               <Link 
                 key={index} 
                 to={menu.href}
-                className="block"
+                className="block mb-2"
               >
                 <li className={`flex items-center gap-x-4 p-2 rounded-md transition-all duration-300 ${
                   isActive ? "bg-gray-400" : "hover:bg-gray-300"
                 }`}>
-                  <div className={`min-w-[24px] ${isActive ? "text-white" : "text-white"} ${!open && "mx-auto"}`}>
+                  <div className={`min-w-[24px] ${!open && "mx-auto"}`}>
                     {menu.icon}
                   </div>
                   <span className={`text-white text-sm font-medium transition-all duration-300 ${!open && "hidden"}`}>
@@ -79,7 +79,7 @@ const Sidebar: React.FC = () => {
             );
           })}
         </ul>
-      </div>  
+      </div>
     </div>
   );
 };
