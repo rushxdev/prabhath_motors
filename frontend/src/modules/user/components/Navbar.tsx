@@ -8,6 +8,9 @@ const Navbar = () => {
             <Link to={"/book-appointment"} className='hover:underline'>Book Appointment</Link>
             <Link to={"/my-appointments"} className='hover:underline'>My Appointments</Link>
             <Link to={"/appointment-list"} className='hover:underline'>Appointments</Link>
+            <Link to={"/vehicle-registration"} className='hover:underline'>Vehicle Registration</Link>
+            <Link to={"/vehicle-page"} className='hover:underline'>Vehicle List</Link>
+
         </div>
     </nav>
   )
