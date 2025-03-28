@@ -270,6 +270,7 @@ const AdminItemsManager: React.FC = () => {
                     <ItemForm
                         initialData={currentItem}
                         categories={categories}
+                        existingItems={stocks}
                         onSuccess={(itemData) => {
                             // stock object from item data
                             const stockData = {

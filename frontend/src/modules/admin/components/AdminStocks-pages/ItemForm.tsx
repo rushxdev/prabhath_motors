@@ -7,6 +7,7 @@ import { SupplierCombobox } from './SupplierCombox';
 interface ItemFormProps {
     initialData?: Partial<StockItem>;
     categories: ItemCategory[];
+    existingItems: StockItem[]; // Add this prop
     onSuccess: (item: Partial<StockItem>) => void;
     onCancel: () => void;
 }
@@ -14,6 +15,7 @@ interface ItemFormProps {
 const ItemForm: React.FC<ItemFormProps> = ({
     initialData,
     categories,
+    existingItems,
     onSuccess,
     onCancel,
 }) => {
@@ -74,6 +76,17 @@ const ItemForm: React.FC<ItemFormProps> = ({
         }
     }, [selectedSupplier]);
 
+    const checkDuplicateName = (name: string): boolean => {
+        // If we're editing an existing item, exclude it from the check
+        const itemsToCheck = initialData 
+            ? existingItems.filter(item => item.itemID !== initialData.itemID)
+            : existingItems;
+        
+        return itemsToCheck.some(
+            item => item.itemName.toLowerCase() === name.toLowerCase()
+        );
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
@@ -115,6 +128,8 @@ const ItemForm: React.FC<ItemFormProps> = ({
                 setNameError('Item name cannot exceed 50 characters');
             } else if (!/^[a-zA-Z0-9\s-]+$/.test(value)) {
                 setNameError('Item name can only contain letters, numbers, spaces, and hyphens');
+            } else if (checkDuplicateName(value)) {
+                setNameError('Item already exists');
             } else {
                 setNameError(null);
             }
@@ -241,6 +256,12 @@ const ItemForm: React.FC<ItemFormProps> = ({
         setError(null);
     
         try {
+            // Check for duplicate name before submission
+            if (checkDuplicateName(formData.itemName || '')) {
+                setNameError('An item with this name already exists');
+                throw new Error('An item with this name already exists');
+            }
+
             if (nameError || brandError || unitPriceError || sellPriceError || recorderLevelError || qtyAvailableError || rackNoError || categoriesError || supplierError) {
                 throw new Error('Please fix the form errors before submitting.');
             } else if (!selectedCategory) {
