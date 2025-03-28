@@ -1,81 +1,127 @@
 import React, { useState } from "react";
-import { Appointment } from "../../../types/Appointment";
+import { Vehicle } from "../../../types/Vehicle";
 import Navbar from "../components/Navbar";
-import { addAppointment } from "../../../services/appointmentService";
+import { addVehicle } from "../../../services/vehicleService";
 import { useNavigate } from "react-router-dom";
 
-const BookAppointment = () => {
-  const [appointment, setAppointment] = useState<Appointment>({
+const VehicleRegistration = () => {
+  const [vehicle, setVehicle] = useState<Vehicle>({
+    vehicleId: 0,
     vehicleRegistrationNo: "",
-    date: "",
-    time: "",
+    vehicleType: "",
+    ownerName: "",
+    contactNo: "",
     mileage: 0,
+    lastUpdate: "",
   });
 
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAppointment({ ...appointment, [e.target.name]: e.target.value });
+    setVehicle({ ...vehicle, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-        await addAppointment({...appointment, mileage:parseFloat(appointment.mileage.toString())});
-        alert("Appointment booked successfully");
-        setAppointment({ vehicleRegistrationNo: "", date: "", time: "", mileage: 0 });
-        navigate("/");
+      await addVehicle({
+        ...vehicle,
+        mileage: parseFloat(vehicle.mileage.toString()),
+      });
+      alert("Vehicle registered successfully");
+      setVehicle({
+        vehicleId: 0,
+        vehicleRegistrationNo: "",
+        vehicleType: "",
+        ownerName: "",
+        contactNo: "",
+        mileage: 0,
+        lastUpdate: "",
+      });
+      navigate("/");
     } catch (error) {
-        console.error("Error while booking appointment", error);
-        alert("Failed to book appointment");
+      console.error("Error while registering vehicle", error);
+      alert("Failed to register vehicle");
     }
-  }
+  };
 
   return (
     <div>
       <Navbar />
       <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-bold mb-4">Book Appointment</h2>
+        <h2 className="text-2xl font-bold mb-4">Register Vehicle</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Vehicle Registration No */}
           <input
             type="text"
             name="vehicleRegistrationNo"
             placeholder="Vehicle Registration No."
-            value={appointment.vehicleRegistrationNo}
+            value={vehicle.vehicleRegistrationNo}
             onChange={handleChange}
             required
             className="w-full p-2 border rounded"
           />
+
+          {/* Vehicle Type */}
           <input
-            type="date"
-            name="date"
-            value={appointment.date}
+            type="text"
+            name="vehicleType"
+            placeholder="Vehicle Type"
+            value={vehicle.vehicleType}
             onChange={handleChange}
             required
             className="w-full p-2 border rounded"
           />
+
+          {/* Owner Name */}
           <input
-            type="time"
-            name="time"
-            value={appointment.time}
+            type="text"
+            name="ownerName"
+            placeholder="Owner Name"
+            value={vehicle.ownerName}
             onChange={handleChange}
             required
             className="w-full p-2 border rounded"
           />
+
+          {/* Contact No */}
+          <input
+            type="text"
+            name="contactNo"
+            placeholder="Contact No."
+            value={vehicle.contactNo}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border rounded"
+          />
+
+          {/* Mileage */}
           <input
             type="number"
             name="mileage"
             placeholder="Mileage"
-            value={appointment.mileage}
+            value={vehicle.mileage}
             onChange={handleChange}
             required
             className="w-full p-2 border rounded"
           />
+
+          {/* Last Update (Time) */}
+          <input
+            type="time"
+            name="lastUpdate"
+            value={vehicle.lastUpdate}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border rounded"
+          />
+
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-2 rounded"
           >
-            Book Appointment
+            Register Vehicle
           </button>
         </form>
       </div>
@@ -83,4 +129,4 @@ const BookAppointment = () => {
   );
 };
 
-export default BookAppointment;
+export default VehicleRegistration;
