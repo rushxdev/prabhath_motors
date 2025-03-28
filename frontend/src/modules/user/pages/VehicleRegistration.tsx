@@ -8,7 +8,7 @@ const VehicleRegistration = () => {
   const [vehicle, setVehicle] = useState<Vehicle>({
     vehicleId: 0,
     vehicleRegistrationNo: "",
-    vehicleType: "Jeep",
+    vehicleType: "",
     ownerName: "",
     contactNo: "",
     mileage: 0,
@@ -43,9 +43,9 @@ const VehicleRegistration = () => {
 
   // Field validation functions
   const validateVehicleRegistrationNo = (value: string) => {
-    const regNoRegex = /^(?:[A-Za-z]{2}\s[A-Za-z]{2,3}-\d{4}|\d{2}-\d{4})$/; 
+    const regNoRegex = /^(?:[A-Za-z]{2,3}-\d{4}|[A-Za-z]{2}\s[A-Za-z]{2,3}-\d{4}|\d{2}-\d{4})$/;
     if (!value.match(regNoRegex)) {
-      return "Vehicle Registration No. should be in the format 'WP ABC-1234', 'WP AB-1234', or '12-3456'.";
+      return "Vehicle Registration No. should be in the format 'ABC-1234', 'WP ABC-1234', 'WP AB-1234', or '12-3456'.";
     }
     return "";
   };
@@ -170,12 +170,13 @@ const VehicleRegistration = () => {
             required
             className="w-full p-2 border rounded"
           >
+            <option value="" disabled>Select Vehicle Type</option> {/* Default option */}
             <option value="Car">CAR</option>
             <option value="Jeep">JEEP</option>
             <option value="Van">VAN</option>
             <option value="SUV">SUV</option>
           </select>
-
+          
           {/* Owner Name */}
           <input
             type="text"

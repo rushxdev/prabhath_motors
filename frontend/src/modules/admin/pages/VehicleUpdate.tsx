@@ -67,7 +67,7 @@ const VehicleUpdate = () => {
 
     try {
       await updateVehicle(idNumber, vehicle);
-      navigate("/vehicle-list");
+      navigate("/vehicle-page");
     } catch (error) {
       console.error("Error while updating vehicle", error);
     }
@@ -99,7 +99,7 @@ const VehicleUpdate = () => {
             placeholder="Vehicle Type"
             value={vehicle.vehicleType}
             onChange={handleChange}
-            required
+            readOnly
             className="w-full p-2 border rounded"
           />
           <input
@@ -126,7 +126,7 @@ const VehicleUpdate = () => {
             placeholder="Mileage"
             value={vehicle.mileage}
             onChange={handleChange}
-            readOnly
+            required
             className="w-full p-2 border rounded"
           />
           <button
