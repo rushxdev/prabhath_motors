@@ -17,6 +17,11 @@ import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminSto
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
 
+import EmployeeDashboard from "./pages/EmployeeDashboard";
+import EmployeeList from "./components/EmployeeList"
+
+
+
 function App() {
   useEffect(() => {
     // Always set dark mode as default
@@ -45,11 +50,14 @@ function App() {
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
+
+          <Route path="employee/add" element={<EmployeeDashboard />} />
+          <Route path="employee/get" element={<EmployeeList/>} />
         </Route>
       </Routes>
     </Router>
-  )
-};
+  );
+}
 
 
 export default App;
