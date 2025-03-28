@@ -3,8 +3,8 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 // import CustomerDashboard from "./modules/user/pages/CustomerDashboard"
 import BookAppointment from "./modules/user/pages/BookAppointment"
 import AppointmentPage from "./modules/admin/pages/AppointmentPage"
-import AppointmentUpdate from "./modules/admin/pages/AppointmentUpdate"
-import React, { useEffect } from "react";
+import AppointmentUpdate from "./modules/admin/pages/AppointmentUpdate";
+import  { useEffect } from "react";
 import { ScrollToTop } from "./utils/scrollToTop.util";
 import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
@@ -17,6 +17,7 @@ import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminSto
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
 
+
 function App() {
   useEffect(() => {
     // Always set dark mode as default
@@ -28,12 +29,12 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/appointment" element={<BookAppointment />} />
-        {/* <Route path="/appointment-list" element={<AppointmentPage />} /> */}
-        {/* <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} /> */}
+        <Route path="/appointment-list" element={<AppointmentPage />} />
+        <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
 
-        <Route path="/appointment-list" element={<AppointmentPage />}>
+        {/* <Route path="/appointment-list" element={<AppointmentPage />}>
           <Route path="update-appointment/:id" element={<AppointmentUpdate />} />
-        </Route>
+        </Route> */}
 
          {/* User Routes */}
         <Route path="/" element={<HomePage />} />
