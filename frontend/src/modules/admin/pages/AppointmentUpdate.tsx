@@ -54,7 +54,7 @@ const AppointmentUpdate = () => {
 
     try {
       await updateAppointment(idNumber, appointment);
-      navigate("/appointment-list");
+      navigate("/admin/appointment-list");
     } catch (error) {
       console.error("Error while updating appointment", error);
     }

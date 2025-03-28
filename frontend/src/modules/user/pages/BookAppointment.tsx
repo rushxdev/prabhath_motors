@@ -17,7 +17,7 @@ const BookAppointment = () => {
     const result = await handleAppointmentSubmit(e);
     if (result) {
       alert("Appointment booked successfully");
-      navigate("/");
+      navigate("/admin/appointment-list");
     }
   };
 

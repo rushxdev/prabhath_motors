@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 const Navbar = () => {
   return (
-    <nav className='bg-green-700 text-white p-4 flex justify-between'>
+    <nav className='bg-black text-white p-4 flex justify-between'>
         <h1 className='text-xl font-bold'>Prabath Motors</h1>
         <div className='space-x-4'>
             <Link to={"/appointment"} className='hover:underline'>Book Appointment</Link>

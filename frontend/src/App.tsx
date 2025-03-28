@@ -1,8 +1,9 @@
 
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 // import CustomerDashboard from "./modules/user/pages/CustomerDashboard";
-import BookAppointment from "./modules/user/pages/BookAppointment";
-import AppointmentPage from "./modules/admin/pages/AppointmentPage";
+// Appointment routes
+// import BookAppointment from "./modules/user/pages/BookAppointment";
+// import AppointmentPage from "./modules/admin/pages/AppointmentPage";
 import AppointmentUpdate from "./modules/admin/pages/AppointmentUpdate";
 import { useEffect } from "react";
 import { ScrollToTop } from "./utils/scrollToTop.util";
@@ -23,6 +24,9 @@ import UtilityBillForm from "./modules/admin/components/AdminUtility-page/Utilit
 
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeList from "./components/EmployeeList"
+import AppointmentDashboard from "./pages/AppointmentDashboard";
+// import AppointmentPage from "./modules/admin/pages/AppointmentPage";
+import BookAppointment from "./modules/user/pages/BookAppointment";
 
 
 
@@ -35,10 +39,10 @@ function App() {
       <Router>
         <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/appointment" element={<BookAppointment />} />
-          <Route path="/appointment-list" element={<AppointmentPage />} />
-          <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+          {/* <Route path="/" element={<HomePage />} /> */}
+          {/* <Route path="/appointment" element={<BookAppointment />} /> */}
+          {/* <Route path="/appointment-list" element={<AppointmentPage />} /> */}
+          {/* <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} /> */}
 
           {/* <Route path="/appointment-list" element={<AppointmentPage />}>
           <Route path="update-appointment/:id" element={<AppointmentUpdate />} />
@@ -57,6 +61,11 @@ function App() {
             <Route path="stock-requests" element={<AdminStockReqManager />} />
             <Route path="supplier-details" element={<AdminSupplierManager />} />
             <Route path="order-stocks" element={<AdminStockOrderManager />} />
+
+            {/* appointment routes */}
+            <Route path="appointment-list" element={<AppointmentDashboard />} />
+            <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+            <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
 
             {/*utility routes*/}
             <Route path="utility" element={<AdminUtilityManager />} />
