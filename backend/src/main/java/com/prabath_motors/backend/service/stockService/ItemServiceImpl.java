@@ -31,6 +31,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item SaveItem(Item item) {
+        // Calculate stock level before saving
+        item.setStockLevel(calculateStockLevel(item.getQtyAvailable(), item.getRecorderLevel()));
         return itemRepository.save(item);
     }
 
@@ -48,12 +50,13 @@ public class ItemServiceImpl implements ItemService {
             existingItem.setRecorderLevel(item.getRecorderLevel());
             existingItem.setQtyAvailable(item.getQtyAvailable());
             existingItem.setItemBrand(item.getItemBrand());
-            existingItem.setUnitPrice(item.getUnitPrice());
-            existingItem.setUnitPrice(item.getUnitPrice());
+            existingItem.setSellPrice(item.getSellPrice());
             existingItem.setStockLevel(item.getStockLevel());
             existingItem.setRackNo(item.getRackNo());
             existingItem.setUpdatedDate(item.getUpdatedDate());
 
+            // Calculate and set stock level
+            existingItem.setStockLevel(calculateStockLevel(item.getQtyAvailable(), item.getRecorderLevel()));
 
             // Save the updated entity
             return itemRepository.save(existingItem);
@@ -65,5 +68,17 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public void DeleteItemById(Integer id) {
         itemRepository.deleteById(id);
+    }
+
+    private String calculateStockLevel(int qtyAvailable, int recorderLevel) {
+        if (qtyAvailable >= (recorderLevel * 4)) {
+            return "High";
+        } else if (qtyAvailable >= (recorderLevel * 2)) {
+            return "Medium";
+        } else if (qtyAvailable >= recorderLevel) {
+            return "Low";
+        } else {
+            return "Critical";
+        }
     }
 }
