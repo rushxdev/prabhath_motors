@@ -1,0 +1,136 @@
+import React, { useState, useEffect } from "react";
+import { Button } from "@headlessui/react";
+import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import UtilityLayout from "../../layout/UtilityLayouts/UtilityLayouts";
+
+interface MonthlyUtilityBill {
+    id: number;
+    invoiceNo: number;
+    billingAccNo: number;
+    billingMonth: string;
+    billingYear: number;
+    units: number;
+    totalPayment: number;
+    generatedDate: string;
+}
+
+const AdminMonthlyUManager: React.FC = () => {
+    const [monthlyBills, setMonthlyBills] = useState<MonthlyUtilityBill[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [currentBill, setCurrentBill] = useState<Partial<MonthlyUtilityBill> | undefined>(undefined);
+    
+    useEffect(() => {
+        fetchMonthlyBills();
+    }, []);
+
+    const fetchMonthlyBills = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch('http://localhost:8081/monthlyutilitybill/get');
+            if (response.ok) {
+                const data = await response.json();
+                setMonthlyBills(data);
+            }
+        } catch (error) {
+            console.error('Error fetching monthly utility bills:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        try {
+            const response = await fetch(`http://localhost:8081/monthlyutilitybill/delete/${id}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                fetchMonthlyBills(); // Refresh the list
+            }
+        } catch (error) {
+            console.error('Error deleting monthly utility bill:', error);
+        }
+    };
+
+    const filteredBills = monthlyBills.filter(bill => 
+        bill.id.toString().includes(searchTerm) ||
+        bill.invoiceNo.toString().includes(searchTerm) ||
+        bill.billingAccNo.toString().includes(searchTerm) ||
+        bill.billingMonth.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <UtilityLayout>
+            <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16">
+                <h2 className="text-2xl sm:text-2xl font-press font-semibold mb-4 mt-10 text-primary">
+                    Manage Monthly Utility Bills
+                </h2>
+                <div className="flex items-center justify-between mt-12">
+                    <input
+                        type="text"
+                        placeholder="Search monthly bills..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full sm:w-1/2 p-2 border border-gray-500 rounded-md mb-4 bg-transparent"
+                    />
+                    <Button
+                        className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
+                        onClick={() => {
+                            setCurrentBill(undefined);
+                            setIsModalOpen(true);
+                        }}
+                    >
+                        <PlusIcon className="w-5 h-5 mr-2" />
+                        Add Monthly Bill
+                    </Button>
+                </div>
+
+                {/* Monthly Utility Bills Table */}
+                <div className="mt-8 overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Acc No</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Month</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Year</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Payment</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Generated Date</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {filteredBills.map((bill) => (
+                                <tr key={bill.id}>
+                                    <td className="px-6 py-4 whitespace-nowrap">{bill.id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{bill.invoiceNo}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{bill.billingAccNo}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{bill.billingMonth}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{bill.billingYear}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{bill.units}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{bill.totalPayment}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{bill.generatedDate}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <button
+                                            onClick={() => handleDelete(bill.id)}
+                                            className="text-red-600 hover:text-red-900"
+                                        >
+                                            <TrashIcon className="w-5 h-5" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </UtilityLayout>
+    );
+}
+
+export default AdminMonthlyUManager;
