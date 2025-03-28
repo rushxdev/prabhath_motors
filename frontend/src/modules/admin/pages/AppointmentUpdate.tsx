@@ -17,13 +17,7 @@ const AppointmentUpdate = () => {
   const navigate = useNavigate();
   const { appointment, setAppointment, errors, handleChange, validateForm } = useAppointment();
 
-  useEffect(() => {
-    if (id) {
-      fetchAppointmentData(id);
-    }
-  }, [id]);
-
-  const fetchAppointmentData = async (appointmentId: string) => {
+  const fetchAppointmentData = React.useCallback(async (appointmentId: string) => {
     try {
       const idNumber = parseInt(appointmentId, 10);
       if (isNaN(idNumber)) {
@@ -35,7 +29,13 @@ const AppointmentUpdate = () => {
     } catch (error) {
       console.error("Error while fetching appointment", error);
     }
-  };
+  }, [setAppointment]);
+
+  useEffect(() => {
+    if (id) {
+      fetchAppointmentData(id);
+    }
+  }, [id, fetchAppointmentData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
