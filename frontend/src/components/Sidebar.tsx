@@ -12,7 +12,7 @@ const Sidebar: React.FC = () => {
   const location = useLocation(); // Get the current URL
 
   const Menus: MenuItem[] = [
-    { title: "Vehicle", src: "/assets/car-solid.svg", href: "/admin/vehicle" },
+    { title: "Vehicle", src: "/assets/car-solid.svg", href: "/admin/vehicle-page" },
     { title: "Appointment", src: "/assets/address-book-solid.svg", href: "/admin/appointment" },
     { title: "Employee", src: "/assets/briefcase-solid.svg", href: "/admin/employee/add" },
     { title: "Stock", src: "/assets/cart-flatbed-solid.svg", href: "/admin/stock" },
@@ -25,7 +25,7 @@ const Sidebar: React.FC = () => {
       <div
         className={`${
           open ? "w-72" : "w-20"
-        } duration-300 h-screen p-5 pt-8 bg-blue-500 text-white relative flex flex-col`}
+        } duration-300 h-/pull p-5 pt-8 bg-blue-500 text-white relative flex flex-col`}
       >
         {/* Sidebar Toggle Button (Bars Icon) */}
         <div className="flex items-center cursor-pointer gap-x-4" onClick={() => setOpen(!open)}>

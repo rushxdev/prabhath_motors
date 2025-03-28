@@ -19,12 +19,13 @@ import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUt
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
 import VehicleRegistration from "./modules/user/pages/VehicleRegistration"
 import VehiclePage from "./modules/admin/pages/VehiclePage"
-import VehicleUpdate from "./modules/admin/pages/VehicleUpdate"
+import VehicleUpdate from "./modules/admin/pages/VehicleUpdate";
 //Utilityform
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
 
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeList from "./components/EmployeeList"
+import VehicleDashboard from "./pages/VehicleDashboard";
 
 
 
@@ -45,7 +46,7 @@ function App() {
         {/*Vehicle routes*/}
         <Route path="vehicle-registration" element={<VehicleRegistration />} />
         <Route path="vehicle-page" element={<VehiclePage />} />
-        <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
+        <Route path="/admin/vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
 
          {/* User Routes */}
         <Route path="/" element={<HomePage />} />
@@ -66,6 +67,8 @@ function App() {
           <Route path="stock-requests" element={<AdminStockReqManager />} />
           <Route path="supplier-details" element={<AdminSupplierManager />} />
           <Route path="order-stocks" element={<AdminStockOrderManager />} />
+
+          {/* <Route path="vehicle-page" element={<VehicleDashboard />} /> */}
 
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />

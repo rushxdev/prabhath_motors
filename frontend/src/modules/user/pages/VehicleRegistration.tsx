@@ -3,6 +3,7 @@ import { Vehicle } from "../../../types/Vehicle";
 import Navbar from "../components/Navbar";
 import { addVehicle } from "../../../services/vehicleService";
 import { useNavigate } from "react-router-dom";
+import { useVehicleValidation } from "../../../hooks/useVehicle";
 
 const VehicleRegistration = () => {
   const [vehicle, setVehicle] = useState<Vehicle>({
@@ -12,17 +13,10 @@ const VehicleRegistration = () => {
     ownerName: "",
     contactNo: "",
     mileage: 0,
-    lastUpdate: "", // will be set dynamically
-  });
-
-  const [errors, setErrors] = useState({
-    vehicleRegistrationNo: "",
-    ownerName: "",
-    contactNo: "",
-    mileage: "",
     lastUpdate: "",
   });
 
+  const { errors, validateField, validateForm, resetErrors } = useVehicleValidation();
   const navigate = useNavigate();
 
   // Function to get current time in HH:mm format
@@ -41,82 +35,19 @@ const VehicleRegistration = () => {
     }));
   }, []);
 
-  // Field validation functions
-  const validateVehicleRegistrationNo = (value: string) => {
-    const regNoRegex = /^(?:[A-Za-z]{2,3}-\d{4}|[A-Za-z]{2}\s[A-Za-z]{2,3}-\d{4}|\d{2}-\d{4})$/;
-    if (!value.match(regNoRegex)) {
-      return "Vehicle Registration No. should be in the format 'ABC-1234', 'WP ABC-1234', 'WP AB-1234', or '12-3456'.";
-    }
-    return "";
-  };
-  
-
-  const validateOwnerName = (value: string) => {
-    const ownerNameRegex = /^[A-Za-z\s]+$/;
-    if (!value.match(ownerNameRegex)) {
-      return "Owner Name cannot contain numbers or symbols";
-    }
-    return "";
-  };
-
-  const validateContactNo = (value: string) => {
-    const contactNoRegex = /^[0-9]{10}$/;
-    if (!value.match(contactNoRegex)) {
-      return "Contact No must be 10 digits and cannot contain symbols or words";
-    }
-    return "";
-  };
-
-  const validateMileage = (value: number) => {
-    if (value < 0 || isNaN(value)) {
-      return "Mileage cannot be a negative number or contain symbols/letters";
-    }
-    return "";
-  };
-
-  const validateLastUpdate = (value: string) => {
-    const currentTime = new Date().toISOString().split('T')[1].substring(0, 5); // Get current time in HH:mm format
-    if (value < currentTime) {
-      return "Last Update time cannot be in the past";
-    }
-    return "";
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setVehicle({ ...vehicle, [name]: value });
-
-    // Validate each field in real-time as the user types
-    let error = "";
-    if (name === "vehicleRegistrationNo") {
-      error = validateVehicleRegistrationNo(value);
-    } else if (name === "ownerName") {
-      error = validateOwnerName(value);
-    } else if (name === "contactNo") {
-      error = validateContactNo(value);
-    } else if (name === "mileage") {
-      error = validateMileage(parseFloat(value));
-    } else if (name === "lastUpdate") {
-      error = validateLastUpdate(value);
-    }
-
-    setErrors({ ...errors, [name]: error });
+    const updatedVehicle = { ...vehicle, [name]: value };
+    
+    setVehicle(updatedVehicle);
+    validateField(name, value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Perform final validation before submitting the form
-    const vehicleErrors = {
-      vehicleRegistrationNo: validateVehicleRegistrationNo(vehicle.vehicleRegistrationNo),
-      ownerName: validateOwnerName(vehicle.ownerName),
-      contactNo: validateContactNo(vehicle.contactNo),
-      mileage: validateMileage(vehicle.mileage),
-      lastUpdate: validateLastUpdate(vehicle.lastUpdate),
-    };
-
-    if (Object.values(vehicleErrors).some((error) => error !== "")) {
-      setErrors(vehicleErrors);
+    // Validate the entire form
+    if (!validateForm(vehicle)) {
       alert("Please fix the errors in the form.");
       return;
     }
@@ -128,6 +59,8 @@ const VehicleRegistration = () => {
         mileage: parseFloat(vehicle.mileage.toString()),
       });
       alert("Vehicle registered successfully");
+      
+      // Reset form
       setVehicle({
         vehicleId: 0,
         vehicleRegistrationNo: "",
@@ -135,9 +68,13 @@ const VehicleRegistration = () => {
         ownerName: "",
         contactNo: "",
         mileage: 0,
-        lastUpdate: getCurrentTime(), // Reset to current time after successful submission
+        lastUpdate: getCurrentTime(),
       });
-      navigate("/");
+      
+      // Reset errors
+      resetErrors();
+      
+      navigate("/admin/vehicle-page");
     } catch (error) {
       console.error("Error while registering vehicle", error);
       alert("Failed to register vehicle");
@@ -168,14 +105,15 @@ const VehicleRegistration = () => {
             value={vehicle.vehicleType}
             onChange={handleChange}
             required
-            className="w-full p-2 border rounded"
+            className={`w-full p-2 border rounded ${errors.vehicleType ? 'border-red-500' : ''}`}
           >
-            <option value="" disabled>Select Vehicle Type</option> {/* Default option */}
+            <option value="" disabled>Select Vehicle Type</option>
             <option value="Car">CAR</option>
             <option value="Jeep">JEEP</option>
             <option value="Van">VAN</option>
             <option value="SUV">SUV</option>
           </select>
+          {errors.vehicleType && <p className="text-red-500 text-sm">{errors.vehicleType}</p>}
           
           {/* Owner Name */}
           <input
@@ -218,7 +156,7 @@ const VehicleRegistration = () => {
             type="time"
             name="lastUpdate"
             value={vehicle.lastUpdate}
-            readOnly
+            onChange={handleChange}
             required
             className={`w-full p-2 border rounded ${errors.lastUpdate ? 'border-red-500' : ''}`}
           />
