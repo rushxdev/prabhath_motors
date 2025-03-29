@@ -21,7 +21,7 @@ export interface ItemCategory {
 }
 
 export interface Stock_In {
-    stockInID?: number;
+    stockInId?: number;
     itemID: number;
     ctgryID: number;
     supplierID: number;
@@ -34,6 +34,6 @@ export interface Stock_In {
 export interface Supplier {
     supplierId: number;
     supplierName: string;
-    contactPerson: string;
-    phoneNumber: number;
+    email: string;
+    contact: string;
 }

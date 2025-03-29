@@ -17,13 +17,14 @@ const SupplierForm: React.FC<SupplierFormProps> = ({
         return initialData || {
             supplierId: undefined,
             supplierName: '',
-            contactPerson: '',
-            phoneNumber: undefined
+            email: '',
+            contact: ''
         };
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [nameError, setNameError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
     const [contactError, setContactError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -46,7 +47,16 @@ const SupplierForm: React.FC<SupplierFormProps> = ({
             }
         }
 
-        if (name === 'phoneNumber') {
+        if (name === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+                setEmailError('Please enter a valid email address');
+            } else {
+                setEmailError(null);
+            }
+        }
+
+        if (name === 'contact') {
             const contactRegex = /^\+?\d{10,12}$/;
             if (!contactRegex.test(value)) {
                 setContactError('Please enter a valid phone number (10-12 digits)');
@@ -67,7 +77,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({
         setError(null);
 
         try {
-            if (nameError || contactError) {
+            if (nameError || emailError || contactError) {
                 throw new Error('Please fix the form errors before submitting.');
             }
 
@@ -101,26 +111,29 @@ const SupplierForm: React.FC<SupplierFormProps> = ({
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700">
-                        Contact Person<span className="text-red-500">*</span>
+                        Email<span className="text-red-500">*</span>
                     </label>
                     <input
-                        type="text"
-                        name="contactPerson"
-                        value={formData.contactPerson}
+                        type="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                        className={`mt-1 block w-full rounded-md border p-2 ${
+                            emailError ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         required
                     />
+                    {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700">
-                        Phone Number<span className="text-red-500">*</span>
+                        Contact Number<span className="text-red-500">*</span>
                     </label>
                     <input
                         type="tel"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
+                        name="contact"
+                        value={formData.contact}
                         onChange={handleChange}
                         className={`mt-1 block w-full rounded-md border p-2 ${
                             contactError ? 'border-red-500' : 'border-gray-300'
