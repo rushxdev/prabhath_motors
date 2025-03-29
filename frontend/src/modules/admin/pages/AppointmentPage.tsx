@@ -8,21 +8,35 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const AppointmentPage = () => {
-  const [appointment, setAppointment] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
 
   const fetchAppointments = async () => {
     const data = await getAllAppointments();
-    setAppointment(data);
+    setAppointments(data);
+    setFilteredAppointments(data);
   };
 
   useEffect(() => {
     fetchAppointments();
-  });
+  }, []);
 
   const handleDelete = async (id: number) => {
     await deleteAppointment(id);
     fetchAppointments();
+  };
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    const filtered = appointments.filter(appointment => 
+      appointment.vehicleRegistrationNo.toLowerCase().includes(value)
+    );
+
+    setFilteredAppointments(filtered);
   };
 
   return (
@@ -39,6 +53,17 @@ const AppointmentPage = () => {
           Appointments
         </h2>
 
+        {/* Search Bar */}
+        <div className="mb-4">
+          <input 
+            type="text" 
+            placeholder="Search by Vehicle Registration Number" 
+            value={searchTerm}
+            onChange={handleSearch}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse border border-gray-300 shadow-sm rounded-lg">
@@ -52,7 +77,7 @@ const AppointmentPage = () => {
               </tr>
             </thead>
             <tbody>
-              {appointment.map((appointment, index) => (
+              {filteredAppointments.map((appointment, index) => (
                 <tr
                   key={appointment.id}
                   className={`text-center ${
