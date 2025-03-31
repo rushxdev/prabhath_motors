@@ -73,7 +73,6 @@ const AppointmentPage = () => {
                 <th className="border p-3">Date</th>
                 <th className="border p-3">Time</th>
                 <th className="border p-3">Mileage</th>
-                <th className="border p-3">Owner</th>
                 <th className="border p-3">Actions</th>
               </tr>
             </thead>
@@ -91,7 +90,6 @@ const AppointmentPage = () => {
                   <td className="border p-3">{appointment.date}</td>
                   <td className="border p-3">{appointment.time}</td>
                   <td className="border p-3">{appointment.mileage}</td>
-                  <td className="border p-3">{appointment.owner}</td>
                   <td className="border p-3 space-x-2">
                     <button
                       className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded transition"
@@ -112,8 +110,6 @@ const AppointmentPage = () => {
               ))}
             </tbody>
           </table>
-
-          <button className="absolute bottom-10 right-60 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md transition">TEST</button>
         </div>
       </div>
     </div>

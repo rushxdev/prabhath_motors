@@ -7,7 +7,6 @@ export const useAppointment = () => {
         vehicleRegistrationNo: "",
         date: "",
         time: "",
-        owner: "",
         mileage: 0,
     });
 
@@ -96,7 +95,7 @@ export const useAppointment = () => {
 
         try {
             await addAppointment(appointment);
-            setAppointment({ vehicleRegistrationNo: "", date: "", time: "", owner: "", mileage: 0 });
+            setAppointment({ vehicleRegistrationNo: "", date: "", time: "", mileage: 0 });
             setErrors({});  // Clear errors on successful submission
             return true;
         } catch (error) {
