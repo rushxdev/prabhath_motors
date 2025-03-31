@@ -42,12 +42,7 @@ function App() {
   return (
 
     <Router>
-       {/* utillity to always scroll to top on URL change */}
-      {/* <Routes> */}
-      {/* <Route path="/" element={<HomePage />} /> */}
-      {/* <Route path="/appointment" element={<BookAppointment />} /> */}
-      {/* <Route path="/appointment-list" element={<AppointmentPage />} /> */}
-      {/* <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} /> */}
+       
       <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
       <Routes>
         {/*Vehicle routes*/}
@@ -58,18 +53,12 @@ function App() {
           element={<VehicleUpdate />}
         />
 
+              
         {/* User Routes */}
         <Route path="/" element={<HomePage />} />
-        {/* <Route
-          path="/appointment-list/update-appointment/:id"
-          element={<AppointmentUpdate />}
-        /> */}
-        {/* User Routes */}
         <Route path="/home" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
-        {/*<Route path="/appointment" element={<AppointmentPage />} />*/}
-
-        {/*<Route path="/appointment" element={<AppointmentPage />} />*/}
+        
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
