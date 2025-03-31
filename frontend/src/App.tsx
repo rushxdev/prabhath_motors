@@ -1,5 +1,4 @@
-
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 // import CustomerDashboard from "./modules/user/pages/CustomerDashboard";
 // Appointment routes
 // import BookAppointment from "./modules/user/pages/BookAppointment";
@@ -19,16 +18,21 @@ import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminS
 // Utility routes
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
+import VehicleRegistration from "./modules/user/pages/VehicleRegistration";
+import VehiclePage from "./modules/admin/pages/VehiclePage";
+import VehicleUpdate from "./modules/admin/pages/VehicleUpdate";
 //Utilityform
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
 
+//Employee routes
 import EmployeeDashboard from "./pages/EmployeeDashboard";
-import EmployeeList from "./components/EmployeeList"
+import EmployeeList from "./components/EmployeeList";
 import AppointmentDashboard from "./pages/AppointmentDashboard";
 // import AppointmentPage from "./modules/admin/pages/AppointmentPage";
 import BookAppointment from "./modules/user/pages/BookAppointment";
 
-
+import EmployeeShow from "./pages/EmployeeShow";
+import EmployeeUpdate from "./pages/EmployeeUpdate";
 
 function App() {
   useEffect(() => {
@@ -36,53 +40,74 @@ function App() {
     //document.documentElement.classList.add("dark");
   }, []);
   return (
-      <Router>
-        <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
-        <Routes>
-          {/* <Route path="/" element={<HomePage />} /> */}
-          {/* <Route path="/appointment" element={<BookAppointment />} /> */}
-          {/* <Route path="/appointment-list" element={<AppointmentPage />} /> */}
-          {/* <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} /> */}
+    
+    <Router>
+       {/* utillity to always scroll to top on URL change */}
+      {/* <Routes> */}
+      {/* <Route path="/" element={<HomePage />} /> */}
+      {/* <Route path="/appointment" element={<BookAppointment />} /> */}
+      {/* <Route path="/appointment-list" element={<AppointmentPage />} /> */}
+      {/* <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} /> */}
+      <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
+      <Routes>
+        {/*Vehicle routes*/}
+        <Route path="vehicle-registration" element={<VehicleRegistration />} />
+        <Route path="vehicle-page" element={<VehiclePage />} />
+        <Route
+          path="vehicle-page/vehicle-update/:id"
+          element={<VehicleUpdate />}
+        />
 
-          {/* <Route path="/appointment-list" element={<AppointmentPage />}>
-          <Route path="update-appointment/:id" element={<AppointmentUpdate />} />
-        </Route> */}
+        {/* User Routes */}
+        <Route path="/" element={<HomePage />} />
+        {/* <Route
+          path="/appointment-list/update-appointment/:id"
+          element={<AppointmentUpdate />}
+        /> */}
+        {/* User Routes */}
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        {/*<Route path="/appointment" element={<AppointmentPage />} />*/}
 
-          {/* User Routes */}
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          {/*<Route path="/appointment" element={<AppointmentPage />} />*/}
+        {/*<Route path="/appointment" element={<AppointmentPage />} />*/}
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            {/*<Route index element={<Navigate to="dashboard" />} />
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          {/*<Route index element={<Navigate to="dashboard" />} />
             <Route path="dashboard" element={<DashboardPage />} /> */}
-            <Route path="items" element={<AdminItemsManager />} />
-            <Route path="stock-requests" element={<AdminStockReqManager />} />
-            <Route path="supplier-details" element={<AdminSupplierManager />} />
-            <Route path="order-stocks" element={<AdminStockOrderManager />} />
+          <Route path="items" element={<AdminItemsManager />} />
+          <Route path="stock-requests" element={<AdminStockReqManager />} />
+          <Route path="supplier-details" element={<AdminSupplierManager />} />
+          <Route path="order-stocks" element={<AdminStockOrderManager />} />
 
-            {/* appointment routes */}
-            <Route path="appointment-list" element={<AppointmentDashboard />} />
-            <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
-            <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
+          {/* appointment routes */}
+          <Route path="appointment-list" element={<AppointmentDashboard />} />
+          <Route
+            path="appointment-list/update-appointment/:id"
+            element={<AppointmentUpdate />}
+          />
+          <Route
+            path="appointment-list/book-appointment"
+            element={<BookAppointment />}
+          />
 
-            {/*utility routes*/}
-            <Route path="utility" element={<AdminUtilityManager />} />
-            <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
-            <Route path="utility/add" element={<UtilityBillForm />} />
-            <Route path="utility/edit/:id" element={<UtilityBillForm />} />
+          {/*utility routes*/}
+          <Route path="utility" element={<AdminUtilityManager />} />
+          <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
+          <Route path="utility/add" element={<UtilityBillForm />} />
+          <Route path="utility/edit/:id" element={<UtilityBillForm />} />
 
-            <Route path="employee/add" element={<EmployeeDashboard />} />
-            <Route path="employee/get" element={<EmployeeList/>} />
-            {/*utility routes-for the form*/}
-
-
-          </Route>
-        </Routes>
-      </Router>
+          <Route path="employee/add" element={<EmployeeDashboard />} />
+          <Route path="employee/get" element={<EmployeeList />} />
+          {/*utility routes-for the form*/}
+          {/* Employee routes */}
+          <Route path="employee/add" element={<EmployeeDashboard />} />
+          <Route path="employee/getAll" element={<EmployeeShow />} />
+          <Route path="employee/update/:id" element={<EmployeeUpdate />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
-
 
 export default App;
