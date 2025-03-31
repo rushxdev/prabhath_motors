@@ -29,7 +29,7 @@ public class Item {
     private int recorderLevel;
     private int qtyAvailable;
     private String itemBrand;
-    private double unitPrice;
+    private double sellPrice;
     private String stockLevel;
     private int rackNo;
     private LocalDate updatedDate;
