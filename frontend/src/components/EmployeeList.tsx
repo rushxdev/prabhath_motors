@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEmployee } from "../hooks/useEmployee";
 import employeeService from "../services/employeeService";
+import { Button } from "@headlessui/react";
 
 const EmployeeList = () => {
   const { employees, setEmployees } = useEmployee(); // Added setEmployees to update state
@@ -20,10 +21,17 @@ const EmployeeList = () => {
   return (
     <div className="max-w-screen mx-auto bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-bold mb-4">Employee List</h2>
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => navigate("/admin/employee/add")}
+          className="bg-green-500 text-white px-4 py-2 rounded mb-4">
+          Back To Form
+        </button>
+      </div>
       <div className="mt-4">
-        <Link to="/admin/employee/add" className="text-blue-500 hover:underline">
+        <button onClick={()=>navigate("/admin/employee/add")} className="text-blue-500 hover:underline">
           Back to Add a New Employee
-        </Link>
+        </button>
       </div>
       {employees.length > 0 ? (
         <table className="w-full border-collapse border border-gray-300 mt-4">
