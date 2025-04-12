@@ -1,6 +1,6 @@
-package com.prabath_motors.backend.controller;
+package com.prabath_motors.backend.controller.AppointmentController;
 
-import com.prabath_motors.backend.dao.Appointment;
+import com.prabath_motors.backend.dao.Appointment.Appointment;
 import com.prabath_motors.backend.service.appointmentService.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

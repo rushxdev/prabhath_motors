@@ -25,7 +25,7 @@ import VehicleUpdate from "./modules/admin/pages/VehicleUpdate";
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
 
 // Appointment routes
-import AppointmentUpdate from "./modules/admin/pages/AppointmentUpdate";
+import AppointmentUpdate from "./modules/admin/pages/AdminAppointmentPages/AppointmentUpdate";
 import BookAppointment from "./modules/user/pages/BookAppointment";
 import AppointmentDashboard from "./pages/AppointmentDashboard";
 

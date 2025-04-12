@@ -1,4 +1,4 @@
-package com.prabath_motors.backend.dao;
+package com.prabath_motors.backend.dao.Appointment;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

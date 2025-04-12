@@ -1,6 +1,6 @@
 package com.prabath_motors.backend.service.appointmentService;
 
-import com.prabath_motors.backend.dao.Job;
+import com.prabath_motors.backend.dao.Appointment.Job;
 
 import java.util.List;
 
