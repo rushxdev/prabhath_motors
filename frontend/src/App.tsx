@@ -1,9 +1,9 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 // import CustomerDashboard from "./modules/user/pages/CustomerDashboard";
-// Appointment routes
+
 // import BookAppointment from "./modules/user/pages/BookAppointment";
 // import AppointmentPage from "./modules/admin/pages/AppointmentPage";
-import AppointmentUpdate from "./modules/admin/pages/AppointmentUpdate";
+
 import { useEffect } from "react";
 import { ScrollToTop } from "./utils/scrollToTop.util";
 import HomePage from "./modules/user/pages/HomePage";
@@ -24,12 +24,17 @@ import VehicleUpdate from "./modules/admin/pages/VehicleUpdate";
 //Utilityform
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
 
+// Appointment routes
+import AppointmentUpdate from "./modules/admin/pages/AppointmentUpdate";
+import BookAppointment from "./modules/user/pages/BookAppointment";
+import AppointmentDashboard from "./pages/AppointmentDashboard";
+
 //Employee routes
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeList from "./components/EmployeeList";
-import AppointmentDashboard from "./pages/AppointmentDashboard";
+
 // import AppointmentPage from "./modules/admin/pages/AppointmentPage";
-import BookAppointment from "./modules/user/pages/BookAppointment";
+
 
 import EmployeeShow from "./pages/EmployeeShow";
 import EmployeeUpdate from "./pages/EmployeeUpdate";
