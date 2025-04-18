@@ -21,7 +21,7 @@ const Sidebar: React.FC = () => {
 
   const Menus: MenuItem[] = [
     { title: "Vehicle", icon: <FaCar size={24} />, href: "/admin/vehicle" },
-    { title: "Appointment", icon: <FaAddressBook size={24} />, href: "/admin/appointment" },
+    { title: "Appointment", icon: <FaAddressBook size={24} />, href: "/admin/appointment-list" },
     { title: "Employee", icon: <FaBriefcase size={24} />, href: "/admin/employee/add" },
     { title: "Stock", icon: <FaCartPlus size={24} />, href: "/admin/items" },
     { title: "Utilities", icon: <FaChartLine size={24} />, href: "/admin/utility" },

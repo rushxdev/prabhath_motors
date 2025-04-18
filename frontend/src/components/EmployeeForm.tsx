@@ -3,11 +3,11 @@ import { useEmployee } from "../hooks/useEmployee";
 
 const EmployeeForm = () => {
   const { employee, errors, handleChange, handleSubmit } = useEmployee();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent) => {
-    await handleSubmit(e); 
-    navigate("/admin/employee/getAll"); 
+    await handleSubmit(e);
+    navigate("/admin/employee/getAll");
   };
 
   return (

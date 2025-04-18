@@ -31,7 +31,7 @@ export const useEmployee = () => {
   };
 
   const validateForm = () => {
-    let newErrors: { [key: string]: string } = {};
+    const newErrors: { [key: string]: string } = {};
 
     if (!/^[A-Za-z]+$/.test(employee.firstname)) newErrors.firstname = "First name must contain only letters.";
     if (!/^[A-Za-z]+$/.test(employee.lastname)) newErrors.lastname = "Last name must contain only letters.";
