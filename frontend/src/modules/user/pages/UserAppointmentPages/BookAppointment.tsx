@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Appointment } from "../../../../types/Appointment";
+import React/*, { useState } */from "react";
+//import { Appointment } from "../../../../types/Appointment";
 import Navbar from "../../components/Navbar";
-import { addAppointment } from "../../../../services/appointmentService";
+//import { addAppointment } from "../../../../services/appointmentService";
 import { useNavigate } from "react-router-dom";
-import { useAppointment } from "../../../hooks/useAppointment"; // Adjust import path as needed
+import { useAppointment } from "../../../../hooks/useAppointment"; // Adjust import path as needed
 
 const BookAppointment = () => {
   const navigate = useNavigate();
