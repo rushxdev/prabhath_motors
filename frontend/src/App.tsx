@@ -51,8 +51,8 @@ function App() {
             <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
           {/*Appointment routes*/}
           <Route path="/" element={<CustomerDashboard />} />
-          <Route path="/book-appointment" element={<BookAppointment />} />
           <Route path="/appointment-list" element={<AppointmentPage />} />
+          <Route path="/appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
 
         {/* --------------------Admin Routes------------------ */}
