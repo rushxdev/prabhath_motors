@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEmployee } from "../hooks/useEmployee";
-import employeeService from "../services/employeeService";
-import { Button } from "@headlessui/react";
+import { useEmployee } from "../../../../hooks/useEmployee";
+import employeeService from "../../../../services/employeeService";
+//import { Button } from "@headlessui/react";
 
 const EmployeeList = () => {
   const { employees, setEmployees } = useEmployee(); // Added setEmployees to update state

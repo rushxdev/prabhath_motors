@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Appointment } from "../../../types/Appointment";
-import Navbar from "../components/Navbar";
-import { addAppointment } from "../../../services/appointmentService";
+import { Appointment } from "../../../../types/Appointment";
+import Navbar from "../../components/Navbar";
+import { addAppointment } from "../../../../services/appointmentService";
 import { useNavigate } from "react-router-dom";
 
 const BookAppointment = () => {

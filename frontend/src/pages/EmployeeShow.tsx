@@ -1,6 +1,6 @@
-import Sidebar from "../components/Sidebar";
-import EmployeeNavBar from "../components/EmployeeNavBar";
-import EmployeeList from "../components/EmployeeList";
+import Sidebar from "../modules/admin/components/Sidebar";
+import EmployeeNavBar from "../modules/admin/components/AdminEmployee-pages/EmployeeNavBar";
+import EmployeeList from "../modules/admin/pages/AdminEmpoyeePages/EmployeeList";
 
 const EmployeeShow = () => {
   return (

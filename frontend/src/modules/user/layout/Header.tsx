@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import { HiMenu } from "react-icons/hi";
@@ -7,7 +7,7 @@ const Header: React.FC = () => {
   const [navOpen, setNavOpen] = useState(false);
   const [isServicesMenuOpen, setIsServicesMenuOpen] = useState(false);
   const [isAppointmentsMenuOpen, setIsAppointmentsMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  //const [darkMode, setDarkMode] = useState(false);
 
   const toggleAppointmentsMenu = () => {
     setIsAppointmentsMenuOpen(!isAppointmentsMenuOpen);
@@ -28,13 +28,16 @@ const Header: React.FC = () => {
   return (
     <header className="sticky top-0 inset-x-0 z-50 w-full shadow-sm transition-colors duration-300">
       {/* Top Navigation */}
-      <nav className="flex items-center px-6 py-4 bg-gray-100 dark:bg-gray-900 border-b border-gray-300 dark:border-gray-700 transition-colors duration-300">
+      <nav className="flex items-center px-6 py-4 bg-gray-100 dark:bg-black border-b border-gray-300 dark:border-gray-700 transition-colors duration-300">
         {/* Left - Logo */}
         <NavLink
           to="/"
           className="text-xl md:text-2xl font-bold dark:text-white"
         >
-          LOGO
+          <div className="md:w-25 mb-5 md:mb-0">
+            <img src="../../../../public/assets/images/logo.png"/>
+          </div>
+          
         </NavLink>
 
         {/* Left - Navigation Links */}
@@ -80,12 +83,14 @@ const Header: React.FC = () => {
         {/* Dropdown menus */}
         <div className="hidden md:flex space-x-6 mr-auto">
           {/* Appointments dropdown */}
-          <div className="relative">
+          <div className="relative"
+            onMouseEnter={() => setIsAppointmentsMenuOpen(true)}
+            onMouseLeave={() => setIsAppointmentsMenuOpen(false)}
+          >
             <button
-              className="text-gray-700 dark:text-black hover:text-gray-900 dark:hover:text-white transition-colors flex items-center space-x-1"
-              onClick={toggleAppointmentsMenu}
-            >
-              <span className="font-medium">APPOINTMENTS</span>
+              className="text-gray-700 dark:text-black hover:text-gray-900 dark:hover:text-gray-700 transition-colors flex items-center space-x-1"
+              >
+              <span className="text-sm tracking-wider">APPOINTMENTS</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4"
@@ -103,12 +108,12 @@ const Header: React.FC = () => {
             </button>
 
             {isAppointmentsMenuOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 shadow-md rounded-md p-2 w-48 z-10 border dark:border-gray-700">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-black shadow-md rounded-md p-2 w-48 z-10">
                 <ul>
                   <li>
                     <a
                       href="#"
-                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-green-700 transition-colors"
                     >
                       Book Appointment
                     </a>
@@ -116,7 +121,7 @@ const Header: React.FC = () => {
                   <li>
                     <a
                       href="#"
-                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-green-700 transition-colors"
                     >
                       Check Status
                     </a>
@@ -124,7 +129,7 @@ const Header: React.FC = () => {
                   <li>
                     <a
                       href="#"
-                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-green-700 transition-colors"
                     >
                       Cancel Appointment
                     </a>
@@ -135,12 +140,14 @@ const Header: React.FC = () => {
           </div>
 
           {/* Service & Spare Parts dropdown */}
-          <div className="relative">
+          <div className="relative"
+            onMouseEnter={() => setIsServicesMenuOpen(true)}
+            onMouseLeave={() => setIsServicesMenuOpen(false)}
+          >
             <button
-              className="text-gray-950 dark:text-black hover:text-gray-900 dark:hover:text-white transition-colors flex items-center space-x-1"
-              onClick={toggleServicesMenu}
-            >
-              <span className="font-medium">SERVICE & SPARE PARTS</span>
+              className="text-gray-950 dark:text-black hover:text-gray-900 dark:hover:text-gray-700 transition-colors flex items-center space-x-1"
+              >
+              <span className="text-sm tracking-wider">SERVICE & SPARE PARTS</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4"
@@ -158,12 +165,12 @@ const Header: React.FC = () => {
             </button>
 
             {isServicesMenuOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 shadow-md rounded-md p-2 w-48 z-10 border dark:border-gray-700">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-black shadow-md rounded-md p-2 w-48 z-10">
                 <ul>
                   <li>
                     <a
                       href="#"
-                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-green-700 transition-colors"
                     >
                       Maintenance
                     </a>
@@ -171,7 +178,7 @@ const Header: React.FC = () => {
                   <li>
                     <a
                       href="#"
-                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-green-700 transition-colors"
                     >
                       Repairs
                     </a>
@@ -179,7 +186,7 @@ const Header: React.FC = () => {
                   <li>
                     <a
                       href="#"
-                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="block px-3 py-2 rounded hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-green-700 transition-colors"
                     >
                       Spare Parts Catalog
                     </a>

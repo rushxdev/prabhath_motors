@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   getAppointmentById,
   updateAppointment,
-} from "../../../services/appointmentService";
-import Navbar from "../../user/components/Navbar";
+} from "../../../../services/appointmentService";
+import Navbar from "../../../user/components/Navbar";
 
 const AppointmentUpdate = () => {
   const { id } = useParams<{ id: string }>();

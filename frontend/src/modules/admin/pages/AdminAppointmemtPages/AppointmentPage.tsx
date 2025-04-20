@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Appointment } from "../../../types/Appointment";
+import { Appointment } from "../../../../types/Appointment";
 import {
   deleteAppointment,
   getAllAppointments,
-} from "../../../services/appointmentService";
-import Navbar from "../../user/components/Navbar";
+} from "../../../../services/appointmentService";
+import Navbar from "../../../user/components/Navbar";
 import { useNavigate } from "react-router-dom";
 
 const AppointmentPage = () => {
