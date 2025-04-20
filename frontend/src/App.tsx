@@ -54,6 +54,8 @@ function App() {
           <Route path="/appointment-list" element={<AppointmentPage />} />
           <Route path="/appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+        {/* --------------------User Routes end-----------------*/}
+
 
         {/* --------------------Admin Routes------------------ */}
         <Route path="/admin" element={<AdminLayout />}>
@@ -71,6 +73,7 @@ function App() {
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
+        {/* --------------------Admin Routes end--------------- */}
         </Route>
       </Routes>
     </Router>
