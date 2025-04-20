@@ -11,6 +11,8 @@ import CustomerDashboard from "./modules/user/pages/UserAppointmentPages/Custome
 import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
 import AppointmentPage from "./modules/admin/pages/AdminAppointmemtPages/AppointmentPage";
 import AppointmentUpdate from "./modules/admin/pages/AdminAppointmemtPages/AppointmentUpdate";
+/*import AppointmentDashboard from "./pages/AppointmentDashboard";
+import AppointmentPage from "./modules/admin/pages/AppointmentPage";*/
 //Items, Stocks, Supplier, Order routes
 import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsManager";
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
@@ -28,14 +30,15 @@ import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeShow from "./pages/EmployeeShow";
 import EmployeeUpdate from "./pages/EmployeeUpdate";
 
-
 function App() {
   useEffect(() => {
     // Always set dark mode as default
     //document.documentElement.classList.add("dark");
   }, []);
   return (
+
     <Router>
+       
       <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
 
       <Routes>
@@ -68,7 +71,6 @@ function App() {
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
-
         </Route>
       </Routes>
     </Router>

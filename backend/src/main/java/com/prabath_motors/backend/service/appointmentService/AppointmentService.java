@@ -1,6 +1,6 @@
-package com.prabath_motors.backend.service.userService;
+package com.prabath_motors.backend.service.appointmentService;
 
-import com.prabath_motors.backend.dao.Appointment;
+import com.prabath_motors.backend.dao.Appointment.Appointment;
 
 import java.util.List;
 import java.util.Optional;
