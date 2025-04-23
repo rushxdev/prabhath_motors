@@ -25,7 +25,7 @@ const Sidebar: React.FC = () => {
       <div
         className={`${
           open ? "w-72" : "w-20"
-        } duration-300 h-/pull p-5 pt-8 bg-blue-500 text-white relative flex flex-col`}
+        } duration-300 h-/pull p-5 pt-8 bg-black text-white relative flex flex-col`}
       >
         {/* Sidebar Toggle Button (Bars Icon) */}
         <div className="flex items-center cursor-pointer gap-x-4" onClick={() => setOpen(!open)}>
@@ -43,7 +43,7 @@ const Sidebar: React.FC = () => {
               <li
                 key={index}
                 className={`flex items-center gap-x-4 p-2 rounded-md transition-all duration-300 ${
-                  isActive ? "bg-blue-400" : "hover:bg-gray-300"
+                  isActive ? "bg-gray-400" : "hover:bg-gray-300"
                 }`}
               >
                 <img src={menu.src} className="w-6 h-6" alt={menu.title} />

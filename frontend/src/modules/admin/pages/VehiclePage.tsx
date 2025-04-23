@@ -102,6 +102,8 @@ const VehiclePage = () => {
             ))}
           </tbody>
         </table>
+
+
       </div>
     </div>
   );
