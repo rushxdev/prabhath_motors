@@ -44,7 +44,7 @@ const AdminStockOrderManager: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:8080/stock_in/get');
+            const response = await fetch('http://localhost:8081/stock_in/get');
             if (!response.ok) {
                 throw new Error('Failed to fetch stock orders');
             }
