@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import employeeService from "../services/employeeService";
-import { Employee } from "../types/Employee";
+import employeeService from "../../../../services/employeeService";
+import { Employee } from "../../../../types/Employee";
 
 const EmployeeEdit = () => {
   const { id } = useParams<{ id: string }>(); // Get employee ID from URL

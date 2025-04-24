@@ -1,6 +1,6 @@
-package com.prabath_motors.backend.service.userService;
+package com.prabath_motors.backend.service.appointmentService;
 
-import com.prabath_motors.backend.dao.Appointment;
+import com.prabath_motors.backend.dao.Appointment.Appointment;
 import com.prabath_motors.backend.repository.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

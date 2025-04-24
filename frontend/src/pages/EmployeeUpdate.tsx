@@ -1,6 +1,6 @@
-import Sidebar from "../components/Sidebar";
-import EmployeeNavBar from "../components/EmployeeNavBar";
-import EmployeeEdit  from "../components/EmployeeEdit";
+import Sidebar from "../modules/admin/components/Sidebar";
+import EmployeeNavBar from "../modules/admin/components/AdminEmployee-pages/EmployeeNavBar";
+import EmployeeEdit  from "../modules/admin/pages/AdminEmpoyeePages/EmployeeEdit";
 
 const EmployeeUpdate = () => {
   return (

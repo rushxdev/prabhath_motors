@@ -1,5 +1,5 @@
 import Sidebar from "../components/Sidebar";
-import AppointmentPage from "../modules/admin/pages/AppointmentPage";
+import AppointmentPage from "../modules/admin/pages/AdminAppointmentPages/AppointmentPage";
 import Navbar from "../modules/user/components/Navbar";
 
 const AppointmentDashboard = () => {

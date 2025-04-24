@@ -31,7 +31,7 @@ const AdminMonthlyUManager: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:8081/monthlyutilitybill/get');
+            const response = await fetch('http://localhost:8080/monthlyutilitybill/get');
             if (response.ok) {
                 const data = await response.json();
                 setMonthlyBills(data);
@@ -47,7 +47,7 @@ const AdminMonthlyUManager: React.FC = () => {
     const handleDelete = async (id: number) => {
         if (window.confirm('Are you sure you want to delete this monthly utility bill?')) {
             try {
-                const response = await fetch(`http://localhost:8081/monthlyutilitybill/delete/${id}`, {
+                const response = await fetch(`http://localhost:8080/monthlyutilitybill/delete/${id}`, {
                     method: 'DELETE',
                 });
                 if (response.ok) {

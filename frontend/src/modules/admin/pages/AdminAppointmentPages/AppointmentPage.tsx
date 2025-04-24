@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Appointment } from "../../../types/Appointment";
+import { Appointment } from "../../../../types/Appointment";
 import {
   deleteAppointment,
   getAllAppointments,
-} from "../../../services/appointmentService";
+} from "../../../../services/appointmentService";
 
 import { useNavigate } from "react-router-dom";
 

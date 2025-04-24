@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Vehicle } from "../../../types/Vehicle";
-import Navbar from "../components/Navbar";
-import { addVehicle } from "../../../services/vehicleService";
+import { Vehicle } from "../../../../types/Vehicle";
+import Navbar from "../../components/Navbar";
+import { addVehicle } from "../../../../services/vehicleService";
 import { useNavigate } from "react-router-dom";
 
 const VehicleRegistration = () => {

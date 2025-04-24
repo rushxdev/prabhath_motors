@@ -3,9 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   getAppointmentById,
   updateAppointment,
-} from "../../../services/appointmentService";
-import Navbar from "../../user/components/Navbar";
-import { useAppointment } from "../../../hooks/useAppointment"; // Adjust import path as needed
+} from "../../../../services/appointmentService";
+import Navbar from "../../../user/components/Navbar";
+import { useAppointment } from "../../../../hooks/useAppointment"; // Adjust import path as needed
 
 const timeSlots = [
   "09:00", "10:00", "11:00", "12:00", "13:00", 
