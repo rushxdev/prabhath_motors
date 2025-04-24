@@ -1,6 +1,6 @@
-import EmployeeForm from "../modules/admin/components/AdminEmployee-pages/EmployeeForm";
-import Sidebar from "../modules/admin/components/Sidebar";
-import EmployeeNavBar from "../modules/admin/components/AdminEmployee-pages/EmployeeNavBar";
+import EmployeeForm from "../../components/AdminEmployee-pages/EmployeeForm";
+import Sidebar from "../../components/Sidebar";
+import EmployeeNavBar from "../../components/AdminEmployee-pages/EmployeeNavBar";
 
 const EmployeeDashboard = () => {
   return (

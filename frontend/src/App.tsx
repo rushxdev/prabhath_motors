@@ -7,10 +7,9 @@ import AboutPage from "./modules/user/pages/AboutPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
 //Appointment routes
-import CustomerDashboard from "./modules/user/pages/UserAppointmentPages/CustomerDashboard";
-import AppointmentPage from "./modules/admin/pages/AdminAppointmentPages/AppointmentPage";
 import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
-import AppointmentUpdate from "./modules/admin/pages/AdminAppointmentPages/AppointmentUpdate";
+import AppointmentPage from "./modules/admin/pages/AdminAppointmemtPages/AppointmentPage";
+import AppointmentUpdate from "./modules/admin/pages/AdminAppointmemtPages/AppointmentUpdate";
 //Items, Stocks, Supplier, Order routes
 import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsManager";
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
@@ -19,14 +18,15 @@ import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminS
 // Utility routes
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
+// vehicle routes
+import VehicleDashboard from "./modules/admin/layout/VehicleLayouts/VehicleDashboard";
 import VehicleRegistration from "./modules/user/pages/UserVehiclePages/VehicleRegistration";
-import VehiclePage from "./modules/admin/pages/AdminVehiclePages/VehiclePage"
 import VehicleUpdate from "./modules/admin/pages/AdminVehiclePages/VehicleUpdate";
-import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";//Utilityform
+import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
 //Employee routes
-import EmployeeDashboard from "./pages/EmployeeDashboard";
-import EmployeeShow from "./pages/EmployeeShow";
-import EmployeeUpdate from "./pages/EmployeeUpdate";
+import EmployeeDashboard from "./modules/admin/layout/EmployeeLayouts/EmployeeDashboard";
+import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
+import EmployeeUpdate from "./modules/admin/layout/EmployeeLayouts/EmployeeUpdate";
 
 
 
@@ -46,11 +46,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           {/*Vehicle routes*/}
-            <Route path="vehicle-registration" element={<VehicleRegistration />} />
-            <Route path="vehicle-page" element={<VehiclePage />} />
+            <Route path="vehicle-page" element={<VehicleDashboard />} />
+            <Route path="vehicle-page/vehicle-registration" element={<VehicleRegistration />} />
             <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
-            <Route path="/" element={<CustomerDashboard />} />
-          
         {/* --------------------User Routes end-----------------*/}
 
 
@@ -74,7 +72,6 @@ function App() {
           <Route path="appointment-list" element={<AppointmentPage />} />
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
-
         {/* --------------------Admin Routes end--------------- */}
         </Route>
       </Routes>

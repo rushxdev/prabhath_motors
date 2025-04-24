@@ -112,14 +112,14 @@ const VehicleRegistration = () => {
       ownerName: validateOwnerName(vehicle.ownerName),
       contactNo: validateContactNo(vehicle.contactNo),
       mileage: validateMileage(vehicle.mileage),
-      lastUpdate: validateLastUpdate(vehicle.lastUpdate),
+      // lastUpdate: validateLastUpdate(vehicle.lastUpdate),
     };
 
-    if (Object.values(vehicleErrors).some((error) => error !== "")) {
-      setErrors(vehicleErrors);
-      alert("Please fix the errors in the form.");
-      return;
-    }
+    // if (Object.values(vehicleErrors).some((error) => error !== "")) {
+    //   setErrors(vehicleErrors);
+    //   alert("Please fix the errors in the form.");
+    //   return;
+    // }
 
     try {
       await addVehicle({
@@ -137,7 +137,7 @@ const VehicleRegistration = () => {
         mileage: 0,
         lastUpdate: getCurrentTime(), // Reset to current time after successful submission
       });
-      navigate("/");
+      navigate("/admin/vehicle-page");
     } catch (error) {
       console.error("Error while registering vehicle", error);
       alert("Failed to register vehicle");
