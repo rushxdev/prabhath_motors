@@ -137,7 +137,7 @@ const VehicleRegistration = () => {
         mileage: 0,
         lastUpdate: getCurrentTime(), // Reset to current time after successful submission
       });
-      navigate("/");
+      navigate("/vehicle-page"); // Redirect to vehicle page after successful registration
     } catch (error) {
       console.error("Error while registering vehicle", error);
       alert("Failed to register vehicle");
