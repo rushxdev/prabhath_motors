@@ -10,7 +10,8 @@ import java.util.Optional;
 public interface EmployeeService {
     Optional<Employee> getEmployeeById(int empId);
     Employee addEmployee(Employee employee);
-    Employee updateEmployee(Employee employee);
+    Employee updateEmployee(int empId, Employee employee);
+
     void deleteEmployee(int empId);
     List<Employee> getAllEmployees();
 }
