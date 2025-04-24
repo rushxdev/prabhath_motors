@@ -49,11 +49,8 @@ function App() {
             <Route path="vehicle-registration" element={<VehicleRegistration />} />
             <Route path="vehicle-page" element={<VehiclePage />} />
             <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
-          {/*Appointment routes*/}
-          <Route path="/" element={<CustomerDashboard />} />
-          <Route path="/appointment-list" element={<AppointmentPage />} />
-          <Route path="/appointment-list/book-appointment" element={<BookAppointment />} />
-          <Route path="/appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+            <Route path="/" element={<CustomerDashboard />} />
+          
         {/* --------------------User Routes end-----------------*/}
 
 
@@ -73,6 +70,11 @@ function App() {
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
+          {/*Appointment routes*/}
+          <Route path="appointment-list" element={<AppointmentPage />} />
+          <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
+          <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+
         {/* --------------------Admin Routes end--------------- */}
         </Route>
       </Routes>
