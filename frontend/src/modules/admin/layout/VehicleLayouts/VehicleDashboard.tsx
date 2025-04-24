@@ -1,7 +1,7 @@
 
-import Navbar from "../modules/user/components/Navbar";
-import Sidebar from "../components/Sidebar";
-import VehiclePage from "../modules/admin/pages/VehiclePage";
+import Navbar from "../../../user/components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import VehiclePage from "../../pages/AdminVehiclePages/VehiclePage";
 
 const VehicleDashboard = () => {
   return (
