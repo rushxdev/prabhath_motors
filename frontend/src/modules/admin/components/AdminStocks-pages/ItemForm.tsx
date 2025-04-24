@@ -528,7 +528,6 @@ const ItemForm: React.FC<ItemFormProps> = ({
                     />
                     {sellPriceError && <p className="text-red-500 text-sm mt-1">{sellPriceError}</p>}
 
-ev
                 </div>
 
                 <div>
