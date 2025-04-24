@@ -8,7 +8,7 @@ import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
 //Appointment routes
 import CustomerDashboard from "./modules/user/pages/UserAppointmentPages/CustomerDashboard";
-import AppointmentDashboard from "./pages/AppointmentDashboard";
+import AppointmentPage from "./modules/admin/pages/AdminAppointmentPages/AppointmentPage";
 import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
 import AppointmentUpdate from "./modules/admin/pages/AdminAppointmentPages/AppointmentUpdate";
 //Items, Stocks, Supplier, Order routes
@@ -27,6 +27,7 @@ import UtilityBillForm from "./modules/admin/components/AdminUtility-page/Utilit
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeShow from "./pages/EmployeeShow";
 import EmployeeUpdate from "./pages/EmployeeUpdate";
+
 
 
 function App() {
@@ -70,7 +71,7 @@ function App() {
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
           {/*Appointment routes*/}
-          <Route path="appointment-list" element={<AppointmentDashboard />} />
+          <Route path="appointment-list" element={<AppointmentPage />} />
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
 
