@@ -1,4 +1,4 @@
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../modules/admin/components/Sidebar";
 import AppointmentPage from "../modules/admin/pages/AdminAppointmentPages/AppointmentPage";
 import Navbar from "../modules/user/components/Navbar";
 
