@@ -8,8 +8,8 @@ import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
 //Appointment routes
 import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
-import AppointmentPage from "./modules/admin/pages/AdminAppointmemtPages/AppointmentPage";
-import AppointmentUpdate from "./modules/admin/pages/AdminAppointmemtPages/AppointmentUpdate";
+import AppointmentPage from "./modules/admin/pages/AdminAppointmentPages/AppointmentPage";
+import AppointmentUpdate from "./modules/admin/pages/AdminAppointmentPages/AppointmentUpdate";
 //Items, Stocks, Supplier, Order routes
 import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsManager";
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
@@ -27,6 +27,8 @@ import UtilityBillForm from "./modules/admin/components/AdminUtility-page/Utilit
 import EmployeeDashboard from "./modules/admin/layout/EmployeeLayouts/EmployeeDashboard";
 import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
 import EmployeeUpdate from "./modules/admin/layout/EmployeeLayouts/EmployeeUpdate";
+
+
 
 function App() {
   useEffect(() => {
