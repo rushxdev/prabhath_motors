@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getVehicleById, updateVehicle } from "../../../services/vehicleService";
-import Navbar from "../../user/components/Navbar";
-import { Vehicle } from "../../../types/Vehicle"; // Ensure you're importing the Vehicle type
+import { getVehicleById, updateVehicle } from "../../../../services/vehicleService";
+import Navbar from "../../../user/components/Navbar";
+import { Vehicle } from "../../../../types/Vehicle"; // Ensure you're importing the Vehicle type
 
 const VehicleUpdate = () => {
   const { id } = useParams<{ id: string }>();

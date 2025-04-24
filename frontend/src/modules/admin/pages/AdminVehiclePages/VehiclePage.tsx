@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Vehicle } from "../../../types/Vehicle";
-import { deleteVehicle, getAllVehicles } from "../../../services/vehicleService";
-import Navbar from "../../user/components/Navbar";
+import { Vehicle } from "../../../../types/Vehicle";
+import { deleteVehicle, getAllVehicles } from "../../../../services/vehicleService";
+import Navbar from "../../../user/components/Navbar";
 import { useNavigate } from "react-router-dom";
 
 const VehiclePage = () => {
