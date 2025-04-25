@@ -16,7 +16,10 @@ public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long jobId;
+    private Long id;
+
+    @Column(nullable = false)
+    private String jobId;
 
     @Column(nullable = false)
     private String vehicleRegistrationNumber; //auto fetch from appointment
@@ -25,13 +28,13 @@ public class Job {
     private String serviceSection;
 
     @Column(nullable = false)
-    private Long employeeId;
+    private String assignedEmployee;
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
-    private List<JobTask> tasks; //Multiple tasks assigned to a job
+    @ElementCollection
+    private List<String> tasks; //Multiple tasks assigned to a job
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
-    private List<JobSparePart> spareParts;
+    @ElementCollection
+    private List<String> spareParts;
 
     @Column(nullable = false)
     private String status; //Ongoing or Done

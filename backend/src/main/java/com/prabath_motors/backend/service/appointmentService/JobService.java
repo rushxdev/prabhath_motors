@@ -6,10 +6,9 @@ import java.util.List;
 
 public interface JobService {
 
-    List<Job> getAllJobs();
     Job createJob(Job job);
-    Job updateJob(Long jobId, Job updateJob);
-    List<Job> getOngoingJobs();
-    List<Job> getDoneJobs();
-    void markJobAsDone(Long jobId);
+    Job updateJob(Long jobId, Job updatedJob);
+    List<Job> getAllOngoingJobs();
+    List<Job> getAllDoneJobs();
+    void markJobAsDone(Long id);
 }
