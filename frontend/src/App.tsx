@@ -6,11 +6,12 @@ import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
-//Appointment routes
+//Appointment, Tasks routes
 import CustomerDashboard from "./modules/user/pages/UserAppointmentPages/CustomerDashboard";
 import AppointmentPage from "./modules/admin/pages/AdminAppointmentPages/AppointmentPage";
 import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
 import AppointmentUpdate from "./modules/admin/pages/AdminAppointmentPages/AppointmentUpdate";
+import TaskList from "./modules/admin/pages/AdminAppointmentPages/TaskList";
 //Items, Stocks, Supplier, Order routes
 import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsManager";
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
@@ -27,6 +28,7 @@ import UtilityBillForm from "./modules/admin/components/AdminUtility-page/Utilit
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeShow from "./pages/EmployeeShow";
 import EmployeeUpdate from "./pages/EmployeeUpdate";
+
 
 
 
@@ -70,10 +72,11 @@ function App() {
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
-          {/*Appointment routes*/}
+          {/*Appointment, Tasks routes*/}
           <Route path="appointment-list" element={<AppointmentPage />} />
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+          <Route path="task-list" element={<TaskList />} />
 
         {/* --------------------Admin Routes end--------------- */}
         </Route>
