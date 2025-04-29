@@ -1,0 +1,77 @@
+[33mcommit fbb68c6b8f597ab568c4392afbe4a6d6b03f9e2f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/appointMgt[m[33m, [m[1;32mft/job-v1.1[m[33m, [m[1;32mft/job-v1[m[33m, [m[1;32mft/cus-ui[m[33m, [m[1;32mft/admin-ui[m[33m)[m
+Author: dilumhapugoda <dilumhapugoda@gmail.com>
+Date:   Tue Mar 25 10:34:35 2025 +0530
+
+    job-forgotton where the hell I stopped
+
+[33mcommit 89a294ea1d6e9dd843ed9a11ed579c9dc456bce7[m
+Author: dilumhapugoda <dilumhapugoda@gmail.com>
+Date:   Sun Mar 23 14:02:12 2025 +0530
+
+    appointment admin ui done
+
+[33mcommit d8e5ea1ac895f3c81b7bdddba951e6a0faa867ab[m
+Author: dilumhapugoda <dilumhapugoda@gmail.com>
+Date:   Sat Mar 22 17:57:02 2025 +0530
+
+    admin appointment data retrieved
+
+[33mcommit ed5741773ef81fb86da27e7426a6563c71178646[m
+Author: dilumhapugoda <dilumhapugoda@gmail.com>
+Date:   Sat Mar 22 16:20:04 2025 +0530
+
+    pages moved
+
+[33mcommit 789106ec1a35f432036981ed4195ff28778131bc[m
+Author: dilumhapugoda <dilumhapugoda@gmail.com>
+Date:   Sat Mar 22 15:24:00 2025 +0530
+
+    add cross origins
+
+[33mcommit 3202f900282193567c67f71cda2c4fee838f618d[m
+Author: dilumhapugoda <dilumhapugoda@gmail.com>
+Date:   Sat Mar 22 15:23:29 2025 +0530
+
+    simple cus ui and cross
+
+[33mcommit ff32c43b573b4dc7f25a96c00068399993d9cb66[m
+Author: dilumhapugoda <dilumhapugoda@gmail.com>
+Date:   Thu Mar 20 23:24:39 2025 +0530
+
+    Service implemented
+
+[33mcommit fb812692fd3fd176f560431e124569790615563e[m[33m ([m[1;31morigin/feature/appointMgt[m[33m)[m
+Author: dilumhapugoda <dilumhapugoda@gmail.com>
+Date:   Thu Mar 20 13:10:20 2025 +0530
+
+    crud-tested
+
+[33mcommit febbaf6261a57736118e0c69a2ae99725aafe25c[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature/vehicleMgt[m[33m, [m[1;31morigin/feature/utilityMgt[m[33m, [m[1;31morigin/feature/stockMgt[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: bf06945 34fdc95
+Author: Rashmika Jayanath <rashmikapabasara@gmail.com>
+Date:   Mon Feb 24 16:41:15 2025 +0530
+
+    Merge pull request #2 from rushxdev/Develop
+    
+    Merge pull request #1 from rushxdev/main
+
+[33mcommit 34fdc9594e6a9c0eb83db8825bb5b969625791df[m
+Merge: 0010182 bf06945
+Author: Rashmika Jayanath <rashmikapabasara@gmail.com>
+Date:   Mon Feb 24 16:34:05 2025 +0530
+
+    Merge pull request #1 from rushxdev/main
+    
+    front-end-configurations
+
+[33mcommit bf06945c77d31ea901abe5fd9c486cd3ddc6cf42[m
+Author: rushxdev <rashmikapabasara@gmail.com>
+Date:   Mon Feb 24 16:23:44 2025 +0530
+
+    front-end-configurations
+
+[33mcommit 001018267b7bd77d382a16280b2cfa937cc1b05b[m
+Author: rushxdev <rashmikapabasara@gmail.com>
+Date:   Tue Feb 18 23:51:50 2025 +0530
+
+    initial commit
