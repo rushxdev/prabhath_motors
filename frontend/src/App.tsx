@@ -19,8 +19,6 @@ import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUt
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
 //Utilityform
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
-
-import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeList from "./components/EmployeeList"
 
 
@@ -61,7 +59,6 @@ function App() {
           <Route path="utility/add" element={<UtilityBillForm />} />
           <Route path="utility/edit/:id" element={<UtilityBillForm />} />
 
-          <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/get" element={<EmployeeList/>} />
           {/*utility routes- for the form*/}
 
