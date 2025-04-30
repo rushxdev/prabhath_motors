@@ -227,10 +227,21 @@ const UtilityBillForm: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    // Special handling for Meter_No in Water billing type
+    if (name === "Meter_No" && billingType === "Water") {
+      // Only allow digits for water meter numbers
+      const digitsOnly = value.replace(/\D/g, "");
+      setFormValues((prev) => ({
+        ...prev,
+        [name]: digitsOnly,
+      }));
+    } else {
+      setFormValues((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   // Handle billing type change
@@ -241,7 +252,12 @@ const UtilityBillForm: React.FC = () => {
       ...prev,
       Type: type,
       Billing_Acc_No: "",
+      // Reset Meter_No when switching billing types to avoid validation errors
+      Meter_No: "",
     }));
+
+    // Clear all errors when switching billing types
+    setErrors({});
 
     if (type === "Water") {
       setWaterBillingGroups({
@@ -250,6 +266,20 @@ const UtilityBillForm: React.FC = () => {
         group3: "",
         group4: "",
         group5: "",
+      });
+    } else {
+      // Reset electricity digits when switching to Electricity
+      setElectricityBillingDigits({
+        digit1: "",
+        digit2: "",
+        digit3: "",
+        digit4: "",
+        digit5: "",
+        digit6: "",
+        digit7: "",
+        digit8: "",
+        digit9: "",
+        digit10: "",
       });
     }
   };

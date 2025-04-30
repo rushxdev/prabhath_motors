@@ -7,7 +7,7 @@ import ItemForm from "../../components/AdminStocks-pages/ItemForm";
 import { StockItem, Stock_In, ItemCategory } from "../../../../types/Stock";
 import { itemService } from '../../../../services/stockItemService';
 import { ErrorBoundary } from 'react-error-boundary';
-import Sidebar from "../../../../components/Sidebar";
+import Sidebar from "../../components/Sidebar";
 
 interface ErrorFallbackProps {
     error: Error;
