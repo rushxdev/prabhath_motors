@@ -362,7 +362,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         <Button
                             type="button"
                             onClick={() => setIsScanning(true)}
-                            className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark"
+                            className="bg-primary text-black px-4 py-2 rounded-md hover:bg-primary-dark"
                         >
                             Scan
                         </Button>
@@ -472,7 +472,6 @@ const ItemForm: React.FC<ItemFormProps> = ({
                     />
                     {sellPriceError && <p className="text-red-500 text-sm mt-1">{sellPriceError}</p>}
 
-ev
                 </div>
 
                 <div>
