@@ -13,11 +13,10 @@ import java.util.List;
 public class ReqRes {
     private int statusCode;
     private String message;
-    private Object data;
     private String error;
     private String token;
     private String refreshToken;
-    private String userId;
+    private String expirationTime;
     private String userName;
     private String userPassword;
     private String userEmail;
