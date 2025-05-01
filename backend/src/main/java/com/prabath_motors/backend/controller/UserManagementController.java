@@ -1,6 +1,5 @@
 package com.prabath_motors.backend.controller;
 
-import com.prabath_motors.backend.dao.User;
 import com.prabath_motors.backend.dto.ReqRes;
 import com.prabath_motors.backend.service.UsersManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
