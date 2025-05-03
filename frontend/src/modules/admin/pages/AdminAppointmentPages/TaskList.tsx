@@ -1,112 +1,101 @@
-import { useEffect, useState } from "react";
-import { Appointment } from "../../../../types/Appointment";
-import {
-  deleteAppointment,
-  getAllAppointments,
-} from "../../../../services/appointmentService";
-
-import { useNavigate } from "react-router-dom";
-import { Button } from "@headlessui/react";
-import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/solid"; // Adjust the path if necessary
+import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import AppointLayouts from "../../layout/AppointmentLayouts/AppointLayouts";
+import React, { useEffect, useState } from "react";
+import { deleteTask, getAllTasks } from "../../../../services/taskService";
+import { Task } from "../../../../types/Task";
+import { useNavigate } from "react-router-dom";
 import Modal from "../../../../components/Model";
+import { Button } from "@headlessui/react";
 
-const AppointmentPage = () => {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [filteredAppointments, setFilteredAppointments] = useState<
-    Appointment[]
-  >([]);
+const TaskList = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  //   const [description, setDescription] = useState("");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [loading] = useState<boolean>(false);
-  const [appointmentToDelete, setAppointmentToDelete] = useState<number | null>(
-    null
-  );
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+  const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [loading] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
-  const fetchAppointments = async () => {
-    const data = await getAllAppointments();
-    setAppointments(data);
-    setFilteredAppointments(data);
+  const fetchTasks = async () => {
+    const data = await getAllTasks();
+    setTasks(data);
+    setFilteredTasks(data);
   };
 
   useEffect(() => {
-    fetchAppointments();
+    fetchTasks();
   }, []);
-
-  // Prompt to delete a utility bill
-
-  const promptDelete = (id: number) => {
-    setAppointmentToDelete(id);
-    setDeleteError(null);
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleDelete = async (id: number) => {
-    await deleteAppointment(id);
-    setIsDeleteModalOpen(false);
-    fetchAppointments();
-  };
-
-  const cancelDelete = () => {
-    setIsDeleteModalOpen(false);
-    setAppointmentToDelete(null);
-    setDeleteError(null);
-  };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
 
-    const filtered = appointments.filter((appointment) =>
-      appointment.vehicleRegistrationNo.toLowerCase().includes(value)
+    const filtered = tasks.filter((task) =>
+      task.description.toLowerCase().includes(value)
     );
 
-    setFilteredAppointments(filtered);
+    setFilteredTasks(filtered);
+  };
+
+  const promptDelete = (id: number) => {
+    setTaskToDelete(id);
+    setDeleteError(null);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    await deleteTask(id);
+    setIsDeleteModalOpen(false);
+    fetchTasks();
+  };
+
+  const cancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setTaskToDelete(null);
+    setDeleteError(null);
   };
 
   return (
     <AppointLayouts>
       <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16">
         <h2 className="text-2xl sm:text-2xl font-press font-semibold mb-4 mt-10 text-primary">
-          Manage All Appointments
+          Manage All Tasks
         </h2>
 
         <div className="flex items-center justify-between mt-12">
           <input
             type="text"
-            placeholder="Search by Vehicle Registration Number"
+            placeholder="Search Tasks"
             value={searchTerm}
             onChange={handleSearch}
             className="w-full sm:w-1/2 p-2 border border-gray-500 rounded-md mb-4 bg-transparent"
           />
-          <Button
+          <button
             className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
-            onClick={() => navigate("book-appointment")}
+            //   onClick={}
           >
             <PlusIcon className="w-5 h-5 mr-2" />
-            Add Appointment
-          </Button>
+            Add Task
+          </button>
         </div>
 
-        {/* Appointment Table */}
+        {/* Task Table */}
+
         <div className="mt-8 overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Vehicle Reg. No
+                  Task ID
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
+                  Description
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Time
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Mileage
+                  Cost (Rs.)
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -114,46 +103,40 @@ const AppointmentPage = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredAppointments.length === 0 ? (
+              {filteredTasks.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
                     className="px-6 py-4 text-center text-gray-500"
                   >
-                    No appointments found
+                    No tasks found
                   </td>
                 </tr>
               ) : (
-                filteredAppointments.map((appointment) => (
-                  <tr key={appointment.id}>
+                filteredTasks.map((task) => (
+                  <tr key={task.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">{task.id}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {appointment.vehicleRegistrationNo}
+                      {task.description}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {appointment.date}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {appointment.time}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {appointment.mileage}
+                      {task.cost}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() =>
-                            navigate(`update-appointment/${appointment.id}`)
-                          }
+                          onClick={() => navigate(`edit-task/${task.id}`)}
                           className="text-blue-600 hover:text-blue-800"
-                          title="Reschedule"
+                          title="Edit"
                         >
                           <PencilIcon className="w-5 h-5" />
                         </button>
                         <button
-                          onClick={() => promptDelete(appointment.id!)}
+                          onClick={() => promptDelete(task.id!)}
                           className="text-red-600 hover:text-red-900"
-                          title="Remove"
+                          title="Delete"
                         >
+                          {" "}
                           <TrashIcon className="w-5 h-5" />
                         </button>
                       </div>
@@ -167,6 +150,7 @@ const AppointmentPage = () => {
       </div>
 
       {/* Delete Confirmation Modal */}
+
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={cancelDelete}
@@ -195,7 +179,7 @@ const AppointmentPage = () => {
             {!deleteError && (
               <Button
                 type="button"
-                onClick={() => handleDelete(appointmentToDelete!)}
+                onClick={() => handleDelete(taskToDelete!)}
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                 disabled={loading}
               >
@@ -209,4 +193,4 @@ const AppointmentPage = () => {
   );
 };
 
-export default AppointmentPage;
+export default TaskList;
