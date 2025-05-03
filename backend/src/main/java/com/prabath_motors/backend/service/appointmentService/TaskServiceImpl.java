@@ -33,6 +33,7 @@ public class TaskServiceImpl implements TaskService{
     public Task updateTask(Long id, Task taskDetails) {
         return taskRepository.findById(id).map(task -> {
             task.setDescription(taskDetails.getDescription());
+            task.setCost(taskDetails.getCost());
             return taskRepository.save(task);
         }).orElseThrow(() -> new RuntimeException("Task not found"));
     }
