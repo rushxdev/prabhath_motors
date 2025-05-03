@@ -1,6 +1,6 @@
 import React from "react";
 import UtilityNav from "./UtilityNavigation";
-import Sidebar from "../../../../components/Sidebar";
+import Sidebar from "../../components/Sidebar";
 
 interface StockLayoutProps {
   children: React.ReactNode;
