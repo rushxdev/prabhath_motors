@@ -28,9 +28,9 @@ import UtilityBillForm from "./modules/admin/components/AdminUtility-page/Utilit
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeShow from "./pages/EmployeeShow";
 import EmployeeUpdate from "./pages/EmployeeUpdate";
-
-
-
+//Job routes
+import JobForm from "./modules/admin/components/JobForm";
+import JobList from "./modules/admin/pages/JobList";
 
 function App() {
   useEffect(() => {
@@ -77,8 +77,9 @@ function App() {
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
           <Route path="task-list" element={<TaskList />} />
-
-        {/* --------------------Admin Routes end--------------- */}
+          {/*Job routes*/}
+          <Route path="job-form" element={<JobForm />} />
+          <Route path="jobs" element={<JobList />} />
         </Route>
       </Routes>
     </Router>

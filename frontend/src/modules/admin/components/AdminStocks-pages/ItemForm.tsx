@@ -182,7 +182,8 @@ const ItemForm: React.FC<ItemFormProps> = ({
             ...prev,
             [name]: name.includes('itemCtgryID') || name.includes('Id') || 
                     name.includes('Level') || name.includes('Price') || 
-                    name.includes('No') || name.includes('Available')
+                    name.includes('No') || name.includes('Available') ||
+                    name === 'itemBarcode' // Add itemBarcode to the list of numeric fields
                     ? Number(value) : value
         }));
     };
@@ -472,7 +473,6 @@ const ItemForm: React.FC<ItemFormProps> = ({
                     />
                     {sellPriceError && <p className="text-red-500 text-sm mt-1">{sellPriceError}</p>}
 
-ev
                 </div>
 
                 <div>

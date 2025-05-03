@@ -82,7 +82,7 @@ const VehiclePage = () => {
                 <td className="border p-2 flex justify-start space-x-2">
                   <button
                     className="bg-green-500 text-white px-3 py-1 rounded mr-2"
-                    onClick={() => navigate(`update-vehicle/${vehicle.id}`)}
+                    onClick={() => navigate("/admin/job-form", { state: { vehicleId: vehicle.id } })}
                   >
                     Assign Job
                   </button>

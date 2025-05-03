@@ -1,5 +1,6 @@
 import { apiClient } from '../axios.config';
 import { StockItem, ItemCategory, Stock_In } from '../types/Stock';
+import { AxiosError } from 'axios';
 
 class ItemService {
     private readonly baseUrl = '/item';
@@ -37,8 +38,22 @@ class ItemService {
     }
 
     async getAllCategories(): Promise<ItemCategory[]> {
-        const response = await apiClient.get<ItemCategory[]>(`${this.categoryUrl}/get`);
-        return response.data;
+        try {
+            console.log('Fetching categories from:', `${this.categoryUrl}/get`);
+            const response = await apiClient.get<ItemCategory[]>(`${this.categoryUrl}/get`);
+            console.log('Categories response:', response);
+            return response.data;
+        } catch (error) {
+            const axiosError = error as AxiosError;
+            console.error('Error in getAllCategories:', axiosError);
+            console.error('Error details:', {
+                message: axiosError.message,
+                status: axiosError.response?.status,
+                data: axiosError.response?.data,
+                config: axiosError.config
+            });
+            throw error;
+        }
     }
 }
 
