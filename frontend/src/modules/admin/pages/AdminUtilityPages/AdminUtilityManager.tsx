@@ -52,7 +52,7 @@ const AdminUtilityManager: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("http://localhost:8081/utilitybill/get");
+      const response = await axios.get("http://localhost:8080/utilitybill/get");
       if (response.data) {
         setUtilities(response.data);
       }
@@ -68,7 +68,7 @@ const AdminUtilityManager: React.FC = () => {
     setIsLoadingMonthlyBills(true);
     try {
       const response = await axios.get(
-        "http://localhost:8081/monthlyutilitybill/get"
+        "http://localhost:8080/monthlyutilitybill/get"
       );
       if (response.data) {
         setMonthlyBills(response.data);
@@ -121,7 +121,7 @@ const AdminUtilityManager: React.FC = () => {
 
       // Proceed with deletion
       const response = await axios.delete(
-        `http://localhost:8081/utilitybill/delete/${utilityToDelete}`
+        `http://localhost:8080/utilitybill/delete/${utilityToDelete}`
       );
 
       if (response.data) {
