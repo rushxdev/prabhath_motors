@@ -5,8 +5,8 @@ const StockNav: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="sticky top-0 z-50 stocknav w-full bg-black text-white text-center py-5 shadow-md">
-        <div className="container mx-auto grid grid-cols-4 gap-4">
+    <div className="stocknav container mx-auto bg-black text-white text-center py-5">
+        <div className="grid grid-cols-4 gap-4">
             {/* 1st button */}
             <div 
               className="text-center space-y-2 cursor-pointer hover:bg-gray-800 p-2 rounded"

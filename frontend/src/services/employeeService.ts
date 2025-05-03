@@ -1,30 +1,57 @@
-import axios from 'axios';
-import { Employee } from '../types/Employee';
+import axios from "axios";
+import { Employee } from "../types/Employee";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/employees';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api/dashboard/employee";
 
-export const employeeService = {
-  getEmployees: async (): Promise<Employee[]> => {
-    const { data } = await axios.get<Employee[]>(API_BASE_URL);
-    return data;
+const employeeService = {
+  getAllEmployees: async (): Promise<Employee[]> => {
+    try {
+      const response = await axios.get<Employee[]>(`${API_BASE_URL}/getAll`);
+      return response.data;
+    } catch (error) {
+      console.error("Error while fetching employees", error);
+      throw error;
+    }
   },
 
   getEmployeeById: async (id: number): Promise<Employee> => {
-    const { data } = await axios.get<Employee>(`${API_BASE_URL}/${id}`);
-    return data;
+    try {
+      const response = await axios.get<Employee>(`${API_BASE_URL}/get/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error while fetching employee by ID", error);
+      throw error;
+    }
   },
 
-  createEmployee: async (employee: Omit<Employee, 'empId'>): Promise<Employee> => {
-    const { data } = await axios.post<Employee>(API_BASE_URL, employee);
-    return data;
+  addEmployee: async (employee: Omit<Employee, "empId">): Promise<Employee> => {
+    try {
+      const response = await axios.post<Employee>(`${API_BASE_URL}/add`, employee);
+      return response.data;
+    } catch (error) {
+      console.error("Error while adding employee", error);
+      throw error;
+    }
   },
 
   updateEmployee: async (id: number, employee: Employee): Promise<Employee> => {
-    const { data } = await axios.put<Employee>(`${API_BASE_URL}/${id}`, employee);
-    return data;
+    try {
+      const response = await axios.put<Employee>(`${API_BASE_URL}/update/${id}`, employee);
+      return response.data;
+    } catch (error) {
+      console.error("Error while updating employee", error);
+      throw error;
+    }
   },
 
   deleteEmployee: async (id: number): Promise<void> => {
-    await axios.delete(`${API_BASE_URL}/${id}`);
-  }
+    try {
+      await axios.delete(`${API_BASE_URL}/delete/${id}`);
+    } catch (error) {
+      console.error("Error while deleting employee", error);
+      throw error;
+    }
+  },
 };
+
+export default employeeService;

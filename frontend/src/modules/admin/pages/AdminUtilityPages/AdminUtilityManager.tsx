@@ -157,7 +157,7 @@ const AdminUtilityManager: React.FC = () => {
     <UtilityLayout>
       <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16">
         <h2 className="text-2xl sm:text-2xl font-press font-semibold mb-4 mt-10 text-primary">
-          Manage All Utility Bills
+          Manage Utility Bills General Details
         </h2>
         <div className="flex items-center justify-between mt-12">
           <input
