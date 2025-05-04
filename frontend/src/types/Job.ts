@@ -1,12 +1,18 @@
+export  interface NamedCostItem {
+    name: string;
+    cost: number;
+}
+
 export interface Job {
     id?: number;
     jobId: string;
     vehicleRegistrationNumber: string;
     serviceSection: ServiceSection;
     assignedEmployee: string;
-    tasks: string[];
-    spareParts: string[];
+    tasks: NamedCostItem[];
+    spareParts: NamedCostItem[];
     status: string;
+    totalCost?: number;
 }
 
 export enum ServiceSection {

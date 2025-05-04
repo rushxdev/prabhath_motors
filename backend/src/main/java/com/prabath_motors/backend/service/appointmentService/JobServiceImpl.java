@@ -13,12 +13,26 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private JobRepository jobRepo;
 
+    public double calculateTotalCost(Job job) {
+        double taskCost = job.getTasks().stream()
+                .mapToDouble(item -> item.getCost())
+                .sum();
+
+        double sparePartCost = job.getSpareParts().stream()
+                .mapToDouble(item -> item.getCost())
+                .sum();
+
+        return taskCost + sparePartCost;
+    }
 
     @Override
     public Job createJob(Job job) {
         job.setStatus("Ongoing");
+        job.setTotalCost(calculateTotalCost(job));
         return jobRepo.save(job);
     }
+
+
 
     @Override
     public Job updateJob(Long id, Job updatedJob) {
@@ -28,6 +42,7 @@ public class JobServiceImpl implements JobService {
         existing.setSpareParts(updatedJob.getSpareParts());
         existing.setServiceSection(updatedJob.getServiceSection());
         existing.setAssignedEmployee(updatedJob.getAssignedEmployee());
+        existing.setTotalCost(calculateTotalCost(updatedJob));
         return jobRepo.save(existing);
     }
 

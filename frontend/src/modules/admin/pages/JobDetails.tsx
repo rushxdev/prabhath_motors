@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { Job, JobStatus } from '../../../types/Job';
+import { Job, JobStatus, NamedCostItem } from '../../../types/Job';
 import { Task } from '../../../types/Task';
 import { StockItem } from '../../../types/Stock';
 import { jobService } from '../../../services/jobService';
@@ -63,6 +63,10 @@ const JobDetails: React.FC = () => {
   const [filteredSpareParts, setFilteredSpareParts] = useState<StockItem[]>([]);
   const [showSparePartDropdown, setShowSparePartDropdown] = useState<boolean>(false);
   
+  // Add new state for saving
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   // Fetch job details and its tasks
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -537,6 +541,55 @@ const JobDetails: React.FC = () => {
     setSparePartDeleteError(null);
   };
 
+  const calculateTotalCost = (): number => {
+    const tasksTotal = tasks.reduce((sum, task) => sum + task.cost, 0);
+    const sparePartsTotal = spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0);
+    return tasksTotal + sparePartsTotal;
+  };
+
+  const handleSaveJob = async () => {
+    if (!job) return;
+
+    setIsSaving(true);
+    setSaveError(null);
+
+    try {
+      // Convert tasks and spare parts to NamedCostItem format
+      const jobTasks: NamedCostItem[] = tasks.map(task => ({
+        name: task.description,
+        cost: task.cost
+      }));
+
+      const jobSpareParts: NamedCostItem[] = spareParts.map(part => ({
+        name: part.itemName,
+        cost: part.qtyAvailable * part.unitPrice
+      }));
+
+      // Prepare the job data for saving
+      const jobData = {
+        jobId: job.jobId,
+        vehicleRegistrationNumber: job.vehicleRegistrationNumber,
+        serviceSection: job.serviceSection,
+        assignedEmployee: job.assignedEmployee,
+        tasks: jobTasks,
+        spareParts: jobSpareParts,
+        status: job.status,
+        totalCost: calculateTotalCost()
+      };
+
+      // Save the job
+      await jobService.updateJob(job.jobId, jobData);
+      
+      // Show success message
+      alert('Job saved successfully!');
+    } catch (err) {
+      console.error('Error saving job:', err);
+      setSaveError('Failed to save job. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <AppointLayouts>
@@ -571,13 +624,35 @@ const JobDetails: React.FC = () => {
       <div className="max-w-7xl mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Job Details</h1>
-          <button 
-            onClick={() => navigate('/admin/jobs')}
-            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-          >
-            Back to Job List
-          </button>
+          <div className="flex space-x-4">
+            <button 
+              onClick={() => navigate('/admin/jobs')}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+            >
+              Back to Job List
+            </button>
+            <button
+              onClick={handleSaveJob}
+              disabled={isSaving}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center min-w-[100px]"
+            >
+              {isSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+                  Saving...
+                </>
+              ) : (
+                "Save Job"
+              )}
+            </button>
+          </div>
         </div>
+
+        {saveError && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <p className="font-medium">{saveError}</p>
+          </div>
+        )}
 
         {/* Job Information Card */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -764,6 +839,16 @@ const JobDetails: React.FC = () => {
           <div className="mt-6 text-right">
             <p className="text-lg font-medium">
               Total Cost: Rs. {spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0).toFixed(2)}
+            </p>
+          </div>
+        </div>
+
+        {/* Total Cost Section */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-medium">Total Cost</h2>
+            <p className="text-2xl font-bold text-blue-600">
+              Rs. {calculateTotalCost().toFixed(2)}
             </p>
           </div>
         </div>
