@@ -31,6 +31,7 @@ import EmployeeUpdate from "./pages/EmployeeUpdate";
 //Job routes
 import JobForm from "./modules/admin/components/JobForm";
 import JobList from "./modules/admin/pages/JobList";
+import JobDetails from "./modules/admin/pages/JobDetails";
 
 function App() {
   useEffect(() => {
@@ -80,6 +81,7 @@ function App() {
           {/*Job routes*/}
           <Route path="job-form" element={<JobForm />} />
           <Route path="jobs" element={<JobList />} />
+          <Route path="jobs/:id" element={<JobDetails />} />
         </Route>
       </Routes>
     </Router>

@@ -29,27 +29,6 @@ export enum TaskStatus {
     COMPLETED = "COMPLETED"
 }
 
-export interface Task {
-    id: number;
-    description: string;
-    cost: number;
-}
 
-export interface SparePart {
-    id: number;
-    name: string;
-    quantity: number;
-    price: number;
-}
 
-export interface Employee {
-    empId: number;
-    firstname: string;
-    lastname: string;
-    role: string;
-    contact: string;
-    nic: string;
-    dob: string;
-    gender: string;
-    salary: number;
-} 
+ 

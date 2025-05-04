@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { Job, Task, SparePart } from '../types/Job';
+import { Job } from '../types/Job';
+import { Task } from '../types/Task';
+import { StockItem } from '../types/Stock';
 
 const API_URL = 'http://localhost:8080/api';
 
@@ -19,10 +21,21 @@ export const jobService = {
         return response.data;
     },
 
+    async getJobById(id: number) {
+        const response = await axios.get(`${API_URL}/jobs/${id}`);
+        return response.data;
+    },
+
+    async getJobTasks(jobId: number) {
+        const response = await axios.get(`${API_URL}/jobs/${jobId}/tasks`);
+        return response.data;
+    },
+
     async updateJob(id: string, jobData: Partial<Job>) {
         const response = await axios.put(`${API_URL}/jobs/update/${id}`, jobData);
         return response.data;
     },
+
 
     async markJobAsDone(id: string) {
         const response = await axios.put(`${API_URL}/jobs/done/${id}`);
@@ -44,8 +57,17 @@ export const jobService = {
         return response.data;
     },
 
-    async addSparePart(jobId: number, sparePart: Partial<SparePart>): Promise<SparePart> {
-        const response = await axios.post<SparePart>(`${API_URL}/jobs/${jobId}/spare-part/save`, sparePart);
+    async updateJobTask(jobId: number, taskId: number, task: Partial<Task>): Promise<Task> {
+        const response = await axios.put<Task>(`${API_URL}/jobs/${jobId}/task/${taskId}`, task);
+        return response.data;
+    },
+
+    async deleteJobTask(jobId: number, taskId: number): Promise<void> {
+        await axios.delete(`${API_URL}/jobs/${jobId}/task/${taskId}`);
+    },
+
+    async addSparePart(jobId: number, sparePart: Partial<StockItem>): Promise<StockItem> {
+        const response = await axios.post<StockItem>(`${API_URL}/jobs/${jobId}/spare-part/save`, sparePart);
         return response.data;
     },
 
@@ -54,8 +76,8 @@ export const jobService = {
         return response.data;
     },
 
-    async getSuggestedSpareParts(query: string): Promise<SparePart[]> {
-        const response = await axios.get<SparePart[]>(`${API_URL}/jobs/suggested-spare-parts?query=${query}`);
+    async getSuggestedSpareParts(query: string): Promise<StockItem[]> {
+        const response = await axios.get<StockItem[]>(`${API_URL}/jobs/suggested-spare-parts?query=${query}`);
         return response.data;
     }
 }; 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Combobox } from '@headlessui/react';
+import { useNavigate } from 'react-router-dom';
 import { Job, SparePart, JobStatus, TaskStatus } from '../../../types/Job';
 import { jobService } from '../../../services/jobService';
 import AppointLayouts from '../layout/AppointmentLayouts/AppointLayouts';
@@ -13,6 +14,7 @@ const JobList: React.FC = () => {
     const [suggestedTasks, setSuggestedTasks] = useState<string[]>([]);
     const [newSparePart, setNewSparePart] = useState('');
     const [suggestedSpareParts, setSuggestedSpareParts] = useState<SparePart[]>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchJobs();
@@ -154,10 +156,10 @@ const JobList: React.FC = () => {
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap text-sm">
                                             <button
-                                                onClick={() => handleStatusChange(job.jobId, JobStatus.COMPLETED)}
-                                                className="text-green-600 hover:text-green-900"
+                                                onClick={() => navigate(`/admin/jobs/${job.id}`)}
+                                                className="text-blue-600 hover:text-blue-900"
                                             >
-                                                Mark as Done
+                                                View Details
                                             </button>
                                         </td>
                                     </tr>
