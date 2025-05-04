@@ -6,7 +6,7 @@ const StockNav: React.FC = () => {
 
   return (
     <div className="stocknav container mx-auto bg-black text-white text-center py-5">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-5 gap-4">
             {/* 1st button */}
             <div 
               className="text-center space-y-2 cursor-pointer hover:bg-gray-800 p-2 rounded"
@@ -37,6 +37,14 @@ const StockNav: React.FC = () => {
               onClick={() => navigate('/admin/supplier-details')}
             >
                 <p className="uppercase tracking-wide text-xs">Supplier details</p>
+            </div>
+            
+            {/* 5th button */}
+            <div 
+              className="text-center space-y-2 cursor-pointer hover:bg-gray-800 p-2 rounded"
+              onClick={() => navigate('/admin/stock-reports')}
+            >
+                <p className="uppercase tracking-wide text-xs">Stock reports</p>
             </div>
         </div>
     </div>
