@@ -5,7 +5,7 @@ import StocksLayout from "../../layout/StockLayouts/StocksLayout";
 const AdminStockReqManager: React.FC = () => {
     return (
         <StocksLayout>
-            <div>Admin Items Manager</div>
+            <div className="text-red-700">No Stock requests yet</div>
         </StocksLayout>
     );
 }
