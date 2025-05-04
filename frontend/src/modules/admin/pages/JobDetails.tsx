@@ -3,8 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { Job, JobStatus } from '../../../types/Job';
 import { Task } from '../../../types/Task';
+import { StockItem } from '../../../types/Stock';
 import { jobService } from '../../../services/jobService';
 import * as taskService from '../../../services/taskService';
+import { itemService } from '../../../services/stockItemService';
 import AppointLayouts from '../layout/AppointmentLayouts/AppointLayouts';
 import Modal from '../../../components/Model';
 import { Button } from "@headlessui/react";
@@ -12,6 +14,10 @@ import { Button } from "@headlessui/react";
 interface TaskFormErrors {
   description?: string;
   cost?: string;
+}
+
+interface SparePartFormErrors {
+  quantity?: string;
 }
 
 const JobDetails: React.FC = () => {
@@ -39,6 +45,23 @@ const JobDetails: React.FC = () => {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+
+  // Spare parts states
+  const [spareParts, setSpareParts] = useState<StockItem[]>([]);
+  const [currentSparePart, setCurrentSparePart] = useState<StockItem | null>(null);
+  const [isSparePartModalOpen, setIsSparePartModalOpen] = useState<boolean>(false);
+  const [sparePartLoading, setSparePartLoading] = useState<boolean>(false);
+  const [sparePartFormErrors, setSparePartFormErrors] = useState<SparePartFormErrors>({});
+  
+  // Spare part deletion states
+  const [sparePartToDelete, setSparePartToDelete] = useState<number | null>(null);
+  const [isSparePartDeleteModalOpen, setIsSparePartDeleteModalOpen] = useState<boolean>(false);
+  const [sparePartDeleteError, setSparePartDeleteError] = useState<string | null>(null);
+
+  // Spare part autocomplete states
+  const [allSpareParts, setAllSpareParts] = useState<StockItem[]>([]);
+  const [filteredSpareParts, setFilteredSpareParts] = useState<StockItem[]>([]);
+  const [showSparePartDropdown, setShowSparePartDropdown] = useState<boolean>(false);
   
   // Fetch job details and its tasks
   useEffect(() => {
@@ -60,6 +83,7 @@ const JobDetails: React.FC = () => {
           // For now, use mock tasks since API endpoint is not ready
           // Replace this with real API call when backend is ready
           setTasks([]);
+          setSpareParts([]);
         } else {
           setError('Job not found');
         }
@@ -88,6 +112,20 @@ const JobDetails: React.FC = () => {
     };
 
     fetchAllTasks();
+  }, []);
+
+  // Fetch all spare parts for autocomplete
+  useEffect(() => {
+    const fetchAllSpareParts = async () => {
+      try {
+        const spareParts = await itemService.getAllItems();
+        setAllSpareParts(spareParts);
+      } catch (err) {
+        console.error('Error fetching spare parts for autocomplete:', err);
+      }
+    };
+
+    fetchAllSpareParts();
   }, []);
 
   const validateTaskForm = (): boolean => {
@@ -295,6 +333,210 @@ const JobDetails: React.FC = () => {
     }
   };
 
+  // Spare part related functions
+  const validateSparePartForm = (): boolean => {
+    const errors: SparePartFormErrors = {};
+    let isValid = true;
+
+    if (!currentSparePart?.qtyAvailable || currentSparePart.qtyAvailable <= 0) {
+      errors.quantity = "Quantity must be greater than 0";
+      isValid = false;
+    }
+
+    setSparePartFormErrors(errors);
+    return isValid;
+  };
+
+  const openSparePartModal = (sparePart?: StockItem) => {
+    console.log('Opening spare part modal with:', sparePart);
+    if (sparePart) {
+      setCurrentSparePart(sparePart);
+    } else {
+      setCurrentSparePart({ 
+        itemName: "", 
+        qtyAvailable: 1,
+        sellPrice: 0,
+        unitPrice: 0,
+        itemCtgryID: 0,
+        supplierId: 0,
+        itemBarcode: "",
+        recorderLevel: 0,
+        itemBrand: "",
+        stockLevel: "HIGH",
+        rackNo: 0,
+        updatedDate: new Date().toISOString().split('T')[0]
+      });
+    }
+    setIsSparePartModalOpen(true);
+    setError(null);
+    setSparePartFormErrors({});
+    setFilteredSpareParts([]);
+    setShowSparePartDropdown(false);
+  };
+
+  const closeSparePartModal = () => {
+    console.log('Closing spare part modal');
+    setIsSparePartModalOpen(false);
+    setCurrentSparePart(null);
+    setError(null);
+    setSparePartFormErrors({});
+    setFilteredSpareParts([]);
+    setShowSparePartDropdown(false);
+  };
+
+  const handleSparePartInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    console.log('Input change:', name, value);
+    
+    setCurrentSparePart(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        [name]: name === 'qtyAvailable' || name === 'sellPrice' || name === 'unitPrice' 
+          ? (value === '' ? 0 : parseFloat(value)) 
+          : value
+      };
+    });
+    
+    // Handle autocomplete for itemName field
+    if (name === 'itemName') {
+      if (value.trim().length > 0) {
+        const filtered = allSpareParts.filter(part => 
+          part.itemName.toLowerCase().includes(value.toLowerCase())
+        );
+        setFilteredSpareParts(filtered);
+        setShowSparePartDropdown(true);
+      } else {
+        setFilteredSpareParts([]);
+        setShowSparePartDropdown(false);
+      }
+    }
+    
+    // Clear error when user starts typing
+    if (sparePartFormErrors[name as keyof SparePartFormErrors]) {
+      setSparePartFormErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const selectSparePart = (sparePart: StockItem) => {
+    console.log('Selected spare part:', sparePart);
+    setCurrentSparePart({
+      ...sparePart,
+      qtyAvailable: 1 // Reset quantity to 1 when selecting from dropdown
+    });
+    setFilteredSpareParts([]);
+    setShowSparePartDropdown(false);
+  };
+
+  const handleSparePartSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateSparePartForm() || !job?.id) {
+      return;
+    }
+
+    setSparePartLoading(true);
+    setError(null);
+
+    try {
+      console.log('Current spare part before save:', currentSparePart);
+      
+      // Create a new spare part with an ID if it doesn't exist
+      const newSparePart = {
+        ...currentSparePart!,
+        itemID: currentSparePart?.itemID || Math.floor(Math.random() * 1000) + 1 // Temporary ID for frontend
+      };
+      
+      console.log('New spare part to be added:', newSparePart);
+      
+      // For now, handle spare parts locally until backend API is ready
+      setSpareParts(prevParts => {
+        // Check if the spare part already exists in the list
+        const existingIndex = prevParts.findIndex(p => p.itemID === newSparePart.itemID);
+        
+        if (existingIndex >= 0) {
+          // Update existing spare part
+          const updatedParts = [...prevParts];
+          updatedParts[existingIndex] = newSparePart;
+          console.log('Updated spare parts after edit:', updatedParts);
+          return updatedParts;
+        } else {
+          // Add new spare part
+          const updatedParts = [...prevParts, newSparePart];
+          console.log('Updated spare parts after add:', updatedParts);
+          return updatedParts;
+        }
+      });
+      
+      // Uncomment below code when API endpoints are ready
+      /*
+      let updatedSparePart;
+      if (currentSparePart?.itemID) {
+        // Update existing spare part
+        updatedSparePart = await jobService.updateJobSparePart(job.id, currentSparePart.itemID, currentSparePart);
+      } else {
+        // Add new spare part to the job
+        updatedSparePart = await jobService.addSparePart(job.id, currentSparePart!);
+      }
+      
+      // Update spare parts list
+      if (currentSparePart?.itemID) {
+        setSpareParts(prevParts => prevParts.map(p => p.itemID === updatedSparePart.itemID ? updatedSparePart : p));
+      } else {
+        setSpareParts(prevParts => [...prevParts, updatedSparePart]);
+      }
+      */
+      
+      closeSparePartModal();
+    } catch (err) {
+      console.error('Error saving spare part:', err);
+      setError("Failed to save spare part. Please try again.");
+    } finally {
+      setSparePartLoading(false);
+    }
+  };
+
+  // Add useEffect to log spare parts state changes
+  useEffect(() => {
+    console.log('Spare parts state updated:', spareParts);
+  }, [spareParts]);
+
+  // Add useEffect to log current spare part changes
+  useEffect(() => {
+    console.log('Current spare part updated:', currentSparePart);
+  }, [currentSparePart]);
+
+  const promptDeleteSparePart = (id: number) => {
+    setSparePartToDelete(id);
+    setSparePartDeleteError(null);
+    setIsSparePartDeleteModalOpen(true);
+  };
+
+  const handleDeleteSparePart = async () => {
+    if (!sparePartToDelete || !job?.id) return;
+    
+    try {
+      // For now, handle deletion locally until the API is ready
+      setSpareParts(spareParts.filter(part => part.itemID !== sparePartToDelete));
+      setIsSparePartDeleteModalOpen(false);
+      
+      // Uncomment when API endpoint is ready
+      // await jobService.deleteJobSparePart(job.id, sparePartToDelete);
+    } catch (err) {
+      console.error('Error deleting spare part:', err);
+      setSparePartDeleteError("Failed to delete spare part. Please try again.");
+    }
+  };
+
+  const cancelSparePartDelete = () => {
+    setIsSparePartDeleteModalOpen(false);
+    setSparePartToDelete(null);
+    setSparePartDeleteError(null);
+  };
+
   if (loading) {
     return (
       <AppointLayouts>
@@ -389,7 +631,7 @@ const JobDetails: React.FC = () => {
         </div>
 
         {/* Tasks Section */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-medium">Tasks</h2>
             <button
@@ -451,6 +693,77 @@ const JobDetails: React.FC = () => {
           <div className="mt-6 text-right">
             <p className="text-lg font-medium">
               Total Cost: Rs. {tasks.reduce((sum, task) => sum + task.cost, 0).toFixed(2)}
+            </p>
+          </div>
+        </div>
+
+        {/* Spare Parts Section */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-medium">Spare Parts</h2>
+            <button
+              onClick={() => openSparePartModal()}
+              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
+            >
+              <PlusIcon className="w-5 h-5 mr-2" />
+              Add Spare Part
+            </button>
+          </div>
+
+          {spareParts.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No spare parts added to this job yet. Click "Add Spare Part" to add one.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price (Rs.)</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total (Rs.)</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {spareParts.map((part) => (
+                    <tr key={part.itemID} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">{part.itemID}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{part.itemName}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{part.qtyAvailable}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{part.unitPrice}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{(part.qtyAvailable * part.unitPrice).toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => openSparePartModal(part)}
+                            className="text-blue-600 hover:text-blue-800"
+                            title="Edit"
+                          >
+                            <PencilIcon className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => promptDeleteSparePart(part.itemID!)}
+                            className="text-red-600 hover:text-red-900"
+                            title="Delete"
+                          >
+                            <TrashIcon className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Total Cost */}
+          <div className="mt-6 text-right">
+            <p className="text-lg font-medium">
+              Total Cost: Rs. {spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0).toFixed(2)}
             </p>
           </div>
         </div>
@@ -592,6 +905,161 @@ const JobDetails: React.FC = () => {
                 disabled={taskLoading}
               >
                 {taskLoading ? "Deleting..." : "Delete"}
+              </Button>
+            )}
+          </div>
+        </div>
+      </Modal>
+
+      {/* Add/Edit Spare Part Modal */}
+      <Modal
+        isOpen={isSparePartModalOpen}
+        onClose={closeSparePartModal}
+        title={currentSparePart?.itemID ? "Edit Spare Part" : "Add New Spare Part"}
+      >
+        <form onSubmit={handleSparePartSubmit} className="p-4">
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              <p className="font-medium">{error}</p>
+            </div>
+          )}
+          
+          <div className="mb-4 relative">
+            <label htmlFor="itemName" className="block text-sm font-medium text-gray-700 mb-1">
+              Item Name
+            </label>
+            <input
+              type="text"
+              id="itemName"
+              name="itemName"
+              value={currentSparePart?.itemName || ""}
+              onChange={handleSparePartInputChange}
+              className="w-full p-2 border border-gray-300 rounded-md"
+              autoComplete="off"
+              required
+              placeholder="Enter item name or start typing to see suggestions"
+              disabled={sparePartLoading}
+            />
+            {showSparePartDropdown && filteredSpareParts.length > 0 && (
+              <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                <ul className="divide-y divide-gray-200">
+                  {filteredSpareParts.map((part) => (
+                    <li
+                      key={part.itemID}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                      onClick={() => selectSparePart(part)}
+                    >
+                      <span>{part.itemName}</span>
+                      <span className="text-gray-500">Rs. {part.unitPrice}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="qtyAvailable" className="block text-sm font-medium text-gray-700 mb-1">
+              Quantity
+            </label>
+            <input
+              type="number"
+              id="qtyAvailable"
+              name="qtyAvailable"
+              value={currentSparePart?.qtyAvailable || ""}
+              onChange={handleSparePartInputChange}
+              className={`w-full p-2 border rounded-md ${
+                sparePartFormErrors.quantity ? 'border-red-500' : 'border-gray-300'
+              }`}
+              required
+              min="1"
+              placeholder="Enter quantity"
+              disabled={sparePartLoading}
+            />
+            {sparePartFormErrors.quantity && (
+              <p className="mt-1 text-sm text-red-600">{sparePartFormErrors.quantity}</p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="unitPrice" className="block text-sm font-medium text-gray-700 mb-1">
+              Unit Price (Rs.)
+            </label>
+            <input
+              type="number"
+              id="unitPrice"
+              name="unitPrice"
+              value={currentSparePart?.unitPrice || ""}
+              onChange={handleSparePartInputChange}
+              className="w-full p-2 border border-gray-300 rounded-md"
+              required
+              min="0"
+              step="0.01"
+              placeholder="Enter unit price"
+              disabled={sparePartLoading}
+            />
+          </div>
+
+          <div className="flex justify-end space-x-2 mt-6">
+            <Button
+              type="button"
+              onClick={closeSparePartModal}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+              disabled={sparePartLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center justify-center min-w-[100px]"
+              disabled={sparePartLoading}
+            >
+              {sparePartLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+                  Saving...
+                </>
+              ) : (
+                "Save"
+              )}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Spare Part Confirmation Modal */}
+      <Modal
+        isOpen={isSparePartDeleteModalOpen}
+        onClose={cancelSparePartDelete}
+        title="Confirm Deletion"
+      >
+        <div className="p-4">
+          {sparePartDeleteError ? (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              <p className="font-medium">{sparePartDeleteError}</p>
+            </div>
+          ) : (
+            <p className="mb-4">
+              Are you sure you want to delete this spare part? This action cannot be undone.
+            </p>
+          )}
+
+          <div className="flex justify-end space-x-2 mt-6">
+            <Button
+              type="button"
+              onClick={cancelSparePartDelete}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+            >
+              Cancel
+            </Button>
+            {!sparePartDeleteError && (
+              <Button
+                type="button"
+                onClick={handleDeleteSparePart}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                disabled={sparePartLoading}
+              >
+                {sparePartLoading ? "Deleting..." : "Delete"}
               </Button>
             )}
           </div>

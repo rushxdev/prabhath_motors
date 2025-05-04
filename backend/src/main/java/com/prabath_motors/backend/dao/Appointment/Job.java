@@ -38,4 +38,7 @@ public class Job {
 
     @Column(nullable = false)
     private String status; //Ongoing or Done
+
+
+    private double totalCost; //Ongoing or Done
 }
