@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@headlessui/react";
-import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, PencilIcon, TrashIcon, ChartBarIcon } from "@heroicons/react/24/solid";
 import UtilityLayout from "../../layout/UtilityLayouts/UtilityLayouts";
 import MonthlyUtilityBillForm from "../../components/AdminUtility-page/MonthlyUtilityBillForm";
+import UtilityChartModal from "../../components/AdminUtility-page/UtilityChartModal";
 
 interface MonthlyUtilityBill {
     id: number;
@@ -20,6 +21,7 @@ const AdminMonthlyUManager: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [isChartModalOpen, setIsChartModalOpen] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [currentBill, setCurrentBill] = useState<Partial<MonthlyUtilityBill> | undefined>(undefined);
     
@@ -90,16 +92,25 @@ const AdminMonthlyUManager: React.FC = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full sm:w-1/2 p-2 border border-gray-500 rounded-md mb-4 bg-transparent"
                     />
-                    <Button
-                        className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
-                        onClick={() => {
-                            setCurrentBill(undefined);
-                            setIsModalOpen(true);
-                        }}
-                    >
-                        <PlusIcon className="w-5 h-5 mr-2" />
-                        Add Monthly Bill
-                    </Button>
+                    <div className="flex space-x-2">
+                        <Button
+                            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+                            onClick={() => setIsChartModalOpen(true)}
+                        >
+                            <ChartBarIcon className="w-5 h-5 mr-2" />
+                            View Analytics
+                        </Button>
+                        <Button
+                            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
+                            onClick={() => {
+                                setCurrentBill(undefined);
+                                setIsModalOpen(true);
+                            }}
+                        >
+                            <PlusIcon className="w-5 h-5 mr-2" />
+                            Add Monthly Bill
+                        </Button>
+                    </div>
                 </div>
 
                 {loading ? (
@@ -171,6 +182,13 @@ const AdminMonthlyUManager: React.FC = () => {
                 onClose={handleCloseModal}
                 currentBill={currentBill}
                 refreshData={fetchMonthlyBills}
+            />
+
+            {/* Utility Chart Modal */}
+            <UtilityChartModal
+                isOpen={isChartModalOpen}
+                onClose={() => setIsChartModalOpen(false)}
+                monthlyBills={monthlyBills}
             />
         </UtilityLayout>
     );
