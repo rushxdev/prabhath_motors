@@ -345,22 +345,6 @@ const JobDetails: React.FC = () => {
     setDeleteError(null);
   };
 
-  const handleStatusChange = async (newStatus: JobStatus) => {
-    if (!job) return;
-    
-    try {
-      // Update status locally for now
-      setJob({ ...job, status: newStatus });
-      
-      // Uncomment when API is ready
-      // const updatedJob = await jobService.updateJob(job.jobId, { ...job, status: newStatus });
-      // setJob(updatedJob);
-    } catch (err) {
-      console.error('Error updating job status:', err);
-      setError('Failed to update job status');
-    }
-  };
-
   // Spare part related functions
   const validateSparePartForm = (): boolean => {
     const errors: SparePartFormErrors = {};
@@ -611,6 +595,21 @@ const JobDetails: React.FC = () => {
     }
   };
 
+  const handleMarkAsDone = async () => {
+    if (!job?.id) return;
+
+    try {
+      await jobService.markJobAsDone(job.id.toString());
+      // Update the job status locally
+      setJob(prev => prev ? { ...prev, status: "Done" } : null);
+      setSaveSuccess("Job marked as completed successfully!");
+      setTimeout(() => setSaveSuccess(null), 500);
+    } catch (err) {
+      console.error('Error marking job as done:', err);
+      setError("Failed to mark job as completed. Please try again.");
+    }
+  };
+
   if (loading) {
     return (
       <AppointLayouts>
@@ -630,7 +629,7 @@ const JobDetails: React.FC = () => {
             <span className="block sm:inline"> {error || "Job not found"}</span>
           </div>
           <button 
-            onClick={() => navigate('/admin/jobs')}
+            onClick={() => navigate('/admin/jobs', { state: { refresh: true } })}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
             Back to Job List
@@ -646,6 +645,14 @@ const JobDetails: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Job Details</h1>
           <div className="flex space-x-2">
+            {job?.status !== "Done" && (
+              <button 
+                onClick={handleMarkAsDone}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center"
+              >
+                Mark as Done
+              </button>
+            )}
             <button 
               onClick={handleSaveJob}
               disabled={saving}
@@ -661,7 +668,7 @@ const JobDetails: React.FC = () => {
               )}
             </button>
             <button 
-              onClick={() => navigate('/admin/jobs')}
+              onClick={() => navigate('/admin/jobs', { state: { refresh: true } })}
               className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
             >
               Back to Job List
@@ -687,46 +694,19 @@ const JobDetails: React.FC = () => {
             <div>
               <h2 className="text-lg font-medium mb-4">Job Information</h2>
               <div className="space-y-2">
-                <p><span className="font-medium">Job ID:</span> {job.jobId}</p>
-                <p><span className="font-medium">Vehicle:</span> {job.vehicleRegistrationNumber}</p>
-                <p><span className="font-medium">Service Section:</span> {job.serviceSection}</p>
-                <p><span className="font-medium">Assigned Employee:</span> {job.assignedEmployee}</p>
-              </div>
-            </div>
-            <div>
-              <h2 className="text-lg font-medium mb-4">Status</h2>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-                    Job Status
-                  </label>
-                  <select
-                    id="status"
-                    value={job.status}
-                    onChange={(e) => handleStatusChange(e.target.value as JobStatus)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  >
-                    {Object.values(JobStatus).map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex items-center mt-2">
-                  <div 
-                    className={`w-3 h-3 rounded-full mr-2 ${
-                      job.status === JobStatus.COMPLETED
-                        ? 'bg-green-500'
-                        : job.status === JobStatus.IN_PROGRESS
-                        ? 'bg-yellow-500'
-                        : job.status === JobStatus.CANCELLED
-                        ? 'bg-red-500'
-                        : 'bg-gray-500'
-                    }`}
-                  ></div>
-                  <span className="text-sm">{job.status}</span>
-                </div>
+                <p><span className="font-medium">Job ID:</span> {job?.jobId}</p>
+                <p><span className="font-medium">Vehicle:</span> {job?.vehicleRegistrationNumber}</p>
+                <p><span className="font-medium">Service Section:</span> {job?.serviceSection}</p>
+                <p><span className="font-medium">Assigned Employee:</span> {job?.assignedEmployee}</p>
+                <p><span className="font-medium">Status:</span> 
+                  <span className={`ml-2 px-2 py-1 rounded-full text-sm ${
+                    job?.status === "Done"
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {job?.status}
+                  </span>
+                </p>
               </div>
             </div>
           </div>

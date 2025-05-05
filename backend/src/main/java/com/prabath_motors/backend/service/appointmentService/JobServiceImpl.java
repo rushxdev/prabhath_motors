@@ -67,4 +67,9 @@ public class JobServiceImpl implements JobService {
         jobRepo.save(job);
 
     }
+
+    @Override
+    public void deleteJob(Long id) {
+        jobRepo.deleteById(id);
+    }
 }

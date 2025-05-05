@@ -36,9 +36,13 @@ export const jobService = {
         return response.data;
     },
 
-
     async markJobAsDone(id: string) {
         const response = await axios.put(`${API_URL}/jobs/done/${id}`);
+        return response.data;
+    },
+
+    async deleteJob(id: string) {
+        const response = await axios.delete(`${API_URL}/jobs/${id}`);
         return response.data;
     },
 

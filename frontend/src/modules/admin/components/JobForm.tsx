@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Combobox } from '@headlessui/react';
-import { Job, ServiceSection, Employee } from '../../../types/Job';
+import { Job, ServiceSection, JobStatus } from '../../../types/Job';
+import { Employee } from '../../../types/Employee';
 import { jobService } from '../../../services/jobService';
 import { getVehicleById } from '../../../services/vehicleService';
 import { Vehicle } from '../../../types/Vehicle';
@@ -19,7 +20,7 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSuccess, onCancel }) =
 
     const [formData, setFormData] = useState<Partial<Job>>({
         serviceSection: ServiceSection.GARAGE,
-        status: "Ongoing",
+        status: JobStatus.IN_PROGRESS,
         ...initialData
     });
 
@@ -63,7 +64,7 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSuccess, onCancel }) =
                 assignedEmployee: `${selectedEmployee.firstname} ${selectedEmployee.lastname}`,
                 tasks: [],
                 spareParts: [],
-                status: "Ongoing"
+                status: JobStatus.IN_PROGRESS
             };
 
             await jobService.createJob(jobData);

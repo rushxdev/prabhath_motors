@@ -39,4 +39,10 @@ public class JobController {
     public void markAsDone(@PathVariable Long id) {
         jobService.markJobAsDone(id);
     }
+
+    @DeleteMapping("/{id}")
+    public Object deleteJob(@PathVariable Long id) {
+        jobService.deleteJob(id);
+        return "Job deleted successfully";
+    }
 }
