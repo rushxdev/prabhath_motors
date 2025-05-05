@@ -31,24 +31,11 @@ export const jobService = {
         return response.data;
     },
 
-    async updateJob(jobId: string, jobData: Partial<Job>) {
-        // First, get all jobs to find the one with matching jobId
-        const [ongoingJobs, doneJobs] = await Promise.all([
-            this.getAllOngoingJobs(),
-            this.getAllDoneJobs()
-        ]);
-        
-        const allJobs = [...ongoingJobs, ...doneJobs];
-        const job = allJobs.find(j => j.jobId === jobId);
-        
-        if (!job || !job.id) {
-            throw new Error('Job not found');
-        }
-        
-        // Then update using the numeric id
-        const response = await axios.put(`${API_URL}/jobs/update/${job.id}`, jobData);
+    async updateJob(id: string, jobData: Partial<Job>) {
+        const response = await axios.put(`${API_URL}/jobs/update/${id}`, jobData);
         return response.data;
     },
+
 
     async markJobAsDone(id: string) {
         const response = await axios.put(`${API_URL}/jobs/done/${id}`);

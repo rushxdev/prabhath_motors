@@ -64,8 +64,11 @@ const JobDetails: React.FC = () => {
   const [showSparePartDropdown, setShowSparePartDropdown] = useState<boolean>(false);
   
   // Add new state for saving
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Add new state for success message
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
 
   // Fetch job details and its tasks
   useEffect(() => {
@@ -541,52 +544,49 @@ const JobDetails: React.FC = () => {
     setSparePartDeleteError(null);
   };
 
-  const calculateTotalCost = (): number => {
-    const tasksTotal = tasks.reduce((sum, task) => sum + task.cost, 0);
-    const sparePartsTotal = spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0);
-    return tasksTotal + sparePartsTotal;
+  // Add function to convert tasks and spare parts to NamedCostItem
+  const convertToNamedCostItems = () => {
+    const taskItems: NamedCostItem[] = tasks.map(task => ({
+      name: task.description,
+      cost: task.cost
+    }));
+
+    const sparePartItems: NamedCostItem[] = spareParts.map(part => ({
+      name: part.itemName,
+      cost: part.qtyAvailable * part.unitPrice
+    }));
+
+    return { taskItems, sparePartItems };
   };
 
+  // Add function to handle saving the job
   const handleSaveJob = async () => {
-    if (!job) return;
+    if (!job?.id) return;
 
-    setIsSaving(true);
+    setSaving(true);
     setSaveError(null);
+    setSaveSuccess(null);
 
     try {
-      // Convert tasks and spare parts to NamedCostItem format
-      const jobTasks: NamedCostItem[] = tasks.map(task => ({
-        name: task.description,
-        cost: task.cost
-      }));
+      const { taskItems, sparePartItems } = convertToNamedCostItems();
+      const totalCost = taskItems.reduce((sum, item) => sum + item.cost, 0) +
+                       sparePartItems.reduce((sum, item) => sum + item.cost, 0);
 
-      const jobSpareParts: NamedCostItem[] = spareParts.map(part => ({
-        name: part.itemName,
-        cost: part.qtyAvailable * part.unitPrice
-      }));
-
-      // Prepare the job data for saving
-      const jobData = {
-        jobId: job.jobId,
-        vehicleRegistrationNumber: job.vehicleRegistrationNumber,
-        serviceSection: job.serviceSection,
-        assignedEmployee: job.assignedEmployee,
-        tasks: jobTasks,
-        spareParts: jobSpareParts,
-        status: job.status,
-        totalCost: calculateTotalCost()
+      const updatedJob: Job = {
+        ...job,
+        tasks: taskItems,
+        spareParts: sparePartItems,
+        totalCost
       };
 
-      // Save the job
-      await jobService.updateJob(job.jobId, jobData);
-      
-      // Show success message
-      alert('Job saved successfully!');
+      await jobService.updateJob(job.id.toString(), updatedJob);
+      setSaveSuccess("Job saved successfully!");
+      setTimeout(() => setSaveSuccess(null), 500);
     } catch (err) {
       console.error('Error saving job:', err);
-      setSaveError('Failed to save job. Please try again.');
+      setSaveError("Failed to save job. Please try again.");
     } finally {
-      setIsSaving(false);
+      setSaving(false);
     }
   };
 
@@ -624,19 +624,13 @@ const JobDetails: React.FC = () => {
       <div className="max-w-7xl mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Job Details</h1>
-          <div className="flex space-x-4">
+          <div className="flex space-x-2">
             <button 
-              onClick={() => navigate('/admin/jobs')}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-            >
-              Back to Job List
-            </button>
-            <button
               onClick={handleSaveJob}
-              disabled={isSaving}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center min-w-[100px]"
+              disabled={saving}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300 flex items-center"
             >
-              {isSaving ? (
+              {saving ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
                   Saving...
@@ -645,12 +639,24 @@ const JobDetails: React.FC = () => {
                 "Save Job"
               )}
             </button>
+            <button 
+              onClick={() => navigate('/admin/jobs')}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+            >
+              Back to Job List
+            </button>
           </div>
         </div>
 
         {saveError && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             <p className="font-medium">{saveError}</p>
+          </div>
+        )}
+
+        {saveSuccess && (
+          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+            <p className="font-medium">{saveSuccess}</p>
           </div>
         )}
 
@@ -763,13 +769,6 @@ const JobDetails: React.FC = () => {
               </table>
             </div>
           )}
-
-          {/* Total Cost */}
-          <div className="mt-6 text-right">
-            <p className="text-lg font-medium">
-              Total Cost: Rs. {tasks.reduce((sum, task) => sum + task.cost, 0).toFixed(2)}
-            </p>
-          </div>
         </div>
 
         {/* Spare Parts Section */}
@@ -838,17 +837,10 @@ const JobDetails: React.FC = () => {
           {/* Total Cost */}
           <div className="mt-6 text-right">
             <p className="text-lg font-medium">
-              Total Cost: Rs. {spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0).toFixed(2)}
-            </p>
-          </div>
-        </div>
-
-        {/* Total Cost Section */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-medium">Total Cost</h2>
-            <p className="text-2xl font-bold text-blue-600">
-              Rs. {calculateTotalCost().toFixed(2)}
+              Total Cost: Rs. {(
+                tasks.reduce((sum, task) => sum + task.cost, 0) +
+                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0)
+              ).toFixed(2)}
             </p>
           </div>
         </div>
