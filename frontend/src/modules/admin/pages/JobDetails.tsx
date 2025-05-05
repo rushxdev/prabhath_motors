@@ -87,10 +87,31 @@ const JobDetails: React.FC = () => {
         if (foundJob) {
           setJob(foundJob);
           
-          // For now, use mock tasks since API endpoint is not ready
-          // Replace this with real API call when backend is ready
-          setTasks([]);
-          setSpareParts([]);
+          // Convert NamedCostItems back to Tasks and StockItems
+          const taskItems: Task[] = foundJob.tasks.map((task: NamedCostItem, index: number) => ({
+            id: index + 1, // Generate a temporary ID
+            description: task.name,
+            cost: task.cost
+          }));
+
+          const sparePartItems: StockItem[] = foundJob.spareParts.map((part: NamedCostItem, index: number) => ({
+            itemID: index + 1, // Generate a temporary ID
+            itemName: part.name,
+            qtyAvailable: 1, // Default quantity
+            unitPrice: part.cost, // Since cost is total, we'll use it as unit price
+            sellPrice: part.cost, // Same as unit price
+            itemCtgryID: 0,
+            supplierId: 0,
+            itemBarcode: "",
+            recorderLevel: 0,
+            itemBrand: "",
+            stockLevel: "HIGH",
+            rackNo: 0,
+            updatedDate: new Date().toISOString().split('T')[0]
+          }));
+
+          setTasks(taskItems);
+          setSpareParts(sparePartItems);
         } else {
           setError('Job not found');
         }
