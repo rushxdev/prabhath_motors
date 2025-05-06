@@ -797,7 +797,7 @@ const JobDetails: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item ID</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price (Rs.)</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price (Rs.)</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total (Rs.)</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
@@ -808,7 +808,7 @@ const JobDetails: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">{part.itemID}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{part.itemName}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{part.qtyAvailable}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{part.unitPrice}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{part.sellPrice}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{(part.qtyAvailable * part.unitPrice).toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2">
