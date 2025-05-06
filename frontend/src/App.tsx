@@ -19,6 +19,7 @@ import AdminStockReportsManager from "./modules/admin/pages/AdminStockPages/Admi
 // Utility routes
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
+import AdminUtilityReportsManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityReportsManager";
 // vehicle routes
 import VehicleDashboard from "./modules/admin/layout/VehicleLayouts/VehicleDashboard";
 import VehicleRegistration from "./modules/user/pages/UserVehiclePages/VehicleRegistration";
@@ -62,12 +63,12 @@ function App() {
           <Route path="supplier-details" element={<AdminSupplierManager />} />
           <Route path="order-stocks" element={<AdminStockOrderManager />} />
           <Route path="stock-reports" element={<AdminStockReportsManager />} />
-          {/* vehicle routes */}
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
           <Route path="utility/add" element={<UtilityBillForm />} />
           <Route path="utility/edit/:id" element={<UtilityBillForm />} />
+          <Route path="utility-reports" element={<AdminUtilityReportsManager />} />
           {/* Employee routes */}
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
