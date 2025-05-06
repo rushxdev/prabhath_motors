@@ -34,15 +34,15 @@ interface MonthlyUtilityBillFormProps {
   refreshData: () => void;
 }
 
-const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({ 
-  isOpen, 
-  onClose, 
-  currentBill, 
-  refreshData 
+const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
+  isOpen,
+  onClose,
+  currentBill,
+  refreshData,
 }) => {
   const navigate = useNavigate();
   const isEditMode = !!currentBill?.id;
-  
+
   const [formValues, setFormValues] = useState<Partial<MonthlyUtilityBill>>(
     currentBill || {
       invoiceNo: 0,
@@ -51,10 +51,10 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
       billingYear: new Date().getFullYear(),
       units: 0,
       totalPayment: 0,
-      generatedDate: new Date().toISOString().split('T')[0]
+      generatedDate: new Date().toISOString().split("T")[0],
     }
   );
-  
+
   const [invoiceNoInput, setInvoiceNoInput] = useState(
     currentBill?.invoiceNo?.toString() || ""
   );
@@ -62,10 +62,14 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
     currentBill?.totalPayment?.toString() || ""
   );
   const [utilityBills, setUtilityBills] = useState<UtilityBill[]>([]);
-  const [existingMonthlyBills, setExistingMonthlyBills] = useState<MonthlyUtilityBill[]>([]);
+  const [existingMonthlyBills, setExistingMonthlyBills] = useState<
+    MonthlyUtilityBill[]
+  >([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingBillingAccounts, setIsLoadingBillingAccounts] = useState(false);
+  const [isLoadingBillingAccounts, setIsLoadingBillingAccounts] = useState(
+    false
+  );
   const [isLoadingExistingBills, setIsLoadingExistingBills] = useState(false);
 
   // Get current date for validation
@@ -78,13 +82,13 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
     const fetchUtilityBills = async () => {
       setIsLoadingBillingAccounts(true);
       try {
-        const response = await axios.get('/utilitybill/get');
+        const response = await axios.get("/utilitybill/get");
         if (response.data) {
           setUtilityBills(response.data);
         }
       } catch (error) {
-        console.error('Error fetching utility bills:', error);
-        toast.error('Failed to load billing account numbers');
+        console.error("Error fetching utility bills:", error);
+        toast.error("Failed to load billing account numbers");
       } finally {
         setIsLoadingBillingAccounts(false);
       }
@@ -94,12 +98,12 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
     const fetchExistingMonthlyBills = async () => {
       setIsLoadingExistingBills(true);
       try {
-        const response = await axios.get('/monthlyutilitybill/get');
+        const response = await axios.get("/monthlyutilitybill/get");
         if (response.data) {
           setExistingMonthlyBills(response.data);
         }
       } catch (error) {
-        console.error('Error fetching existing monthly bills:', error);
+        console.error("Error fetching existing monthly bills:", error);
       } finally {
         setIsLoadingExistingBills(false);
       }
@@ -123,18 +127,18 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
   // Handle invoice number input change (text field that only accepts numbers)
   const handleInvoiceNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Only allow digits
-    if (value === '' || /^\d+$/.test(value)) {
+    // Only allow digits and limit to 8 digits
+    if (value === "" || (/^\d+$/.test(value) && value.length <= 8)) {
       setInvoiceNoInput(value);
-      setFormValues(prev => ({
+      setFormValues((prev) => ({
         ...prev,
-        invoiceNo: value === '' ? undefined : parseInt(value, 10)
+        invoiceNo: value === "" ? undefined : parseInt(value, 10),
       }));
-      
+
       // Clear any existing invoice duplicate errors when the value changes
       if (errors.invoiceDuplicate) {
-        setErrors(prev => {
-          const updatedErrors = {...prev};
+        setErrors((prev) => {
+          const updatedErrors = { ...prev };
           delete updatedErrors.invoiceDuplicate;
           return updatedErrors;
         });
@@ -145,13 +149,13 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
   // Handle total payment input change (limit to 2 decimal places)
   const handleTotalPaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    
+
     // Accept only numbers and one decimal point
-    if (value === '' || /^\d*\.?\d{0,2}$/.test(value)) {
+    if (value === "" || /^\d*\.?\d{0,2}$/.test(value)) {
       setTotalPaymentInput(value);
-      setFormValues(prev => ({
+      setFormValues((prev) => ({
         ...prev,
-        totalPayment: value === '' ? undefined : parseFloat(value)
+        totalPayment: value === "" ? undefined : parseFloat(value),
       }));
     }
   };
@@ -159,15 +163,15 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
   // Handle billing account number change
   const handleBillingAccNoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-    setFormValues(prev => ({
+    setFormValues((prev) => ({
       ...prev,
-      billingAccNo: parseInt(value, 10)
+      billingAccNo: parseInt(value, 10),
     }));
-    
+
     // Clear any existing duplicate errors when account number changes
     if (errors.duplicate) {
-      setErrors(prev => {
-        const updatedErrors = {...prev};
+      setErrors((prev) => {
+        const updatedErrors = { ...prev };
         delete updatedErrors.duplicate;
         return updatedErrors;
       });
@@ -177,40 +181,44 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
   // Handle month change with future date validation
   const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-    
-    setFormValues(prev => ({
+
+    setFormValues((prev) => ({
       ...prev,
-      billingMonth: value
+      billingMonth: value,
     }));
-    
+
     // Check if the selected month and year combination is in the future
     if (value && formValues.billingYear) {
       const monthIndex = months.indexOf(value);
-      
+
       if (monthIndex > -1) {
-        const isFutureDate = (formValues.billingYear > currentYear) || 
-                            (formValues.billingYear === currentYear && monthIndex > currentMonth);
-        
+        const isFutureDate =
+          formValues.billingYear > currentYear ||
+          (formValues.billingYear === currentYear && monthIndex > currentMonth);
+
+        // Update both month and year errors based on the combined future date check
         if (isFutureDate) {
-          setErrors(prev => ({
+          setErrors((prev) => ({
             ...prev,
-            billingMonth: "Billing month and year cannot be in the future"
+            billingMonth: "Billing month and year cannot be in the future",
           }));
         } else {
-          // Clear the error if it exists
-          setErrors(prev => {
-            const newErrors = {...prev};
+          // Clear both month and year errors related to future dates
+          setErrors((prev) => {
+            const newErrors = { ...prev };
             delete newErrors.billingMonth;
+            delete newErrors.billingYear;
+            delete newErrors.billingDate;
             return newErrors;
           });
         }
       }
     }
-    
+
     // Clear any duplicate errors
     if (errors.duplicate) {
-      setErrors(prev => {
-        const updatedErrors = {...prev};
+      setErrors((prev) => {
+        const updatedErrors = { ...prev };
         delete updatedErrors.duplicate;
         return updatedErrors;
       });
@@ -220,44 +228,48 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
   // Handle year change with future date validation
   const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    
-    if (value === '' || /^\d+$/.test(value)) {
-      const yearValue = value === '' ? undefined : parseInt(value, 10);
-      
-      setFormValues(prev => ({
+
+    if (value === "" || /^\d+$/.test(value)) {
+      const yearValue = value === "" ? undefined : parseInt(value, 10);
+
+      setFormValues((prev) => ({
         ...prev,
-        billingYear: yearValue
+        billingYear: yearValue,
       }));
-      
+
       // Check if the selected month and year combination is in the future
       if (yearValue && formValues.billingMonth) {
         const monthIndex = months.indexOf(formValues.billingMonth);
-        
+
         if (monthIndex > -1) {
-          const isFutureDate = (yearValue > currentYear) || 
-                              (yearValue === currentYear && monthIndex > currentMonth);
-          
+          const isFutureDate =
+            yearValue > currentYear ||
+            (yearValue === currentYear && monthIndex > currentMonth);
+
+          // Update both month and year errors based on the combined future date check
           if (isFutureDate) {
-            setErrors(prev => ({
+            setErrors((prev) => ({
               ...prev,
-              billingYear: "Billing month and year cannot be in the future"
+              billingYear: "Billing month and year cannot be in the future",
             }));
           } else {
-            // Clear the error if it exists
-            setErrors(prev => {
-              const newErrors = {...prev};
+            // Clear both month and year errors related to future dates
+            setErrors((prev) => {
+              const newErrors = { ...prev };
+              delete newErrors.billingMonth;
               delete newErrors.billingYear;
+              delete newErrors.billingDate;
               return newErrors;
             });
           }
         }
       }
     }
-    
+
     // Clear any duplicate errors
     if (errors.duplicate) {
-      setErrors(prev => {
-        const updatedErrors = {...prev};
+      setErrors((prev) => {
+        const updatedErrors = { ...prev };
         delete updatedErrors.duplicate;
         return updatedErrors;
       });
@@ -269,15 +281,24 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    
+
     // Skip handling billingAccNo, billingMonth, billingYear, and totalPayment since we have separate handlers
-    if (name === 'billingAccNo' || name === 'billingMonth' || name === 'billingYear' || name === 'totalPayment') return;
-    
+    if (
+      name === "billingAccNo" ||
+      name === "billingMonth" ||
+      name === "billingYear" ||
+      name === "totalPayment"
+    )
+      return;
+
     setFormValues((prev) => ({
       ...prev,
-      [name]: name === "units" ? 
-                (value === '' ? undefined : parseInt(value, 10)) : 
-                value,
+      [name]:
+        name === "units"
+          ? value === ""
+            ? undefined
+            : parseInt(value, 10)
+          : value,
     }));
   };
 
@@ -287,43 +308,51 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
       return false; // Cannot check for duplicates if invoice number is missing
     }
 
-    const isDuplicate = existingMonthlyBills.some(bill => 
-      bill.invoiceNo === formValues.invoiceNo &&
-      (!isEditMode || bill.id !== currentBill?.id) // Exclude current record when editing
+    const isDuplicate = existingMonthlyBills.some(
+      (bill) =>
+        bill.invoiceNo === formValues.invoiceNo &&
+        (!isEditMode || bill.id !== currentBill?.id) // Exclude current record when editing
     );
 
     if (isDuplicate) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        invoiceDuplicate: "This invoice number already exists. Please use a different invoice number."
+        invoiceDuplicate:
+          "This invoice number already exists. Please use a different invoice number.",
       }));
       return true;
     }
-    
+
     return false;
   };
 
   // Check for duplicates
   const checkForDuplicates = (): boolean => {
-    if (!formValues.billingAccNo || !formValues.billingMonth || !formValues.billingYear) {
+    if (
+      !formValues.billingAccNo ||
+      !formValues.billingMonth ||
+      !formValues.billingYear
+    ) {
       return false; // Cannot check for duplicates if any of the values are missing
     }
 
-    const isDuplicate = existingMonthlyBills.some(bill => 
-      bill.billingAccNo === formValues.billingAccNo &&
-      bill.billingMonth === formValues.billingMonth &&
-      bill.billingYear === formValues.billingYear &&
-      (!isEditMode || bill.id !== currentBill?.id) // Exclude current record when editing
+    const isDuplicate = existingMonthlyBills.some(
+      (bill) =>
+        bill.billingAccNo === formValues.billingAccNo &&
+        bill.billingMonth === formValues.billingMonth &&
+        bill.billingYear === formValues.billingYear &&
+        (!isEditMode || bill.id !== currentBill?.id) // Exclude current record when editing
     );
 
     if (isDuplicate) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        duplicate: "A bill for this account, month, and year already exists. Please modify your selection."
+        duplicate:
+          "A bill for this account, month, and year already exists. Please modify your selection.",
       }));
       return true;
     }
-    
+
     return false;
   };
 
@@ -336,8 +365,10 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
     const monthIndex = months.indexOf(formValues.billingMonth);
     if (monthIndex === -1) return false;
 
-    return (formValues.billingYear > currentYear) || 
-           (formValues.billingYear === currentYear && monthIndex > currentMonth);
+    return (
+      formValues.billingYear > currentYear ||
+      (formValues.billingYear === currentYear && monthIndex > currentMonth)
+    );
   };
 
   // Validate form
@@ -349,6 +380,8 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
       newErrors.invoiceNo = "Invoice number is required";
     } else if (formValues.invoiceNo <= 0) {
       newErrors.invoiceNo = "Invoice number must be a positive number";
+    } else if (invoiceNoInput.length > 8) {
+      newErrors.invoiceNo = "Invoice number must be a maximum of 8 digits";
     }
 
     // Validate Billing Account Number
@@ -371,7 +404,8 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
     // Validate that billing month and year are not in the future
     if (formValues.billingMonth && formValues.billingYear) {
       if (isFutureDate()) {
-        newErrors.billingDate = "Billing month and year cannot be in the future";
+        newErrors.billingDate =
+          "Billing month and year cannot be in the future";
       }
     }
 
@@ -383,12 +417,16 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
     }
 
     // Validate Total Payment
-    if (formValues.totalPayment === undefined || formValues.totalPayment === null) {
+    if (
+      formValues.totalPayment === undefined ||
+      formValues.totalPayment === null
+    ) {
       newErrors.totalPayment = "Total payment is required";
-    } else if (formValues.totalPayment < 0) {
+    } else if (formValues.totalPayment <= 0) {
       newErrors.totalPayment = "Total payment must be a positive number";
     } else if (!/^\d+(\.\d{1,2})?$/.test(totalPaymentInput)) {
-      newErrors.totalPayment = "Total payment can have a maximum of 2 decimal places";
+      newErrors.totalPayment =
+        "Total payment can have a maximum of 2 decimal places";
     }
 
     // Validate Generated Date
@@ -405,14 +443,18 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
     // Check for duplicates
     const hasDuplicate = checkForDuplicates();
     const hasDuplicateInvoice = checkForDuplicateInvoice();
-    
-    setErrors(prev => ({
+
+    setErrors((prev) => ({
       ...newErrors,
       ...(hasDuplicate ? { duplicate: prev.duplicate } : {}),
-      ...(hasDuplicateInvoice ? { invoiceDuplicate: prev.invoiceDuplicate } : {})
+      ...(hasDuplicateInvoice ? { invoiceDuplicate: prev.invoiceDuplicate } : {}),
     }));
-    
-    return Object.keys(newErrors).length === 0 && !hasDuplicate && !hasDuplicateInvoice;
+
+    return (
+      Object.keys(newErrors).length === 0 &&
+      !hasDuplicate &&
+      !hasDuplicateInvoice
+    );
   };
 
   // Handle form submission
@@ -434,7 +476,7 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
         billingYear: formValues.billingYear,
         units: formValues.units,
         totalPayment: formValues.totalPayment,
-        generatedDate: formValues.generatedDate
+        generatedDate: formValues.generatedDate,
       };
 
       if (isEditMode) {
@@ -457,33 +499,49 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
 
   // Months array for dropdown
   const months = [
-    "January", "February", "March", "April", "May", "June", 
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditMode ? "Edit Monthly Utility Bill" : "Add Monthly Utility Bill"}
+      title={
+        isEditMode ? "Edit Monthly Utility Bill" : "Add Monthly Utility Bill"
+      }
     >
       <form onSubmit={handleSubmit} className="mt-4">
         {/* Display duplicate errors at the top if they exist */}
         {(errors.duplicate || errors.invoiceDuplicate) && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {errors.duplicate && <p className="font-medium">{errors.duplicate}</p>}
-            {errors.invoiceDuplicate && <p className="font-medium">{errors.invoiceDuplicate}</p>}
+            {errors.duplicate && (
+              <p className="font-medium">{errors.duplicate}</p>
+            )}
+            {errors.invoiceDuplicate && (
+              <p className="font-medium">{errors.invoiceDuplicate}</p>
+            )}
           </div>
         )}
-        
+
         {/* Future date error at the top if exists */}
         {errors.billingDate && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             <p className="font-medium">{errors.billingDate}</p>
           </div>
         )}
-        
-        {/* Invoice Number - Changed to text field that only accepts numbers */}
+
+        {/* Invoice Number - Changed to text field that only accepts numbers with max 8 digits */}
         <div className="mb-4">
           <label
             htmlFor="invoiceNo"
@@ -492,20 +550,25 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
             Invoice Number<span className="text-red-500">*</span>
           </label>
           <input
-            type="text" 
+            type="text"
             id="invoiceNo"
             name="invoiceNo"
             value={invoiceNoInput}
             onChange={handleInvoiceNoChange}
-            placeholder="Enter invoice number"
-            className={`w-full px-3 py-2 border ${errors.invoiceNo || errors.invoiceDuplicate ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            placeholder="Enter invoice number (max 8 digits)"
+            maxLength={8}
+            className={`w-full px-3 py-2 border ${
+              errors.invoiceNo || errors.invoiceDuplicate
+                ? "border-red-500"
+                : "border-gray-300"
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
             required
           />
           {errors.invoiceNo && (
             <p className="mt-1 text-sm text-red-600">{errors.invoiceNo}</p>
           )}
           <p className="mt-1 text-xs text-gray-500">
-            Invoice number must be unique
+            Invoice number must be unique and maximum 8 digits
           </p>
         </div>
 
@@ -520,7 +583,9 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
           {isLoadingBillingAccounts ? (
             <div className="flex items-center justify-center py-2">
               <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-green-500"></div>
-              <span className="ml-2 text-sm text-gray-500">Loading billing accounts...</span>
+              <span className="ml-2 text-sm text-gray-500">
+                Loading billing accounts...
+              </span>
             </div>
           ) : (
             <select
@@ -528,48 +593,23 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
               name="billingAccNo"
               value={formValues.billingAccNo || ""}
               onChange={handleBillingAccNoChange}
-              className={`w-full px-3 py-2 border ${errors.billingAccNo ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full px-3 py-2 border ${
+                errors.billingAccNo ? "border-red-500" : "border-gray-300"
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
               required
             >
               <option value="">Select Billing Account</option>
               {utilityBills.map((bill) => (
                 <option key={bill.id} value={bill.billing_Acc_No}>
-                  {bill.billing_Acc_No} - {bill.type} ({bill.address.substring(0, 30)}{bill.address.length > 30 ? '...' : ''})
+                  {bill.billing_Acc_No} - {bill.type} (
+                  {bill.address.substring(0, 30)}
+                  {bill.address.length > 30 ? "..." : ""})
                 </option>
               ))}
             </select>
           )}
           {errors.billingAccNo && (
             <p className="mt-1 text-sm text-red-600">{errors.billingAccNo}</p>
-          )}
-        </div>
-
-        {/* Rest of the form fields remain unchanged */}
-        {/* Billing Month */}
-        <div className="mb-4">
-          <label
-            htmlFor="billingMonth"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Billing Month<span className="text-red-500">*</span>
-          </label>
-          <select
-            id="billingMonth"
-            name="billingMonth"
-            value={formValues.billingMonth || ""}
-            onChange={handleMonthChange}
-            className={`w-full px-3 py-2 border ${errors.billingMonth ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-            required
-          >
-            <option value="">Select Month</option>
-            {months.map((month) => (
-              <option key={month} value={month}>
-                {month}
-              </option>
-            ))}
-          </select>
-          {errors.billingMonth && (
-            <p className="mt-1 text-sm text-red-600">{errors.billingMonth}</p>
           )}
         </div>
 
@@ -590,11 +630,44 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
             value={formValues.billingYear || ""}
             onChange={handleYearChange}
             placeholder="Enter billing year"
-            className={`w-full px-3 py-2 border ${errors.billingYear ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full px-3 py-2 border ${
+              errors.billingYear ? "border-red-500" : "border-gray-300"
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
             required
           />
           {errors.billingYear && (
             <p className="mt-1 text-sm text-red-600">{errors.billingYear}</p>
+          )}
+        </div>
+
+        {/* Rest of the form fields remain unchanged */}
+        {/* Billing Month */}
+        <div className="mb-4">
+          <label
+            htmlFor="billingMonth"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Billing Month<span className="text-red-500">*</span>
+          </label>
+          <select
+            id="billingMonth"
+            name="billingMonth"
+            value={formValues.billingMonth || ""}
+            onChange={handleMonthChange}
+            className={`w-full px-3 py-2 border ${
+              errors.billingMonth ? "border-red-500" : "border-gray-300"
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            required
+          >
+            <option value="">Select Month</option>
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+          {errors.billingMonth && (
+            <p className="mt-1 text-sm text-red-600">{errors.billingMonth}</p>
           )}
         </div>
 
@@ -614,7 +687,9 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
             value={formValues.units || ""}
             onChange={handleInputChange}
             placeholder="Enter units consumed"
-            className={`w-full px-3 py-2 border ${errors.units ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full px-3 py-2 border ${
+              errors.units ? "border-red-500" : "border-gray-300"
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
             required
           />
           {errors.units && (
@@ -637,7 +712,9 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
             value={totalPaymentInput}
             onChange={handleTotalPaymentChange}
             placeholder="Enter total payment amount (Max 2 decimals)"
-            className={`w-full px-3 py-2 border ${errors.totalPayment ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full px-3 py-2 border ${
+              errors.totalPayment ? "border-red-500" : "border-gray-300"
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
             required
           />
           {errors.totalPayment && (
@@ -661,10 +738,14 @@ const MonthlyUtilityBillForm: React.FC<MonthlyUtilityBillFormProps> = ({
             id="generatedDate"
             name="generatedDate"
             value={formValues.generatedDate || ""}
-            className={`w-full px-3 py-2 border ${errors.generatedDate ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${isEditMode ? 'bg-gray-100' : ''}`}
+            className={`w-full px-3 py-2 border ${
+              errors.generatedDate ? "border-red-500" : "border-gray-300"
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              isEditMode ? "bg-gray-100" : ""
+            }`}
             readOnly={isEditMode}
             onChange={!isEditMode ? handleInputChange : undefined}
-            max={new Date().toISOString().split('T')[0]}
+            max={new Date().toISOString().split("T")[0]}
             required
           />
           {errors.generatedDate && (

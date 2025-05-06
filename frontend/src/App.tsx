@@ -17,6 +17,7 @@ import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsM
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
 import AdminSupplierManager from "./modules/admin/pages/AdminStockPages/AdminSupplierManager";
 import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminStockOrderManager";
+import AdminStockReportsManager from "./modules/admin/pages/AdminStockPages/AdminStockReportsManager";
 // Utility routes
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
@@ -63,6 +64,8 @@ function App() {
           <Route path="stock-requests" element={<AdminStockReqManager />} />
           <Route path="supplier-details" element={<AdminSupplierManager />} />
           <Route path="order-stocks" element={<AdminStockOrderManager />} />
+          <Route path="stock-reports" element={<AdminStockReportsManager />} />
+          {/* vehicle routes */}
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />

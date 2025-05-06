@@ -19,9 +19,18 @@ interface UtilityBill {
   Unit_Price: number;
 }
 
+// Define the UtilityBillResponse interface
+interface UtilityBillResponse {
+  id: number;
+  billing_Acc_No: number;
+  type: string;
+  address: string;
+  meter_No: string;
+  unit_Price: number;
+}
+
 // For input masking of water billing account number
 interface WaterBillingGroups {
-  group1: string;
   group2: string;
   group3: string;
   group4: string;
@@ -69,7 +78,6 @@ const UtilityBillForm: React.FC = () => {
   );
   const [waterBillingGroups, setWaterBillingGroups] =
     useState<WaterBillingGroups>({
-      group1: "",
       group2: "",
       group3: "",
       group4: "",
@@ -93,7 +101,9 @@ const UtilityBillForm: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Same existing functionality (fetch, validate, handle changes, submit)
+  const [existingUtilityBills, setExistingUtilityBills] = useState<UtilityBillResponse[]>([]);
+  const [isLoadingExistingBills, setIsLoadingExistingBills] = useState<boolean>(false);
+
   // Fetch utility bill data if in edit mode
   useEffect(() => {
     if (isEditMode) {
@@ -121,7 +131,6 @@ const UtilityBillForm: React.FC = () => {
               "0"
             );
             setWaterBillingGroups({
-              group1: accNoStr.substring(0, 2),
               group2: accNoStr.substring(2, 4),
               group3: accNoStr.substring(4, 7),
               group4: accNoStr.substring(7, 10),
@@ -156,6 +165,46 @@ const UtilityBillForm: React.FC = () => {
       fetchUtilityBill();
     }
   }, [isEditMode, id]);
+
+  // Fetch existing utility bills
+  useEffect(() => {
+    const fetchExistingUtilityBills = async () => {
+      setIsLoadingExistingBills(true);
+      try {
+        const response = await axios.get("/utilitybill/get");
+        if (response.data) {
+          setExistingUtilityBills(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching existing utility bills:", error);
+      } finally {
+        setIsLoadingExistingBills(false);
+      }
+    };
+
+    fetchExistingUtilityBills();
+  }, []);
+
+  const checkForDuplicateBillingAccNo = (billingAccNo: number): boolean => {
+    if (!billingAccNo) {
+      return false; // Cannot check for duplicates if billing account number is missing
+    }
+
+    const isDuplicate = existingUtilityBills.some(bill => 
+      bill.billing_Acc_No === billingAccNo &&
+      (!isEditMode || bill.id !== parseInt(id as string, 10)) // Exclude current record when editing
+    );
+
+    if (isDuplicate) {
+      setErrors(prev => ({
+        ...prev,
+        duplicateBillingAccNo: "This billing account number already exists. Please use a different number."
+      }));
+      return true;
+    }
+    
+    return false;
+  };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -205,7 +254,6 @@ const UtilityBillForm: React.FC = () => {
     // Validate Water Billing Groups
     if (billingType === "Water") {
       if (
-        waterBillingGroups.group1.length !== 2 ||
         waterBillingGroups.group2.length !== 2 ||
         waterBillingGroups.group3.length !== 3 ||
         waterBillingGroups.group4.length !== 3 ||
@@ -216,8 +264,27 @@ const UtilityBillForm: React.FC = () => {
       }
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    let billingAccNo: number;
+    
+    // Process billing account number based on type
+    if (billingType === "Water") {
+      const combinedNumber = `${waterBillingGroups.group2}${waterBillingGroups.group3}${waterBillingGroups.group4}${waterBillingGroups.group5}`;
+      billingAccNo = parseInt(combinedNumber, 10);
+    } else {
+      // For electricity
+      const combinedNumber = Object.values(electricityBillingDigits).join("");
+      billingAccNo = parseInt(combinedNumber, 10);
+    }
+    
+    // Check for duplicate billing account number
+    const hasDuplicateBillingAccNo = checkForDuplicateBillingAccNo(billingAccNo);
+
+    setErrors(prev => ({
+      ...newErrors,
+      ...(hasDuplicateBillingAccNo ? { duplicateBillingAccNo: prev.duplicateBillingAccNo } : {})
+    }));
+    
+    return Object.keys(newErrors).length === 0 && !hasDuplicateBillingAccNo;
   };
 
   // Handle input change
@@ -227,16 +294,27 @@ const UtilityBillForm: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
-
+    
+    // Special handling for Unit_Price
+    if (name === "Unit_Price") {
+      // Only allow positive numbers with up to 2 decimal places
+      if (value === "" || /^\d*\.?\d{0,2}$/.test(value) && parseFloat(value) > 0) {
+        setFormValues((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    } 
     // Special handling for Meter_No in Water billing type
-    if (name === "Meter_No" && billingType === "Water") {
+    else if (name === "Meter_No" && billingType === "Water") {
       // Only allow digits for water meter numbers
       const digitsOnly = value.replace(/\D/g, "");
       setFormValues((prev) => ({
         ...prev,
         [name]: digitsOnly,
       }));
-    } else {
+    } 
+    else {
       setFormValues((prev) => ({
         ...prev,
         [name]: value,
@@ -245,44 +323,67 @@ const UtilityBillForm: React.FC = () => {
   };
 
   // Handle billing type change
-  const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const type = e.target.value as "Electricity" | "Water";
-    setBillingType(type);
-    setFormValues((prev) => ({
-      ...prev,
-      Type: type,
-      Billing_Acc_No: "",
-      // Reset Meter_No when switching billing types to avoid validation errors
-      Meter_No: "",
-    }));
+  // Handle billing type change
+const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const type = e.target.value as "Electricity" | "Water";
+  setBillingType(type);
+  
+  // Reset all form fields when changing billing type
+  setFormValues({
+    Type: type,
+    Address: "",
+    Meter_No: "",
+    Unit_Price: "",
+    Billing_Acc_No: "",
+  });
+  
+  // Clear any existing errors
+  setErrors({});
 
-    // Clear all errors when switching billing types
-    setErrors({});
-
-    if (type === "Water") {
-      setWaterBillingGroups({
-        group1: "",
-        group2: "",
-        group3: "",
-        group4: "",
-        group5: "",
-      });
-    } else {
-      // Reset electricity digits when switching to Electricity
-      setElectricityBillingDigits({
-        digit1: "",
-        digit2: "",
-        digit3: "",
-        digit4: "",
-        digit5: "",
-        digit6: "",
-        digit7: "",
-        digit8: "",
-        digit9: "",
-        digit10: "",
-      });
-    }
-  };
+  // Reset billing groups/digits
+  if (type === "Water") {
+    setWaterBillingGroups({
+      group2: "",
+      group3: "",
+      group4: "",
+      group5: "",
+    });
+    // Reset electricity digits too in case user switches back
+    setElectricityBillingDigits({
+      digit1: "",
+      digit2: "",
+      digit3: "",
+      digit4: "",
+      digit5: "",
+      digit6: "",
+      digit7: "",
+      digit8: "",
+      digit9: "",
+      digit10: "",
+    });
+  } else {
+    // Reset electricity digits
+    setElectricityBillingDigits({
+      digit1: "",
+      digit2: "",
+      digit3: "",
+      digit4: "",
+      digit5: "",
+      digit6: "",
+      digit7: "",
+      digit8: "",
+      digit9: "",
+      digit10: "",
+    });
+    // Reset water billing groups too
+    setWaterBillingGroups({
+      group2: "",
+      group3: "",
+      group4: "",
+      group5: "",
+    });
+  }
+};
 
   // Handle water billing account number group changes
   const handleWaterGroupChange = (
@@ -294,7 +395,6 @@ const UtilityBillForm: React.FC = () => {
 
     // Get the max length for each group
     const maxLength = {
-      group1: 2,
       group2: 2,
       group3: 3,
       group4: 3,
@@ -312,7 +412,6 @@ const UtilityBillForm: React.FC = () => {
     // Auto-focus next input if current one is filled to max length
     if (digitsOnly.length >= maxLength) {
       const nextGroupMap: Record<string, keyof WaterBillingGroups | null> = {
-        group1: "group2",
         group2: "group3",
         group3: "group4",
         group4: "group5",
@@ -377,7 +476,7 @@ const UtilityBillForm: React.FC = () => {
 
       // Process billing account number based on type
       if (billingType === "Water") {
-        const combinedNumber = `${waterBillingGroups.group1}${waterBillingGroups.group2}${waterBillingGroups.group3}${waterBillingGroups.group4}${waterBillingGroups.group5}`;
+        const combinedNumber = `${waterBillingGroups.group2}${waterBillingGroups.group3}${waterBillingGroups.group4}${waterBillingGroups.group5}`;
         billingAccNo = parseInt(combinedNumber, 10);
       } else {
         // For electricity
@@ -506,6 +605,11 @@ const UtilityBillForm: React.FC = () => {
                 {errors.electricityBillingDigits}
               </p>
             )}
+            {errors.duplicateBillingAccNo && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.duplicateBillingAccNo}
+              </p>
+            )}
           </div>
         ) : (
           <div className="mb-6">
@@ -513,17 +617,6 @@ const UtilityBillForm: React.FC = () => {
               Billing Account Number
             </label>
             <div className="flex flex-wrap gap-2 items-center">
-              <input
-                id="water-billing-group1"
-                value={waterBillingGroups.group1}
-                onChange={(e) =>
-                  handleWaterGroupChange("group1", e.target.value)
-                }
-                placeholder="XX"
-                maxLength={2}
-                className="w-16 px-3 py-2 border border-gray-300 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <span className="text-gray-500">-</span>
               <input
                 id="water-billing-group2"
                 value={waterBillingGroups.group2}
@@ -571,6 +664,11 @@ const UtilityBillForm: React.FC = () => {
             {errors.waterBillingGroups && (
               <p className="mt-1 text-sm text-red-600">
                 {errors.waterBillingGroups}
+              </p>
+            )}
+            {errors.duplicateBillingAccNo && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.duplicateBillingAccNo}
               </p>
             )}
           </div>
@@ -666,8 +764,7 @@ const UtilityBillForm: React.FC = () => {
             disabled={
               isSubmitting ||
               (billingType === "Water" &&
-                (waterBillingGroups.group1.length !== 2 ||
-                  waterBillingGroups.group2.length !== 2 ||
+                (waterBillingGroups.group2.length !== 2 ||
                   waterBillingGroups.group3.length !== 3 ||
                   waterBillingGroups.group4.length !== 3 ||
                   waterBillingGroups.group5.length !== 2))

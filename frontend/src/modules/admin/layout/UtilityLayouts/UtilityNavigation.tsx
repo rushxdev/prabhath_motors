@@ -26,7 +26,7 @@ const UtilityNav: React.FC = () => {
             {/* 3rd button */}
             <div 
               className="text-center space-y-2 cursor-pointer hover:bg-gray-800 p-2 rounded"
-              onClick={() => navigate('/admin/order-stocks')}
+               onClick={() => navigate('/admin/order-stocks')}  
             >
                 <p className="uppercase tracking-wide text-xs">Miscelleneous Items</p>
             </div>

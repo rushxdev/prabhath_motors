@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@headlessui/react";
-import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import StocksLayout from "../../layout/StockLayouts/StocksLayout";
 import Modal from "../../../../components/Model";
 import { Supplier } from "../../../../types/Stock";
@@ -118,8 +118,7 @@ const AdminSupplierManager: React.FC = () => {
 
     const filteredSuppliers = suppliers.filter(supplier => 
         supplier.supplierName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        supplier.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        supplier.contact.includes(searchTerm)
+        supplier.contactPerson.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -142,7 +141,7 @@ const AdminSupplierManager: React.FC = () => {
                                 setCurrentSupplier(undefined);
                                 setIsModalOpen(true);
                             }}
-                            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                            className="flex items-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600"
                         >
                             <PlusIcon className="w-5 h-5 mr-2" />
                             Add Supplier
@@ -163,11 +162,10 @@ const AdminSupplierManager: React.FC = () => {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -176,11 +174,10 @@ const AdminSupplierManager: React.FC = () => {
                                             key={supplier.supplierId}
                                             className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
                                         >
-                                            <td className="px-6 py-4 whitespace-nowrap">{supplier.supplierId}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">{supplier.supplierName}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">{supplier.email}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">{supplier.contact}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-6 py-4 text-left whitespace-nowrap">{supplier.supplierName}</td>
+                                            <td className="px-6 py-4 text-left whitespace-nowrap">{supplier.contactPerson}</td>
+                                            <td className="px-6 py-4 text-left whitespace-nowrap">{supplier.phoneNumber}</td>
+                                            <td className="px-6 py-4 text-center whitespace-nowrap">
                                                 <button
                                                     onClick={() => handleView(supplier)}
                                                     className="text-blue-600 hover:text-blue-900 font-medium"
@@ -204,24 +201,32 @@ const AdminSupplierManager: React.FC = () => {
                 >
                     {selectedSupplier && (
                         <div className="space-y-6">
-                            <div className="bg-gray-50 p-4 rounded-lg">
+                            {/* Add this button for the cross icon */}
+                            <button
+                                onClick={() => setIsViewModalOpen(false)}
+                                className="absolute top-4 right-4 p-1 text-gray-600 hover:text-gray-800 focus:outline-none"
+                            >
+                                <XMarkIcon className="h-6 w-6" />
+                            </button>
+
+                            <div className="bg-gray-50 dark:bg-gray-200 p-4 rounded-lg">
                                 <h3 className="text-lg font-semibold mb-4 text-primary">Basic Information</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <p className="text-sm font-medium text-gray-500">Supplier ID</p>
-                                        <p className="mt-1 text-gray-900">{selectedSupplier.supplierId}</p>
+                                        <p className="mt-1 text-gray-900 dark:text-green-700">{selectedSupplier.supplierId}</p>
                                     </div>
                                     <div>
                                         <p className="text-sm font-medium text-gray-500">Name</p>
-                                        <p className="mt-1 text-gray-900">{selectedSupplier.supplierName}</p>
+                                        <p className="mt-1 text-gray-900 dark:text-green-700">{selectedSupplier.supplierName}</p>
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500">Email</p>
-                                        <p className="mt-1 text-gray-900">{selectedSupplier.email}</p>
+                                        <p className="text-sm font-medium text-gray-500">Contact Person</p>
+                                        <p className="mt-1 text-gray-900 dark:text-green-700">{selectedSupplier.contactPerson}</p>
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500">Contact</p>
-                                        <p className="mt-1 text-gray-900">{selectedSupplier.contact}</p>
+                                        <p className="text-sm font-medium text-gray-500">Phone Number</p>
+                                        <p className="mt-1 text-gray-900 dark:text-green-700">{selectedSupplier.phoneNumber}</p>
                                     </div>
                                 </div>
                                 <div className="flex justify-end space-x-3 mt-4">
@@ -231,14 +236,14 @@ const AdminSupplierManager: React.FC = () => {
                                             setIsViewModalOpen(false);
                                             setIsModalOpen(true);
                                         }}
-                                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                        className="flex items-center px-4 py-2 bg-transparent text-green-700 border-2 border-green-400 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300"
                                     >
                                         <PencilIcon className="w-4 h-4 mr-2" />
                                         Edit
                                     </button>
                                     <button
                                         onClick={() => handleDelete(selectedSupplier.supplierId)}
-                                        className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                                        className="flex items-center px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-900 transition-all duration-300"
                                     >
                                         <TrashIcon className="w-4 h-4 mr-2" />
                                         Delete
