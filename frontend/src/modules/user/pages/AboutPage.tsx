@@ -8,9 +8,9 @@ const AboutPage: React.FC = () => {
       {/* Hero Section */}
       <section className="relative text-white overflow-hidden">
         {/* Background Image */}
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-70 z-0"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0"></div>
         <img
-          className="absolute top-0 left-0 w-full h-full object-cover opacity-60 z-0"
+          className="absolute top-0 left-0 w-full h-full object-cover opacity-100 z-0"
           src="../../../../public/assets/images/img7.avif"
           alt="Workshop"
         />
