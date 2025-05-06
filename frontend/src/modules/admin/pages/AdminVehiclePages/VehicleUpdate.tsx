@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getVehicleById, updateVehicle } from "../../../../services/vehicleService";
 import Navbar from "../../../user/components/Navbar";
+import Sidebar from "../../components/Sidebar";
 import { Vehicle } from "../../../../types/Vehicle"; // Ensure you're importing the Vehicle type
 
 const VehicleUpdate = () => {
@@ -67,7 +68,7 @@ const VehicleUpdate = () => {
 
     try {
       await updateVehicle(idNumber, vehicle);
-      navigate("/admin/vehicle-page");
+      navigate(`/vehicle-page/${id}`);
     } catch (error) {
       console.error("Error while updating vehicle", error);
     }

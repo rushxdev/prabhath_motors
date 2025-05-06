@@ -6,4 +6,3 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface Stock_OutRepository extends JpaRepository<Stock_Out, Integer> {}
-
