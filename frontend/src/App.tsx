@@ -53,6 +53,7 @@ function App() {
             <Route path="vehicle-registration" element={<VehicleRegistration />} />
             <Route path="vehicle-page" element={<VehiclePage />} />
             <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
+            
           
         {/* --------------------User Routes end-----------------*/}
 
