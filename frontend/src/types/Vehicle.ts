@@ -8,3 +8,13 @@ export interface Vehicle {
     mileage: number;
     lastUpdate: string;
 }
+
+export interface OwnershipHistory {
+    id?: number;
+    vehicleId: number;
+    previousOwnerName: string;
+    previousOwnerContact: string;
+    newOwnerName: string;
+    newOwnerContact: string;
+    transferDate: string;
+}
