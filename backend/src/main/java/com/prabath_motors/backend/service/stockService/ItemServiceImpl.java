@@ -17,12 +17,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> getAllItems() {
-
         List<Item> items = itemRepository.findAll();
-        if (items.isEmpty()){
+        if (items.isEmpty()) {
             throw new RuntimeException("No items found");
         }
-
         return items;
     }
 
