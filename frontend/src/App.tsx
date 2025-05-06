@@ -7,7 +7,7 @@ import AboutPage from "./modules/user/pages/AboutPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
 //Appointment, Tasks routes
-
+import CustomerDashboard from "./modules/user/pages/UserAppointmentPages/CustomerDashboard";
 import AppointmentPage from "./modules/admin/pages/AdminAppointmentPages/AppointmentPage";
 import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
 import AppointmentUpdate from "./modules/admin/pages/AdminAppointmentPages/AppointmentUpdate";
@@ -26,12 +26,13 @@ import VehiclePage from "./modules/admin/pages/AdminVehiclePages/VehiclePage"
 import VehicleUpdate from "./modules/admin/pages/AdminVehiclePages/VehicleUpdate";
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";//Utilityform
 //Employee routes
-import EmployeeDashboard from "./modules/admin/layout/EmployeeLayouts/EmployeeDashboard";
-import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
-import EmployeeUpdate from "./modules/admin/layout/EmployeeLayouts/EmployeeUpdate";
-
-
-
+import EmployeeDashboard from "./pages/EmployeeDashboard";
+import EmployeeShow from "./pages/EmployeeShow";
+import EmployeeUpdate from "./pages/EmployeeUpdate";
+//Job routes
+import JobForm from "./modules/admin/components/JobForm";
+import JobList from "./modules/admin/pages/JobList";
+import JobDetails from "./modules/admin/pages/JobDetails";
 
 function App() {
   useEffect(() => {
@@ -52,7 +53,7 @@ function App() {
             <Route path="vehicle-registration" element={<VehicleRegistration />} />
             <Route path="vehicle-page" element={<VehiclePage />} />
             <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
-          
+            <Route path="/" element={<CustomerDashboard />} />
           
         {/* --------------------User Routes end-----------------*/}
 
@@ -80,8 +81,10 @@ function App() {
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
           <Route path="task-list" element={<TaskList />} />
-
-        {/* --------------------Admin Routes end--------------- */}
+          {/*Job routes*/}
+          <Route path="job-form" element={<JobForm />} />
+          <Route path="jobs" element={<JobList />} />
+          <Route path="jobs/:id" element={<JobDetails />} />
         </Route>
       </Routes>
     </Router>

@@ -31,11 +31,16 @@ public class Job {
     private String assignedEmployee;
 
     @ElementCollection
-    private List<String> tasks; //Multiple tasks assigned to a job
+    @CollectionTable(name = "job_tasks", joinColumns = @JoinColumn(name = "job_id"))
+    private List<NamedCostItem> tasks; //Multiple tasks assigned to a job
 
     @ElementCollection
-    private List<String> spareParts;
+    @CollectionTable(name = "job_spare_parts", joinColumns = @JoinColumn(name = "job_id"))
+    private List<NamedCostItem> spareParts;
 
     @Column(nullable = false)
     private String status; //Ongoing or Done
+
+
+    private double totalCost; //Ongoing or Done
 }

@@ -30,7 +30,10 @@ public class Item {
     private int qtyAvailable;
     private String itemBrand;
     private double sellPrice;
+    private double unitPrice;
     private String stockLevel;
     private int rackNo;
     private LocalDate updatedDate;
+
 }
+

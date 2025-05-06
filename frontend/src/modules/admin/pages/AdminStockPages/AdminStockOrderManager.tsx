@@ -58,7 +58,7 @@ const AdminStockOrderManager: React.FC = () => {
 
     const fetchItems = async () => {
         try {
-            const response = await fetch('http://localhost:8081/item/get');
+            const response = await fetch('http://localhost:8080/item/get');
             if (!response.ok) throw new Error('Failed to fetch items');
             const data = await response.json();
             setItems(data);
@@ -69,7 +69,7 @@ const AdminStockOrderManager: React.FC = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('http://localhost:8081/itemCtgry/get');
+            const response = await fetch('http://localhost:8080/itemCtgry/get');
             if (!response.ok) throw new Error('Failed to fetch categories');
             const data = await response.json();
             setCategories(data);
@@ -80,7 +80,7 @@ const AdminStockOrderManager: React.FC = () => {
 
     const fetchSuppliers = async () => {
         try {
-            const response = await fetch('http://localhost:8081/supplier/get');
+            const response = await fetch('http://localhost:8080/supplier/get');
             if (!response.ok) throw new Error('Failed to fetch suppliers');
             const data = await response.json();
             setSuppliers(data);
@@ -118,7 +118,7 @@ const AdminStockOrderManager: React.FC = () => {
         setLoading(true);
         try {
             console.log('Attempting to delete stock:', stockToDelete);
-            const response = await fetch(`http://localhost:8081/stock_in/delete/${stockToDelete}`, {
+            const response = await fetch(`http://localhost:8080/stock_in/delete/${stockToDelete}`, {
                 method: 'DELETE',
             });
 

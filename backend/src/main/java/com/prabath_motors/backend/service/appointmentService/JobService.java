@@ -11,4 +11,5 @@ public interface JobService {
     List<Job> getAllOngoingJobs();
     List<Job> getAllDoneJobs();
     void markJobAsDone(Long id);
+    void deleteJob(Long id);
 }

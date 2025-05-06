@@ -85,7 +85,7 @@ const AdminStockReportsManager: React.FC = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8081/reports/${selectedReportType}`, {
+            const response = await fetch(`http://localhost:8080/reports/${selectedReportType}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
