@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   const [isAppointmentsMenuOpen, setIsAppointmentsMenuOpen] = useState(false);
   //const [darkMode, setDarkMode] = useState(false);
 
-  const toggleAppointmentsMenu = () => {
+  /*const toggleAppointmentsMenu = () => {
     setIsAppointmentsMenuOpen(!isAppointmentsMenuOpen);
     if (isServicesMenuOpen) setIsServicesMenuOpen(false);
   };
@@ -17,7 +17,7 @@ const Header: React.FC = () => {
   const toggleServicesMenu = () => {
     setIsServicesMenuOpen(!isServicesMenuOpen);
     if (isAppointmentsMenuOpen) setIsAppointmentsMenuOpen(false);
-  };
+  };*/
 
   const navLinks = [
     { to: "/about", label: "DISCOVER" },
