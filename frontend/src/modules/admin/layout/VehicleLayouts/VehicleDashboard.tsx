@@ -1,7 +1,7 @@
-
 import Navbar from "../../../user/components/Navbar";
 import Sidebar from "../../components/Sidebar";
 import VehiclePage from "../../pages/AdminVehiclePages/VehiclePage";
+
 
 const VehicleDashboard = () => {
   return (
@@ -9,7 +9,7 @@ const VehicleDashboard = () => {
       <Sidebar />
       <div className="flex-1">
         <Navbar />
-        <div className="max-w-4xl mx-auto p-6 bg-gray-100 min-h-screen">
+        <div className="w-full p-6 bg-gray-100 min-h-screen">
           <VehiclePage />
         </div>
       </div>
