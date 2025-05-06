@@ -2,7 +2,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 // Explicitly set the base URL
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
@@ -30,11 +31,9 @@ apiClient.interceptors.request.use(
 // Response interceptor
 apiClient.interceptors.response.use(
     (response) => {
-        console.log('Response received:', response);
         return response;
     },
     (error) => {
-        console.error('Response error:', error);
         const message = error.response?.data?.message || 'An error occurred';
         
         switch (error.response?.status) {
