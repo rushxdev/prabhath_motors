@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Modal from "../../../../components/Model"; // Import the Modal component
 
 // Configure axios base URL
-axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.baseURL = "http://localhost:8081";
 
 interface MonthlyUtilityBill {
   id?: number;
