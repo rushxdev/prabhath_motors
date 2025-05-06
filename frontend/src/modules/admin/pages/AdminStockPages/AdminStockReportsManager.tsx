@@ -4,6 +4,7 @@ import { Document, Page, Text, View, StyleSheet, PDFViewer } from "@react-pdf/re
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ErrorBoundary } from 'react-error-boundary';
+import ReportLayout from "../../components/Reports/ReportLayout";
  
 interface ErrorFallbackProps {
     error: Error
@@ -40,6 +41,28 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 12,
         marginBottom: 5,
+    },
+    content: {
+        marginTop: 20,
+        padding: 10,
+        borderRadius: 4,
+    },
+    tableHeader: {
+        backgroundColor: '#f0f0f0',
+        flexDirection: 'row',
+        borderBottomColor: '#000',
+        borderBottomWidth: 1,
+        padding: 8,
+    },
+    tableRow: {
+        flexDirection: 'row',
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        padding: 8,
+    },
+    cell: {
+        flex: 1,
+        fontSize: 10,
     }
 });
 
@@ -87,13 +110,40 @@ const AdminStockReportsManager: React.FC = () => {
     const ReportDocument = () => (
         <Document>
             <Page size="A4" style={styles.page}>
-                <View style={styles.header}>
-                    <Text>{REPORT_TYPES.find(r => r.id === selectedReportType)?.name}</Text>
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.text}>Period: {startDate?.toDateString()} - {endDate?.toDateString()}</Text>
-                    {/* Add more report content based on reportData */}
-                </View>
+                <ReportLayout 
+                    title={REPORT_TYPES.find(r => r.id === selectedReportType)?.name || ''}
+                    pageNumber={1}
+                >
+                    <View style={styles.section}>
+                        <Text style={styles.text}>Period: {startDate?.toDateString()} - {endDate?.toDateString()}</Text>
+                        
+                        {reportData && (
+                            <View style={styles.content}>
+                                {/* report data based on report type */}
+                                {selectedReportType === 'spare_parts' && (
+                                    <View>
+                                        <Text style={styles.text}>Total Sales: {reportData.totalSales}</Text>
+                                        <Text style={styles.text}>Items Sold: {reportData.itemsSold}</Text>
+                                    </View>
+                                )}
+                                
+                                {selectedReportType === 'supplier_purchase' && (
+                                    <View>
+                                        <Text style={styles.text}>Total Purchases: {reportData.totalPurchases}</Text>
+                                        <Text style={styles.text}>Suppliers: {reportData.suppliersCount}</Text>
+                                    </View>
+                                )}
+                                
+                                {selectedReportType === 'inventory' && (
+                                    <View>
+                                        <Text style={styles.text}>Total Items: {reportData.totalItems}</Text>
+                                        <Text style={styles.text}>Low Stock Items: {reportData.lowStockItems}</Text>
+                                    </View>
+                                )}
+                            </View>
+                        )}
+                    </View>
+                </ReportLayout>
             </Page>
         </Document>
     );
