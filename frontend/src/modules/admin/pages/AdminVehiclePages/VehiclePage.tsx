@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Vehicle } from "../../../../types/Vehicle";
 import { deleteVehicle, getAllVehicles } from "../../../../services/vehicleService";
-import Navbar from "../../../user/components/Navbar";
 import { useNavigate } from "react-router-dom";
 
 const VehiclePage = () => {
@@ -50,7 +49,7 @@ const VehiclePage = () => {
           />
           {/* Add New button */}
           <button
-            onClick={() => navigate(`vehicle-registration`)}
+            onClick={() => navigate(`/vehicle-registration`)}
             className="bg-blue-500 text-white px-4 py-2 rounded ml-4"
           >
             Add
