@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-// Explicitly set the base URL
-const API_BASE_URL = 'http://localhost:8081';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
@@ -14,7 +13,6 @@ export const apiClient = axios.create({
 // Request interceptor
 apiClient.interceptors.request.use(
     (config) => {
-        console.log('Making request to:', config.url);
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -22,19 +20,14 @@ apiClient.interceptors.request.use(
         return config;
     },
     (error) => {
-        console.error('Request error:', error);
         return Promise.reject(error);
     }
 );
 
 // Response interceptor
 apiClient.interceptors.response.use(
-    (response) => {
-        console.log('Response received:', response);
-        return response;
-    },
+    (response) => response,
     (error) => {
-        console.error('Response error:', error);
         const message = error.response?.data?.message || 'An error occurred';
         
         switch (error.response?.status) {

@@ -38,9 +38,8 @@ class ItemService {
     }
 
     async getAllCategories(): Promise<ItemCategory[]> {
-        
-            const response = await apiClient.get<ItemCategory[]>(`${this.categoryUrl}/get`);
-            return response.data;
+        const response = await apiClient.get<ItemCategory[]>(`${this.categoryUrl}/get`);
+        return response.data;
         
     }
 }
