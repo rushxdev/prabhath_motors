@@ -67,7 +67,7 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSuccess, onCancel }) =
                 status: 'Ongoing',
                 totalCost: 0,
                 ownerName: vehicle.ownerName,
-                contactNo: vehicle.contactNo // Using contactNo instead of contactNumber
+                contactNumber: vehicle.contactNumber
             };
 
             await jobService.createJob(jobData);

@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     text: {
-        fontSize: 12,
+        fontSize: 8,
         marginBottom: 5,
     },
     label: {
@@ -65,13 +65,8 @@ const ServiceReport: React.FC<ServiceReportProps> = ({ job, tasks, spareParts })
                 <ReportLayout title="Service Report" pageNumber={1}>
                     <View style={styles.section}>
                         {/* Vehicle Details */}
-                        <Text style={styles.label}>Vehicle Details</Text>
+                        <Text style={styles.label}>Service Details</Text>
                         <Text style={styles.text}>Registration Number: {job.vehicleRegistrationNumber}</Text>
-                        <Text style={styles.text}>Owner Name: {job.ownerName}</Text>
-                        <Text style={styles.text}>Contact Number: {job.contactNo}</Text>
-
-                        {/* Job Details */}
-                        <Text style={[styles.label, { marginTop: 10 }]}>Job Details</Text>
                         <Text style={styles.text}>Job ID: {job.jobId}</Text>
                         <Text style={styles.text}>Service Section: {job.serviceSection}</Text>
                         <Text style={styles.text}>Assigned Employee: {job.assignedEmployee}</Text>

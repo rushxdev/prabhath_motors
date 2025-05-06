@@ -9,7 +9,7 @@ export interface Job {
     spareParts: NamedCostItem[];
     totalCost: number;
     ownerName: string;
-    contactNo: string;
+    contactNumber: string;
 }
 
 export interface NamedCostItem {
