@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Vehicle } from "../types/Vehicle";
+import { Vehicle, OwnershipHistory } from "../types/Vehicle";
 
 const API_URL = "http://localhost:8080/vehicle";
 
@@ -59,6 +59,42 @@ export const deleteVehicle = async (id: number): Promise<void> => {
     await axios.delete<void>(`${API_URL}/${id}`);
   } catch (error) {
     console.error("Error while deleting vehicle", error);
+    throw error;
+  }
+};
+
+export const transferVehicleOwnership = async (
+  vehicleId: number,
+  newOwnerName: string,
+  newOwnerContact: string
+): Promise<void> => {
+  try {
+    await axios.post(`${API_URL}/transfer-ownership`, {
+      vehicleId,
+      newOwnerName,
+      newOwnerContact
+    });
+  } catch (error) {
+    console.error("Error while transferring vehicle ownership", error);
+    throw error;
+  }
+};
+
+export const getOwnershipHistory = async (vehicleId: number): Promise<OwnershipHistory[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/ownership-history/${vehicleId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error while fetching ownership history", error);
+    throw error;
+  }
+};
+
+export const clearOwnershipHistory = async (vehicleId: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_URL}/ownership-history/${vehicleId}/clear`);
+  } catch (error) {
+    console.error("Error while clearing ownership history", error);
     throw error;
   }
 };
