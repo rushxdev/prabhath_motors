@@ -6,6 +6,8 @@ interface MenuItem {
   title: string;
   icon: React.ReactNode;
   href: string;
+  basePath: string; // Base path for matching child routes
+  additionalPaths?: string[]; // Optional additional paths to check
 }
 
 const Sidebar: React.FC = () => {
@@ -20,12 +22,18 @@ const Sidebar: React.FC = () => {
   }, [open]);
 
   const Menus: MenuItem[] = [
-    { title: "Vehicle", icon: <FaCar size={24} />, href: "/vehicle-page" },
-    { title: "Appointment", icon: <FaAddressBook size={24} />, href: "/admin/appointment-list" },
-    { title: "Employee", icon: <FaBriefcase size={24} />, href: "/admin/employee/add" },
-    { title: "Stock", icon: <FaCartPlus size={24} />, href: "/admin/items" },
-    { title: "Utilities", icon: <FaChartLine size={24} />, href: "/admin/utility" },
-    { title: "Reports", icon: <FaRegFilePdf size={24} />, href: "/admin/reports" },
+    { title: "Vehicle", icon: <FaCar size={24} />, href: "/admin/vehicle", basePath: "/admin/vehicle" },
+    { title: "Appointment", icon: <FaAddressBook size={24} />, href: "/admin/appointment-list", basePath: "/admin/appointment" },
+    { title: "Employee", icon: <FaBriefcase size={24} />, href: "/admin/employee/add", basePath: "/admin/employee" },
+    { 
+      title: "Stock", 
+      icon: <FaCartPlus size={24} />, 
+      href: "/admin/items", 
+      basePath: "/admin/stock",
+      additionalPaths: ["/admin/items", "/admin/stock-requests", "/admin/order-stocks", "/admin/supplier-details", "/admin/stock-reports"]
+    },
+    { title: "Utilities", icon: <FaChartLine size={24} />, href: "/admin/utility", basePath: "/admin/utility" },
+    { title: "Reports", icon: <FaRegFilePdf size={24} />, href: "/admin/reports", basePath: "/admin/reports" },
   ];
 
   const toggleSidebar = () => {
@@ -50,7 +58,15 @@ const Sidebar: React.FC = () => {
         {/* Sidebar Menu */}
         <ul className="mt-6 flex-1 pt-8">
           {Menus.map((menu, index) => {
-            const isActive = location.pathname === menu.href;
+            // Comprehensive check for active state
+            const isActive = 
+              // Check exact path match
+              location.pathname === menu.href || 
+              // Check if path starts with basePath
+              (menu.basePath && location.pathname.startsWith(menu.basePath)) ||
+              // Check additional paths if they exist
+              (menu.additionalPaths?.some(path => location.pathname.startsWith(path)) || false);
+            
             return (
               <li key={index} className="pt-2">
                 <Link 
@@ -59,7 +75,6 @@ const Sidebar: React.FC = () => {
                     isActive ? "bg-green-950 text-green-700" : "hover:bg-green-900" 
                   }`}
                 >
-              
                   <div className="min-w-[24px]">{menu.icon}</div>
                   <span className={`text-white text-sm font-medium transition-all duration-300 ${!open && "hidden"}`}>
                     {menu.title}

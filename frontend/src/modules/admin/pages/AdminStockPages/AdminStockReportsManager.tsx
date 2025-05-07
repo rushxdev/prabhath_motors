@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import StocksLayout from "../../layout/StockLayouts/StocksLayout";
 import { Document, Page, Text, View, StyleSheet, PDFViewer } from "@react-pdf/renderer";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { ErrorBoundary } from 'react-error-boundary';
 import ReportLayout from "../../components/Reports/ReportLayout";
- 
+import DateRangeParameters from "../../components/Reports/parameters/DateRangeParameters";
+import InventoryParameters from "../../components/Reports/parameters/InventoryParameters";
+
 interface ErrorFallbackProps {
     error: Error
 }
@@ -19,7 +19,7 @@ const ErrorFallback = ({ error }: ErrorFallbackProps) => (
 
 // Define report types
 const REPORT_TYPES = [
-    { id: 'spare_parts', name: 'Spare Parts Sales Report' },
+    { id: 'sales summery', name: 'Sales summary Report' },
     { id: 'supplier_purchase', name: 'Supplier Purchase Report' },
     { id: 'inventory', name: 'Inventory Report' }
 ];
@@ -63,6 +63,24 @@ const styles = StyleSheet.create({
     cell: {
         flex: 1,
         fontSize: 10,
+        padding: 4,
+    },
+    cellHeader: {
+        flex: 1,
+        fontSize: 10,
+        fontWeight: 'bold',
+        padding: 4,
+    },
+    summarySection: {
+        marginTop: 15,
+        paddingTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#000',
+    },
+    summaryText: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginBottom: 5,
     }
 });
 
@@ -74,26 +92,49 @@ const AdminStockReportsManager: React.FC = () => {
     const [reportData, setReportData] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    
+    // Additional parameters for specific reports
+    const [showLowStock, setShowLowStock] = useState<boolean>(false);
 
     const generateReport = async () => {
         setLoading(true);
         setError(null);
-        if (!selectedReportType || !startDate || !endDate) {
-            alert('Please select all required fields');
+        
+        // Validate required fields based on report type
+        if (!selectedReportType) {
+            alert('Please select a report type');
+            setLoading(false);
+            return;
+        }
+        
+        // Validate date range for reports that need it
+        if (['sales summery', 'supplier_purchase'].includes(selectedReportType) && 
+            (!startDate || !endDate)) {
+            alert('Please select a date range');
             setLoading(false);
             return;
         }
 
         try {
-            const response = await fetch(`http://localhost:8081/reports/${selectedReportType}`, {
+            // Build request body based on report type
+            const requestBody: any = {};
+            
+            // Add common parameters
+            // Convert Date objects to LocalDate format strings (YYYY-MM-DD)
+            if (startDate) requestBody.startDate = startDate.toISOString().split('T')[0]; // Just the date part
+            if (endDate) requestBody.endDate = endDate.toISOString().split('T')[0]; // Just the date part
+                        
+            // Add report-specific parameters
+            if (selectedReportType === 'inventory') {
+                requestBody.showLowStockOnly = showLowStock;
+            }
+
+            const response = await fetch(`http://localhost:8080/reports/${selectedReportType}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    startDate: startDate.toISOString(),
-                    endDate: endDate.toISOString(),
-                }),
+                body: JSON.stringify(requestBody),
             });
 
             const data = await response.json();
@@ -105,6 +146,42 @@ const AdminStockReportsManager: React.FC = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    // Function to render the appropriate parameter form based on report type
+    const renderParameterForm = () => {
+        if (!selectedReportType) return null;
+        
+        switch (selectedReportType) {
+            case 'sales summery':
+            case 'supplier_purchase':
+                return (
+                    <DateRangeParameters
+                        startDate={startDate}
+                        setStartDate={setStartDate}
+                        endDate={endDate}
+                        setEndDate={setEndDate}
+                    />
+                );
+            case 'inventory':
+                return (
+                    <InventoryParameters
+                        startDate={startDate}
+                        setStartDate={setStartDate}
+                        endDate={endDate}
+                        setEndDate={setEndDate}
+                        showLowStock={showLowStock}
+                        setShowLowStock={setShowLowStock}
+                    />
+                );
+            default:
+                return null;
+        }
+    };
+
+    // Function to format currency
+    const formatCurrency = (value: number): string => {
+        return `Rs. ${value.toFixed(2)}`;
     };
 
     const ReportDocument = () => (
@@ -119,14 +196,44 @@ const AdminStockReportsManager: React.FC = () => {
                         
                         {reportData && (
                             <View style={styles.content}>
-                                {/* report data based on report type */}
-                                {selectedReportType === 'spare_parts' && (
+                                {/* Sales Summary Report with Table */}
+                                {selectedReportType === 'sales summery' && (
                                     <View>
-                                        <Text style={styles.text}>Total Sales: {reportData.totalSales}</Text>
-                                        <Text style={styles.text}>Items Sold: {reportData.itemsSold}</Text>
+                                        {/* Table Header */}
+                                        <View style={styles.tableHeader}>
+                                            <Text style={styles.cellHeader}>Item Name</Text>
+                                            <Text style={styles.cellHeader}>Quantity</Text>
+                                            <Text style={styles.cellHeader}>Purchase Price</Text>
+                                            <Text style={styles.cellHeader}>Sold Price</Text>
+                                            <Text style={styles.cellHeader}>Revenue</Text>
+                                            <Text style={styles.cellHeader}>Expense</Text>
+                                            <Text style={styles.cellHeader}>Profit</Text>
+                                        </View>
+                                        
+                                        {/* Table Rows */}
+                                        {reportData.salesDetails?.map((item: any, index: number) => (
+                                            <View style={styles.tableRow} key={index}>
+                                                <Text style={styles.cell}>{item.itemName}</Text>
+                                                <Text style={styles.cell}>{item.soldQty}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.purchasePrice)}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.soldPrice)}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.revenue)}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.expense)}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.revenue - item.expense)}</Text>
+                                            </View>
+                                        ))}
+                                        
+                                        {/* Summary Section */}
+                                        <View style={styles.summarySection}>
+                                            <Text style={styles.summaryText}>Total Items Sold: {reportData.itemsSold}</Text>
+                                            <Text style={styles.summaryText}>Total Sales: {formatCurrency(reportData.totalSales)}</Text>
+                                            <Text style={styles.summaryText}>Total Expenses: {formatCurrency(reportData.totalExpenses)}</Text>
+                                            <Text style={styles.summaryText}>Net Profit: {formatCurrency(reportData.totalSales - reportData.totalExpenses)}</Text>
+                                        </View>
                                     </View>
                                 )}
                                 
+                                {/* Supplier Purchase Report */}
                                 {selectedReportType === 'supplier_purchase' && (
                                     <View>
                                         <Text style={styles.text}>Total Purchases: {reportData.totalPurchases}</Text>
@@ -134,6 +241,7 @@ const AdminStockReportsManager: React.FC = () => {
                                     </View>
                                 )}
                                 
+                                {/* Inventory Report */}
                                 {selectedReportType === 'inventory' && (
                                     <View>
                                         <Text style={styles.text}>Total Items: {reportData.totalItems}</Text>
@@ -163,9 +271,9 @@ const AdminStockReportsManager: React.FC = () => {
                             <p className="text-lg text-red-500">{error}</p>
                         </div>
                     ) : (
-                        <div className="space-y-6 bg-white p-6 rounded-lg shadow">
-                            {/* Report Type Selection */}
-                            <div>
+                        <div className="space-y-6">
+                            {/* Report Type Selection - First Section */}
+                            <div className="bg-white p-6 rounded-lg shadow">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Report Type
                                 </label>
@@ -183,44 +291,25 @@ const AdminStockReportsManager: React.FC = () => {
                                 </select>
                             </div>
 
-                            {/* Date Range Selection */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Start Date
-                                    </label>
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={(date: Date | null) => setStartDate(date)}
-                                        className="w-full p-2 border rounded-md"
-                                        dateFormat="yyyy-MM-dd"
-                                        maxDate={new Date()}
-                                    />
+                            {/* Parameters Section - Second Section (Dynamic) */}
+                            {selectedReportType && (
+                                <div className="bg-white p-6 rounded-lg shadow">
+                                    <h3 className="text-lg font-medium mb-4">
+                                        {REPORT_TYPES.find(r => r.id === selectedReportType)?.name} Parameters
+                                    </h3>
+                                    {renderParameterForm()}
+                                    
+                                    {/* Generate Button */}
+                                    <div className="flex justify-end mt-6">
+                                        <button
+                                            onClick={generateReport}
+                                            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700"
+                                        >
+                                            Generate Report
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        End Date
-                                    </label>
-                                    <DatePicker
-                                        selected={endDate}
-                                        onChange={(date: Date | null) => setEndDate(date)}
-                                        className="w-full p-2 border rounded-md"
-                                        dateFormat="yyyy-MM-dd"
-                                        maxDate={new Date()}
-                                        minDate={startDate || undefined}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Generate Button */}
-                            <div className="flex justify-end">
-                                <button
-                                    onClick={generateReport}
-                                    className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700"
-                                >
-                                    Generate Report
-                                </button>
-                            </div>
+                            )}
                         </div>
                     )}
 
