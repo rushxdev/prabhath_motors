@@ -6,10 +6,12 @@ import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
-//Appointment routes
-import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
+//Appointment, Tasks routes
+
 import AppointmentPage from "./modules/admin/pages/AdminAppointmentPages/AppointmentPage";
+import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
 import AppointmentUpdate from "./modules/admin/pages/AdminAppointmentPages/AppointmentUpdate";
+import TaskList from "./modules/admin/pages/AdminAppointmentPages/TaskList";
 //Items, Stocks, Supplier, Order routes
 import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsManager";
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
@@ -28,8 +30,13 @@ import UtilityBillForm from "./modules/admin/components/AdminUtility-page/Utilit
 import EmployeeDashboard from "./modules/admin/layout/EmployeeLayouts/EmployeeDashboard";
 import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
 import EmployeeUpdate from "./modules/admin/layout/EmployeeLayouts/EmployeeUpdate";
+import VehicleDetails from "./modules/admin/pages/AdminVehiclePages/VehicleDetails";
 
 
+//Job routes
+import JobForm from "./modules/admin/components/JobForm";
+import JobList from "./modules/admin/pages/AdminAppointmentPages/JobList";
+import JobDetails from "./modules/admin/pages/AdminAppointmentPages/JobDetails";
 
 function App() {
   useEffect(() => {
@@ -48,8 +55,8 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           {/*Vehicle routes*/}
             <Route path="vehicle-page" element={<VehicleDashboard />} />
-            <Route path="vehicle-page/vehicle-registration" element={<VehicleRegistration />} />
             <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
+            <Route path="vehicle-page/:id" element={<VehicleDetails />} />
         {/* --------------------User Routes end-----------------*/}
 
 
@@ -71,11 +78,20 @@ function App() {
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
-          {/*Appointment routes*/}
+          {/*Appointment, Tasks routes*/}
           <Route path="appointment-list" element={<AppointmentPage />} />
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+          {/*Vehicle routes*/}
+          <Route path="vehicle-page" element={<VehicleDashboard />} />
+          <Route path="vehicle-page/vehicle-registration" element={<VehicleRegistration />} />
+          <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
         {/* --------------------Admin Routes end--------------- */}
+          <Route path="task-list" element={<TaskList />} />
+          {/*Job routes*/}
+          <Route path="job-form" element={<JobForm />} />
+          <Route path="jobs" element={<JobList />} />
+          <Route path="jobs/:id" element={<JobDetails />} />
         </Route>
       </Routes>
     </Router>
