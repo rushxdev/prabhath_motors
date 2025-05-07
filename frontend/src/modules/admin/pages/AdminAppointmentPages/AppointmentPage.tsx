@@ -18,7 +18,9 @@ const AppointmentPage = () => {
   >([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading] = useState<boolean>(false);
-  const [appointmentToDelete, setAppointmentToDelete] = useState<number | null>(null);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<number | null>(
+    null
+  );
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
@@ -166,42 +168,42 @@ const AppointmentPage = () => {
 
       {/* Delete Confirmation Modal */}
       <Modal
-        isOpen ={isDeleteModalOpen}
+        isOpen={isDeleteModalOpen}
         onClose={cancelDelete}
         title="Confirm Deletion"
-        >
-          <div className="p-4">
-                    {deleteError ? (
-                      <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                        <p className="font-medium">{deleteError}</p>
-                      </div>
-                    ) : (
-                      <p className="mb-4">
-                        Are you sure you want to delete this Appointment? This action
-                        cannot be undone.
-                      </p>
-                    )}
-          
-                    <div className="flex justify-end space-x-2 mt-6">
-                      <Button
-                        type="button"
-                        onClick={cancelDelete}
-                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                      >
-                        Cancel
-                      </Button>
-                      {!deleteError && (
-                        <Button
-                          type="button"
-                          onClick={() => handleDelete(appointmentToDelete!)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                          disabled={loading}
-                        >
-                          {loading ? "Deleting..." : "Delete"}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
+      >
+        <div className="p-4">
+          {deleteError ? (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              <p className="font-medium">{deleteError}</p>
+            </div>
+          ) : (
+            <p className="mb-4">
+              Are you sure you want to delete this Appointment? This action
+              cannot be undone.
+            </p>
+          )}
+
+          <div className="flex justify-end space-x-2 mt-6">
+            <Button
+              type="button"
+              onClick={cancelDelete}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+            >
+              Cancel
+            </Button>
+            {!deleteError && (
+              <Button
+                type="button"
+                onClick={() => handleDelete(appointmentToDelete!)}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                disabled={loading}
+              >
+                {loading ? "Deleting..." : "Delete"}
+              </Button>
+            )}
+          </div>
+        </div>
       </Modal>
     </AppointLayouts>
   );

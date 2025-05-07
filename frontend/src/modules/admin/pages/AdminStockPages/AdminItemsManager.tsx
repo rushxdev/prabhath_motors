@@ -8,6 +8,7 @@ import { StockItem, Stock_In, ItemCategory } from "../../../../types/Stock";
 import { itemService } from '../../../../services/stockItemService';
 import { ErrorBoundary } from 'react-error-boundary';
 
+
 interface ErrorFallbackProps {
     error: Error;
 }
@@ -173,7 +174,7 @@ const AdminItemsManager: React.FC = () => {
                         <h2 className="text-2xl sm:text-2xl font-press font-semibold pt-10 text-primary">
                             Manage All Stock Items
                         </h2>
-                        
+
                         <div className="flex items-center justify-between mt-8 px-4">
                             <input
                                 type="text"

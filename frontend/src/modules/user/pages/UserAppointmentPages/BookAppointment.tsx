@@ -1,18 +1,40 @@
-import React/*, { useState } */from "react";
+import React, { useState /*, { useState } */ } from "react";
 //import { Appointment } from "../../../../types/Appointment";
-import Navbar from "../../components/Navbar";
 //import { addAppointment } from "../../../../services/appointmentService";
 import { useNavigate } from "react-router-dom";
 import { useAppointment } from "../../../../hooks/useAppointment"; // Adjust import path as needed
+import Modal from "../../../../components/Model"; // Import the Modal component
+import AppointLayouts from "../../../admin/layout/AppointmentLayouts/AppointLayouts";
 
 const BookAppointment = () => {
   const navigate = useNavigate();
-  const { appointment, errors, handleChange, handleSubmit: handleAppointmentSubmit } = useAppointment();
+  const {
+    appointment,
+    errors,
+    handleChange,
+    handleSubmit: handleAppointmentSubmit,
+  } = useAppointment();
+  const [isSubmitting] = useState(false); // Form submission state
+  const [isOpen, setIsOpen] = useState(true); // Modal state
 
   const timeSlots = [
-    "09:00", "10:00", "11:00", "12:00", "13:00", 
-    "14:00", "15:00", "16:00", "17:00", "18:00"
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
   ];
+
+  // Handle modal close
+  const handleClose = () => {
+    setIsOpen(false);
+    navigate("/admin/appointment-list"); // Redirect to appointment list
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,46 +46,74 @@ const BookAppointment = () => {
   };
 
   return (
+    <AppointLayouts>
     <div>
-      <Navbar />
-      <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-bold mb-4">Book Appointment</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <input
-              type="text"
-              name="vehicleRegistrationNo"
-              placeholder="Vehicle Registration No."
-              value={appointment.vehicleRegistrationNo}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-            {errors.vehicleRegistrationNo && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.vehicleRegistrationNo}
-              </p>
-            )}
-          </div>
-          
-          <div>
-            <input
-              type="date"
-              name="date"
-              value={appointment.date}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-            {errors.date && (
-              <p className="text-red-500 text-sm mt-1">{errors.date}</p>
-            )}
-          </div>
+      <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Book Appointment"
+    >
+      <form onSubmit={handleSubmit} className="mt-4">
+        {/* Vehicle Registration Number */}
+        <div className="mb-6">
+          <label
+            htmlFor="vehicleRegistrationNo"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Vehicle Registration No.
+          </label>
+          <input
+            type="text"
+            id="vehicleRegistrationNo"
+            name="vehicleRegistrationNo"
+            value={appointment.vehicleRegistrationNo}
+            onChange={handleChange}
+            placeholder="Enter vehicle registration number"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {errors.vehicleRegistrationNo && (
+            <p className="mt-1 text-sm text-red-600">
+              {errors.vehicleRegistrationNo}
+            </p>
+          )}
+        </div>
 
+        {/* Date */}
+        <div className="mb-6">
+          <label
+            htmlFor="date"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Appointment Date
+          </label>
+          <input
+            type="date"
+            id="date"
+            name="date"
+            value={appointment.date}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {errors.date && (
+            <p className="mt-1 text-sm text-red-600">{errors.date}</p>
+          )}
+        </div>
+
+        {/* Time */}
+        <div className="mb-6">
+          <label
+            htmlFor="time"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Appointment Time
+          </label>
           <select
+            id="time"
             name="time"
             value={appointment.time}
             onChange={handleChange}
             required
-            className="w-full p-2 border rounded"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Select a time</option>
             {timeSlots.map((slot) => (
@@ -72,30 +122,57 @@ const BookAppointment = () => {
               </option>
             ))}
           </select>
+          {errors.time && (
+            <p className="mt-1 text-sm text-red-600">{errors.time}</p>
+          )}
+        </div>
 
-          <div>
-            <input
-              type="text"
-              name="mileage"
-              placeholder="Mileage"
-              value={appointment.mileage}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-            {errors.mileage && (
-              <p className="text-red-500 text-sm mt-1">{errors.mileage}</p>
-            )}
-          </div>
+        {/* Mileage */}
+        <div className="mb-6">
+          <label
+            htmlFor="mileage"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Mileage
+          </label>
+          <input
+            type="text"
+            id="mileage"
+            name="mileage"
+            value={appointment.mileage}
+            onChange={handleChange}
+            placeholder="Enter current vehicle mileage"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {errors.mileage && (
+            <p className="mt-1 text-sm text-red-600">{errors.mileage}</p>
+          )}
+        </div>
 
+        {/* Form Actions */}
+        <div className="flex justify-end mt-8 gap-4">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md shadow-sm hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded"
+            className={`px-4 py-2 bg-green-500 text-white rounded-md shadow-sm hover:bg-green-700 transition ${
+              isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+            }`}
+            disabled={isSubmitting}
           >
-            Book Appointment
+            {isSubmitting ? "Booking..." : "Book Appointment"}
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
+      </Modal>
     </div>
+    </AppointLayouts>
   );
 };
 

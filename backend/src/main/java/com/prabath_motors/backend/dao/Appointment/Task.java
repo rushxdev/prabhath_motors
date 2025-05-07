@@ -1,6 +1,9 @@
 package com.prabath_motors.backend.dao.Appointment;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,18 +12,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "job_tasks")
-public class JobTask {
+public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long taskId;
+    private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "job_id", nullable = false)
-    private Job job;
+    private String description;
 
-    @Column(nullable = false)
-    private String taskName;
-
-
+    private double cost;
 }
