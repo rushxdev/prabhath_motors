@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Job } from '../../../types/Job';
-import { jobService } from '../../../services/jobService';
-import AppointLayouts from '../layout/AppointmentLayouts/AppointLayouts';
-import { TrashIcon } from "@heroicons/react/24/solid";
-import Modal from '../../../components/Model';
+import { Job } from '../../../../types/Job';
+import { jobService } from '../../../../services/jobService';
+import AppointLayouts from '../../layout/AppointmentLayouts/AppointLayouts';
+import { TrashIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import Modal from '../../../../components/Model';
 
 const JobList: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [jobs, setJobs] = useState<Job[]>([]);
+    const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [jobToDelete, setJobToDelete] = useState<number | null>(null);
@@ -23,7 +25,9 @@ const JobList: React.FC = () => {
                 jobService.getAllOngoingJobs(),
                 jobService.getAllDoneJobs()
             ]);
-            setJobs([...ongoingJobs, ...doneJobs]);
+            const allJobs = [...ongoingJobs, ...doneJobs];
+            setJobs(allJobs);
+            setFilteredJobs(allJobs);
         } catch (err) {
             console.error('Error fetching jobs:', err);
             setError('Failed to fetch jobs. Please try again.');
@@ -35,6 +39,23 @@ const JobList: React.FC = () => {
     useEffect(() => {
         fetchJobs();
     }, []);
+
+    // Filter jobs based on search query
+    useEffect(() => {
+        if (searchQuery.trim() === '') {
+            setFilteredJobs(jobs);
+            return;
+        }
+
+        const query = searchQuery.toLowerCase();
+        const filtered = jobs.filter(job => 
+            job.vehicleRegistrationNumber.toLowerCase().includes(query) ||
+            job.serviceSection.toLowerCase().includes(query) ||
+            job.assignedEmployee.toLowerCase().includes(query) ||
+            job.status.toLowerCase().includes(query)
+        );
+        setFilteredJobs(filtered);
+    }, [searchQuery, jobs]);
 
     // Refresh jobs when returning from job details
     useEffect(() => {
@@ -101,6 +122,22 @@ const JobList: React.FC = () => {
                     <h1 className="text-2xl font-semibold">Jobs</h1>
                 </div>
 
+                {/* Search Bar */}
+                <div className="mb-6">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                            type="text"
+                            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                            placeholder="Search by vehicle number, service section, employee, or status..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                </div>
+
                 <div className="bg-white shadow-md rounded-lg overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
@@ -116,7 +153,7 @@ const JobList: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {jobs.map((job) => (
+                                {filteredJobs.map((job) => (
                                     <tr key={job.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4 whitespace-nowrap">{job.jobId}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{job.vehicleRegistrationNumber}</td>

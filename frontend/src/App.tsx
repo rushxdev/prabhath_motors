@@ -35,8 +35,8 @@ import VehicleDetails from "./modules/admin/pages/AdminVehiclePages/VehicleDetai
 
 //Job routes
 import JobForm from "./modules/admin/components/JobForm";
-import JobList from "./modules/admin/pages/JobList";
-import JobDetails from "./modules/admin/pages/JobDetails";
+import JobList from "./modules/admin/pages/AdminAppointmentPages/JobList";
+import JobDetails from "./modules/admin/pages/AdminAppointmentPages/JobDetails";
 
 function App() {
   useEffect(() => {
