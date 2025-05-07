@@ -96,9 +96,72 @@ const AdminStockReportsManager: React.FC = () => {
     // Additional parameters for specific reports
     const [showLowStock, setShowLowStock] = useState<boolean>(false);
 
+    // Add state to track original values
+    const [originalSettings, setOriginalSettings] = useState({
+        reportType: '',
+        startDate: null as Date | null,
+        endDate: null as Date | null,
+        showLowStock: false
+    });
+    
+    // Handler for report type changes
+    const handleReportTypeChange = (newReportType: string) => {
+        if (showPDF) {
+            if (window.confirm('Changing the report type will reset current report. Do you want to continue?')) {
+                setSelectedReportType(newReportType);
+                setShowPDF(false);
+                setReportData(null);
+            }
+        } else {
+            setSelectedReportType(newReportType);
+        }
+    };
+    
+    // Handler for date changes
+    const handleDateChange = (type: 'start' | 'end', newDate: Date | null) => {
+        if (showPDF) {
+            if (window.confirm('Changing the date range will reset current report. Do you want to continue?')) {
+                if (type === 'start') {
+                    setStartDate(newDate);
+                } else {
+                    setEndDate(newDate);
+                }
+                setShowPDF(false);
+                setReportData(null);
+            }
+        } else {
+            if (type === 'start') {
+                setStartDate(newDate);
+            } else {
+                setEndDate(newDate);
+            }
+        }
+    };
+    
+    // Handler for low stock setting change
+    const handleLowStockChange = (newValue: boolean) => {
+        if (showPDF) {
+            if (window.confirm('Changing the low stock filter will reset current report. Do you want to continue?')) {
+                setShowLowStock(newValue);
+                setShowPDF(false);
+                setReportData(null);
+            }
+        } else {
+            setShowLowStock(newValue);
+        }
+    };
+
     const generateReport = async () => {
         setLoading(true);
         setError(null);
+        
+        // Store current settings when generating report
+        setOriginalSettings({
+            reportType: selectedReportType,
+            startDate: startDate,
+            endDate: endDate,
+            showLowStock: showLowStock
+        });
         
         // Validate required fields based on report type
         if (!selectedReportType) {
@@ -158,20 +221,20 @@ const AdminStockReportsManager: React.FC = () => {
                 return (
                     <DateRangeParameters
                         startDate={startDate}
-                        setStartDate={setStartDate}
+                        setStartDate={(date) => handleDateChange('start', date)}
                         endDate={endDate}
-                        setEndDate={setEndDate}
+                        setEndDate={(date) => handleDateChange('end', date)}
                     />
                 );
             case 'inventory':
                 return (
                     <InventoryParameters
                         startDate={startDate}
-                        setStartDate={setStartDate}
+                        setStartDate={(date) => handleDateChange('start', date)}
                         endDate={endDate}
-                        setEndDate={setEndDate}
+                        setEndDate={(date) => handleDateChange('end', date)}
                         showLowStock={showLowStock}
-                        setShowLowStock={setShowLowStock}
+                        setShowLowStock={handleLowStockChange}
                     />
                 );
             default:
@@ -279,7 +342,7 @@ const AdminStockReportsManager: React.FC = () => {
                                 </label>
                                 <select
                                     value={selectedReportType}
-                                    onChange={(e) => setSelectedReportType(e.target.value)}
+                                    onChange={(e) => handleReportTypeChange(e.target.value)}
                                     className="w-full p-2 border rounded-md"
                                 >
                                     <option value="">Select Report Type</option>
