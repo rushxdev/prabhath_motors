@@ -8,10 +8,9 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children?: ReactNode;
-  fullSize?: boolean;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, fullSize = false }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="fixed inset-0 z-50 overflow-y-auto" onClose={onClose}>
@@ -31,7 +30,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, fullSiz
             leaveTo="opacity-0 scale-95 translate-y-4"
           >
             {/* Modal content with glass effect */}
-            <div className={`inline-block w-full ${fullSize ? 'max-w-7xl' : 'max-w-4xl'} p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white/80 backdrop-blur-md shadow-xl rounded-2xl`}>
+            <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white/80 backdrop-blur-md shadow-xl rounded-2xl">
               <Dialog.Title as="h3" className="text-xl font-semibold leading-6 text-gray-900">
                 {title}
               </Dialog.Title>
