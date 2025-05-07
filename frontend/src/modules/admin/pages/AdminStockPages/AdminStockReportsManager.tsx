@@ -5,6 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import ReportLayout from "../../components/Reports/ReportLayout";
 import DateRangeParameters from "../../components/Reports/parameters/DateRangeParameters";
 import InventoryParameters from "../../components/Reports/parameters/InventoryParameters";
+import ItemPurchaseHistoryParameters from "../../components/Reports/parameters/ItemPurchaseHistoryParameters";
 
 interface ErrorFallbackProps {
     error: Error
@@ -20,7 +21,7 @@ const ErrorFallback = ({ error }: ErrorFallbackProps) => (
 // Define report types
 const REPORT_TYPES = [
     { id: 'sales summery', name: 'Sales summary Report' },
-    { id: 'supplier_purchase', name: 'Supplier Purchase Report' },
+    { id: 'item_purchase_history', name: 'Item Purchase History Report' },
     { id: 'inventory', name: 'Inventory Report' }
 ];
 
@@ -95,13 +96,15 @@ const AdminStockReportsManager: React.FC = () => {
     
     // Additional parameters for specific reports
     const [showLowStock, setShowLowStock] = useState<boolean>(false);
+    const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
     // Add state to track original values
     const [originalSettings, setOriginalSettings] = useState({
         reportType: '',
         startDate: null as Date | null,
         endDate: null as Date | null,
-        showLowStock: false
+        showLowStock: false,
+        selectedItemId: null as number | null
     });
     
     // Handler for report type changes
@@ -160,7 +163,8 @@ const AdminStockReportsManager: React.FC = () => {
             reportType: selectedReportType,
             startDate: startDate,
             endDate: endDate,
-            showLowStock: showLowStock
+            showLowStock: showLowStock,
+            selectedItemId: selectedItemId
         });
         
         // Validate required fields based on report type
@@ -170,8 +174,16 @@ const AdminStockReportsManager: React.FC = () => {
             return;
         }
         
+        // Validate date range and item selection for item purchase history report
+        if (selectedReportType === 'item_purchase_history' && 
+            (!startDate || !endDate || !selectedItemId)) {
+            alert('Please select an item and date range');
+            setLoading(false);
+            return;
+        }
+
         // Validate date range for reports that need it
-        if (['sales summery', 'supplier_purchase'].includes(selectedReportType) && 
+        if (['sales summery'].includes(selectedReportType) && 
             (!startDate || !endDate)) {
             alert('Please select a date range');
             setLoading(false);
@@ -190,6 +202,11 @@ const AdminStockReportsManager: React.FC = () => {
             // Add report-specific parameters
             if (selectedReportType === 'inventory') {
                 requestBody.showLowStockOnly = showLowStock;
+            }
+
+            // Add item-specific parameters
+            if (selectedReportType === 'item_purchase_history') {
+                requestBody.itemId = selectedItemId;
             }
 
             const response = await fetch(`http://localhost:8081/reports/${selectedReportType}`, {
@@ -217,13 +234,23 @@ const AdminStockReportsManager: React.FC = () => {
         
         switch (selectedReportType) {
             case 'sales summery':
-            case 'supplier_purchase':
                 return (
                     <DateRangeParameters
                         startDate={startDate}
                         setStartDate={(date) => handleDateChange('start', date)}
                         endDate={endDate}
                         setEndDate={(date) => handleDateChange('end', date)}
+                    />
+                );
+            case 'item_purchase_history':
+                return (
+                    <ItemPurchaseHistoryParameters
+                        startDate={startDate}
+                        setStartDate={(date) => handleDateChange('start', date)}
+                        endDate={endDate}
+                        setEndDate={(date) => handleDateChange('end', date)}
+                        selectedItemId={selectedItemId}
+                        setSelectedItemId={setSelectedItemId}
                     />
                 );
             case 'inventory':
@@ -309,6 +336,52 @@ const AdminStockReportsManager: React.FC = () => {
                                     <View>
                                         <Text style={styles.text}>Total Items: {reportData.totalItems}</Text>
                                         <Text style={styles.text}>Low Stock Items: {reportData.lowStockItems}</Text>
+                                    </View>
+                                )}
+
+                                {/* Item Purchase History Report */}
+                                {selectedReportType === 'item_purchase_history' && reportData && (
+                                    <View>
+                                        {/* Item Details Section */}
+                                        <View style={{ marginBottom: 10 }}>
+                                            <Text style={styles.text}>Item Name: {reportData.itemDetails?.itemName}</Text>
+                                            <Text style={styles.text}>Barcode: {reportData.itemDetails?.itemBarcode}</Text>
+                                            <Text style={styles.text}>Category: {reportData.itemDetails?.categoryName}</Text>
+                                            <Text style={styles.text}>Current Stock: {reportData.itemDetails?.qtyAvailable}</Text>
+                                            <Text style={styles.text}>Stock Level: {reportData.itemDetails?.stockLevel}</Text>
+                                        </View>
+                                        
+                                        {/* Purchase History Table */}
+                                        <View style={{ marginTop: 10 }}>
+                                            <Text style={[styles.text, { fontWeight: 'bold', marginBottom: 8 }]}>Purchase History</Text>
+                                            
+                                            {/* Table Header */}
+                                            <View style={styles.tableHeader}>
+                                                <Text style={styles.cellHeader}>Date</Text>
+                                                <Text style={styles.cellHeader}>Quantity</Text>
+                                                <Text style={styles.cellHeader}>Unit Price</Text>
+                                                <Text style={styles.cellHeader}>Sell Price</Text>
+                                                <Text style={styles.cellHeader}>Supplier</Text>
+                                            </View>
+                                            
+                                            {/* Table Rows */}
+                                            {reportData.purchaseHistory?.map((entry: any, index: number) => (
+                                                <View style={styles.tableRow} key={index}>
+                                                    <Text style={styles.cell}>{entry.dateAdded}</Text>
+                                                    <Text style={styles.cell}>{entry.qtyAdded}</Text>
+                                                    <Text style={styles.cell}>{formatCurrency(entry.unitPrice)}</Text>
+                                                    <Text style={styles.cell}>{formatCurrency(entry.sellPrice)}</Text>
+                                                    <Text style={styles.cell}>{entry.supplierName}</Text>
+                                                </View>
+                                            ))}
+                                            
+                                            {/* Summary Section */}
+                                            <View style={styles.summarySection}>
+                                                <Text style={styles.summaryText}>Total Purchases: {reportData.totalPurchases}</Text>
+                                                <Text style={styles.summaryText}>Total Quantity: {reportData.totalQuantity}</Text>
+                                                <Text style={styles.summaryText}>Average Unit Price: {formatCurrency(reportData.averageUnitPrice)}</Text>
+                                            </View>
+                                        </View>
                                     </View>
                                 )}
                             </View>

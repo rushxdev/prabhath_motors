@@ -7,4 +7,5 @@ public interface StockReportService {
     SalesSummaryResponse generateSalesSummaryReport(LocalDate startDate, LocalDate endDate);
     Object generateSupplierPurchaseReport(LocalDate startDate, LocalDate endDate);
     Object generateInventoryReport(boolean showLowStockOnly);
+    Object generateItemPurchaseHistoryReport(Integer itemId, LocalDate startDate, LocalDate endDate);
 }

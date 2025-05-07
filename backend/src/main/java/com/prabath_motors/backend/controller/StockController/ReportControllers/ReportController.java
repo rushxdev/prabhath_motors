@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/reports")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -36,5 +39,15 @@ public class ReportController {
     public ResponseEntity<?> getInventoryReport(@RequestBody DateRangeRequest request) {
         return ResponseEntity.ok(stockReportService.generateInventoryReport(
                 request.isShowLowStockOnly()));
+    }
+
+    @PostMapping("/item_purchase_history")
+    public ResponseEntity<?> getItemPurchaseHistory(@RequestBody Map<String, Object> request) {
+        Integer itemId = (Integer) request.get("itemId");
+        LocalDate startDate = LocalDate.parse((String) request.get("startDate"));
+        LocalDate endDate = LocalDate.parse((String) request.get("endDate"));
+        
+        return ResponseEntity.ok(stockReportService.generateItemPurchaseHistoryReport(
+                itemId, startDate, endDate));
     }
 }
