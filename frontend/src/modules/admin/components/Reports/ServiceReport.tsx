@@ -57,7 +57,7 @@ interface ServiceReportProps {
 
 const ServiceReport: React.FC<ServiceReportProps> = ({ job, tasks, spareParts }) => {
     const totalCost = tasks.reduce((sum, task) => sum + task.cost, 0) +
-                     spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.sellPrice), 0);
+                     spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0);
 
     return (
         <Document>
@@ -100,8 +100,8 @@ const ServiceReport: React.FC<ServiceReportProps> = ({ job, tasks, spareParts })
                                 <View key={index} style={styles.tableRow}>
                                     <Text style={styles.tableCell}>{part.itemName}</Text>
                                     <Text style={styles.tableCell}>{part.qtyAvailable}</Text>
-                                    <Text style={styles.tableCell}>{part.sellPrice.toFixed(2)}</Text>
-                                    <Text style={styles.tableCell}>{(part.qtyAvailable * part.sellPrice).toFixed(2)}</Text>
+                                    <Text style={styles.tableCell}>{part.unitPrice.toFixed(2)}</Text>
+                                    <Text style={styles.tableCell}>{(part.qtyAvailable * part.unitPrice).toFixed(2)}</Text>
                                 </View>
                             ))}
                         </View>
