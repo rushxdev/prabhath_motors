@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { Job, JobStatus, NamedCostItem } from '../../../types/Job';
+import { PencilIcon, PlusIcon, TrashIcon, DocumentTextIcon } from "@heroicons/react/24/solid";
+import { Job, NamedCostItem } from '../../../types/Job';
 import { Task } from '../../../types/Task';
 import { StockItem } from '../../../types/Stock';
 import { jobService } from '../../../services/jobService';
@@ -10,6 +10,8 @@ import { itemService } from '../../../services/stockItemService';
 import AppointLayouts from '../layout/AppointmentLayouts/AppointLayouts';
 import Modal from '../../../components/Model';
 import { Button } from "@headlessui/react";
+import { PDFViewer } from '@react-pdf/renderer';
+import ServiceReport from '../components/Reports/ServiceReport';
 
 interface TaskFormErrors {
   description?: string;
@@ -69,6 +71,9 @@ const JobDetails: React.FC = () => {
 
   // Add new state for success message
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+
+  // Add new state for PDF viewer
+  const [showReport, setShowReport] = useState<boolean>(false);
 
   // Fetch job details and its tasks
   useEffect(() => {
@@ -645,6 +650,13 @@ const JobDetails: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Job Details</h1>
           <div className="flex space-x-2">
+            <button
+              onClick={() => setShowReport(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center"
+            >
+              <DocumentTextIcon className="w-5 h-5 mr-2" />
+              Service Report
+            </button>
             {job?.status !== "Done" && (
               <button 
                 onClick={handleMarkAsDone}
@@ -1141,6 +1153,35 @@ const JobDetails: React.FC = () => {
               </Button>
             )}
           </div>
+        </div>
+      </Modal>
+
+      {/* PDF Viewer Modal */}
+      <Modal
+        isOpen={showReport}
+        onClose={() => setShowReport(false)}
+        title="Service Report"
+        fullSize={true}
+      >
+        <div className="h-[80vh] w-full">
+          <div className="flex justify-end mb-2">
+            <button
+              onClick={() => setShowReport(false)}
+              className="px-4 py-2 bg-red-400 text-white rounded-md hover:bg-red-600 flex items-center"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+              Close
+            </button>
+          </div>
+          <PDFViewer width="100%" height="100%">
+            <ServiceReport
+              job={job!}
+              tasks={tasks}
+              spareParts={spareParts}
+            />
+          </PDFViewer>
         </div>
       </Modal>
     </AppointLayouts>
