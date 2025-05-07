@@ -703,8 +703,8 @@ const JobDetails: React.FC = () => {
         {/* Job Information Card */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center mb-6">
-            <div className="bg-blue-100 p-3 rounded-full mr-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="bg-green-100 p-3 rounded-full mr-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
@@ -890,8 +890,8 @@ const JobDetails: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">{part.itemID}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{part.itemName}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{part.qtyAvailable}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{part.unitPrice}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{(part.qtyAvailable * part.unitPrice).toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{part.sellPrice}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{(part.qtyAvailable * part.sellPrice).toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2">
                           <button
@@ -922,7 +922,7 @@ const JobDetails: React.FC = () => {
             <p className="text-lg font-medium">
               Total Cost: Rs. {(
                 tasks.reduce((sum, task) => sum + task.cost, 0) +
-                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0)
+                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.sellPrice), 0)
               ).toFixed(2)}
             </p>
           </div>
@@ -1110,7 +1110,7 @@ const JobDetails: React.FC = () => {
                       onClick={() => selectSparePart(part)}
                     >
                       <span>{part.itemName}</span>
-                      <span className="text-gray-500">Rs. {part.unitPrice}</span>
+                      <span className="text-gray-500">Rs. {part.sellPrice}</span>
                     </li>
                   ))}
                 </ul>
@@ -1149,7 +1149,7 @@ const JobDetails: React.FC = () => {
               type="number"
               id="unitPrice"
               name="unitPrice"
-              value={currentSparePart?.unitPrice || ""}
+              value={currentSparePart?.sellPrice || ""}
               onChange={handleSparePartInputChange}
               className="w-full p-2 border border-gray-300 rounded-md"
               required
