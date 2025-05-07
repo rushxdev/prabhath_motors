@@ -891,7 +891,7 @@ const JobDetails: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">{part.itemName}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{part.qtyAvailable}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{part.sellPrice}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{(part.qtyAvailable * part.unitPrice).toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{(part.qtyAvailable * part.sellPrice).toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2">
                           <button
@@ -922,7 +922,7 @@ const JobDetails: React.FC = () => {
             <p className="text-lg font-medium">
               Total Cost: Rs. {(
                 tasks.reduce((sum, task) => sum + task.cost, 0) +
-                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0)
+                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.sellPrice), 0)
               ).toFixed(2)}
             </p>
           </div>
@@ -1110,7 +1110,7 @@ const JobDetails: React.FC = () => {
                       onClick={() => selectSparePart(part)}
                     >
                       <span>{part.itemName}</span>
-                      <span className="text-gray-500">Rs. {part.unitPrice}</span>
+                      <span className="text-gray-500">Rs. {part.sellPrice}</span>
                     </li>
                   ))}
                 </ul>
@@ -1149,7 +1149,7 @@ const JobDetails: React.FC = () => {
               type="number"
               id="unitPrice"
               name="unitPrice"
-              value={currentSparePart?.unitPrice || ""}
+              value={currentSparePart?.sellPrice || ""}
               onChange={handleSparePartInputChange}
               className="w-full p-2 border border-gray-300 rounded-md"
               required
