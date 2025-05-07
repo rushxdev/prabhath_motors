@@ -36,9 +36,12 @@ public class ReportController {
     }
 
     @PostMapping("/inventory")
-    public ResponseEntity<?> getInventoryReport(@RequestBody DateRangeRequest request) {
-        return ResponseEntity.ok(stockReportService.generateInventoryReport(
-                request.isShowLowStockOnly()));
+    public ResponseEntity<?> getInventoryReport(@RequestBody Map<String, Object> request) {
+        boolean showLowStockOnly = request.containsKey("showLowStockOnly") ? (boolean) request.get("showLowStockOnly") : false;
+        String sortBy = request.containsKey("sortBy") ? (String) request.get("sortBy") : "stockLevel";
+        // We don't need to pass showChart to the backend since it's just for UI rendering
+        
+        return ResponseEntity.ok(stockReportService.generateInventoryReport(showLowStockOnly, sortBy));
     }
 
     @PostMapping("/item_purchase_history")

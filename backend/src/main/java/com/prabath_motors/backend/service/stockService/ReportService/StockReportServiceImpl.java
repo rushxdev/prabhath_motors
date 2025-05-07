@@ -119,20 +119,201 @@ public class StockReportServiceImpl implements StockReportService {
 
     @Override
     public Object generateInventoryReport(boolean showLowStockOnly) {
-        // Implementation for inventory report
         Map<String, Object> response = new HashMap<>();
 
-        List<Item> items;
+        List<Item> allItems;
         if (showLowStockOnly) {
-            items = itemRepository.findByStockLevelIn(List.of("Low", "Critical"));
+            allItems = itemRepository.findByStockLevelIn(List.of("Low", "Critical"));
         } else {
-            items = itemRepository.findAll();
+            allItems = itemRepository.findAll();
         }
 
-        response.put("totalItems", items.size());
-        response.put("lowStockItems", items.stream()
-                .filter(i -> "Low".equals(i.getStockLevel()) || "Critical".equals(i.getStockLevel()))
-                .count());
+        // Calculate total inventory value
+        double totalInventoryValue = allItems.stream()
+                .mapToDouble(item -> item.getQtyAvailable() * item.getSellPrice())
+                .sum();
+        
+        // Calculate total purchase value
+        double totalPurchaseValue = 0;
+        // Add stock status counts
+        int criticalItems = 0;
+        int lowItems = 0;
+        int mediumItems = 0;
+        int highItems = 0;
+
+        // Create detailed item list with category and supplier info
+        List<Map<String, Object>> itemDetails = new ArrayList<>();
+
+        for (Item item : allItems) {
+            // Count by stock level
+            switch (item.getStockLevel()) {
+                case "Critical": criticalItems++; break;
+                case "Low": lowItems++; break;
+                case "Medium": mediumItems++; break;
+                case "High": highItems++; break;
+            }
+            
+            // Get average purchase price
+            List<Stock_In> stockIns = stockInRepository.findByItemID(item.getItemID());
+            double avgPurchasePrice = stockIns.isEmpty() ? 0 :
+                    stockIns.stream().mapToDouble(Stock_In::getUnitPrice).average().orElse(0);
+            
+            totalPurchaseValue += avgPurchasePrice * item.getQtyAvailable();
+
+            // Get category name
+            Optional<Item_Ctgry> categoryOpt = item_CtgryRepository.findById(item.getItemCtgryID());
+            String categoryName = categoryOpt.isPresent() ? categoryOpt.get().getItemCtgryName() : "Unknown";
+
+            // Get supplier name
+            Optional<Supplier> supplierOpt = supplierRepository.findById(item.getSupplierId());
+            String supplierName = supplierOpt.isPresent() ? supplierOpt.get().getSupplierName() : "Unknown";
+
+            Map<String, Object> itemDetail = new HashMap<>();
+            itemDetail.put("itemID", item.getItemID());
+            itemDetail.put("itemName", item.getItemName());
+            itemDetail.put("barcode", item.getItemBarcode());
+            itemDetail.put("category", categoryName);
+            itemDetail.put("supplier", supplierName);
+            itemDetail.put("qtyAvailable", item.getQtyAvailable());
+            itemDetail.put("reorderLevel", item.getRecorderLevel());
+            itemDetail.put("stockLevel", item.getStockLevel());
+            itemDetail.put("sellPrice", item.getSellPrice());
+            itemDetail.put("avgPurchasePrice", avgPurchasePrice);
+            itemDetail.put("inventoryValue", item.getQtyAvailable() * item.getSellPrice());
+            itemDetail.put("rackNo", item.getRackNo());
+            itemDetail.put("lastUpdated", item.getUpdatedDate());
+
+            itemDetails.add(itemDetail);
+        }
+
+        response.put("items", itemDetails);
+        response.put("totalItems", allItems.size());
+        response.put("criticalItems", criticalItems);
+        response.put("lowItems", lowItems);
+        response.put("mediumItems", mediumItems);
+        response.put("highItems", highItems);
+        response.put("totalInventoryValue", totalInventoryValue);
+        response.put("totalPurchaseValue", totalPurchaseValue);
+        response.put("potentialProfit", totalInventoryValue - totalPurchaseValue);
+
+        return response;
+    }
+
+    @Override
+    public Object generateInventoryReport(boolean showLowStockOnly, String sortBy) {
+        Map<String, Object> response = new HashMap<>();
+
+        List<Item> allItems;
+        if (showLowStockOnly) {
+            allItems = itemRepository.findByStockLevelIn(List.of("Low", "Critical"));
+        } else {
+            allItems = itemRepository.findAll();
+        }
+
+        // Calculate total inventory value
+        double totalInventoryValue = allItems.stream()
+                .mapToDouble(item -> item.getQtyAvailable() * item.getSellPrice())
+                .sum();
+        
+        // Calculate total purchase value
+        double totalPurchaseValue = 0;
+        // Add stock status counts
+        int criticalItems = 0;
+        int lowItems = 0;
+        int mediumItems = 0;
+        int highItems = 0;
+
+        // Create detailed item list with category and supplier info
+        List<Map<String, Object>> itemDetails = new ArrayList<>();
+
+        for (Item item : allItems) {
+            // Count by stock level
+            switch (item.getStockLevel()) {
+                case "Critical": criticalItems++; break;
+                case "Low": lowItems++; break;
+                case "Medium": mediumItems++; break;
+                case "High": highItems++; break;
+            }
+            
+            // Get average purchase price
+            List<Stock_In> stockIns = stockInRepository.findByItemID(item.getItemID());
+            double avgPurchasePrice = stockIns.isEmpty() ? 0 :
+                    stockIns.stream().mapToDouble(Stock_In::getUnitPrice).average().orElse(0);
+            
+            totalPurchaseValue += avgPurchasePrice * item.getQtyAvailable();
+
+            // Get category name
+            Optional<Item_Ctgry> categoryOpt = item_CtgryRepository.findById(item.getItemCtgryID());
+            String categoryName = categoryOpt.isPresent() ? categoryOpt.get().getItemCtgryName() : "Unknown";
+
+            // Get supplier name
+            Optional<Supplier> supplierOpt = supplierRepository.findById(item.getSupplierId());
+            String supplierName = supplierOpt.isPresent() ? supplierOpt.get().getSupplierName() : "Unknown";
+
+            Map<String, Object> itemDetail = new HashMap<>();
+            itemDetail.put("itemID", item.getItemID());
+            itemDetail.put("itemName", item.getItemName());
+            itemDetail.put("barcode", item.getItemBarcode());
+            itemDetail.put("category", categoryName);
+            itemDetail.put("supplier", supplierName);
+            itemDetail.put("qtyAvailable", item.getQtyAvailable());
+            itemDetail.put("reorderLevel", item.getRecorderLevel());
+            itemDetail.put("stockLevel", item.getStockLevel());
+            itemDetail.put("sellPrice", item.getSellPrice());
+            itemDetail.put("avgPurchasePrice", avgPurchasePrice);
+            itemDetail.put("inventoryValue", item.getQtyAvailable() * item.getSellPrice());
+            itemDetail.put("rackNo", item.getRackNo());
+            itemDetail.put("lastUpdated", item.getUpdatedDate());
+
+            itemDetails.add(itemDetail);
+        }
+
+        // Sort the items based on the sortBy parameter
+        switch (sortBy) {
+            case "qtyAvailable":
+                itemDetails.sort(Comparator.comparingInt(item -> (Integer) item.get("qtyAvailable")));
+                break;
+            case "inventoryValue":
+                itemDetails.sort((item1, item2) -> 
+                    Double.compare((Double) item2.get("inventoryValue"), (Double) item1.get("inventoryValue")));
+                break;
+            case "itemName":
+                itemDetails.sort(Comparator.comparing(item -> ((String) item.get("itemName")).toLowerCase()));
+                break;
+            case "category":
+                itemDetails.sort(Comparator.comparing(item -> ((String) item.get("category")).toLowerCase()));
+                break;
+            case "stockLevel":
+            default:
+                // Custom sort for stock level: Critical, Low, Medium, High
+                itemDetails.sort((item1, item2) -> {
+                    String level1 = (String) item1.get("stockLevel");
+                    String level2 = (String) item2.get("stockLevel");
+                    
+                    // Define priority: Critical (highest) > Low > Medium > High (lowest)
+                    Map<String, Integer> priority = Map.of(
+                        "Critical", 0,
+                        "Low", 1,
+                        "Medium", 2,
+                        "High", 3
+                    );
+                    
+                    return Integer.compare(
+                        priority.getOrDefault(level1, 4),
+                        priority.getOrDefault(level2, 4)
+                    );
+                });
+        }
+
+        response.put("items", itemDetails);
+        response.put("totalItems", allItems.size());
+        response.put("criticalItems", criticalItems);
+        response.put("lowItems", lowItems);
+        response.put("mediumItems", mediumItems);
+        response.put("highItems", highItems);
+        response.put("totalInventoryValue", totalInventoryValue);
+        response.put("totalPurchaseValue", totalPurchaseValue);
+        response.put("potentialProfit", totalInventoryValue - totalPurchaseValue);
 
         return response;
     }

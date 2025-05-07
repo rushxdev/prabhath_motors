@@ -97,6 +97,8 @@ const AdminStockReportsManager: React.FC = () => {
     // Additional parameters for specific reports
     const [showLowStock, setShowLowStock] = useState<boolean>(false);
     const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+    const [sortBy, setSortBy] = useState<string>("stockLevel");
+    const [showChart, setShowChart] = useState<boolean>(true);
 
     // Add state to track original values
     const [originalSettings, setOriginalSettings] = useState({
@@ -104,7 +106,9 @@ const AdminStockReportsManager: React.FC = () => {
         startDate: null as Date | null,
         endDate: null as Date | null,
         showLowStock: false,
-        selectedItemId: null as number | null
+        selectedItemId: null as number | null,
+        sortBy: 'stockLevel',
+        showChart: true
     });
     
     // Handler for report type changes
@@ -154,6 +158,32 @@ const AdminStockReportsManager: React.FC = () => {
         }
     };
 
+    // Add a handler for sort changes
+    const handleSortChange = (newSortBy: string) => {
+        if (showPDF) {
+            if (window.confirm('Changing the sort order will reset current report. Do you want to continue?')) {
+                setSortBy(newSortBy);
+                setShowPDF(false);
+                setReportData(null);
+            }
+        } else {
+            setSortBy(newSortBy);
+        }
+    };
+
+    // Add a handler for showChart changes
+    const handleShowChartChange = (newValue: boolean) => {
+        if (showPDF) {
+            if (window.confirm('Changing the chart display will reset current report. Do you want to continue?')) {
+                setShowChart(newValue);
+                setShowPDF(false);
+                setReportData(null);
+            }
+        } else {
+            setShowChart(newValue);
+        }
+    };
+
     const generateReport = async () => {
         setLoading(true);
         setError(null);
@@ -164,7 +194,9 @@ const AdminStockReportsManager: React.FC = () => {
             startDate: startDate,
             endDate: endDate,
             showLowStock: showLowStock,
-            selectedItemId: selectedItemId
+            selectedItemId: selectedItemId,
+            sortBy: sortBy,
+            showChart: showChart
         });
         
         // Validate required fields based on report type
@@ -202,6 +234,7 @@ const AdminStockReportsManager: React.FC = () => {
             // Add report-specific parameters
             if (selectedReportType === 'inventory') {
                 requestBody.showLowStockOnly = showLowStock;
+                requestBody.sortBy = sortBy;
             }
 
             // Add item-specific parameters
@@ -262,6 +295,10 @@ const AdminStockReportsManager: React.FC = () => {
                         setEndDate={(date) => handleDateChange('end', date)}
                         showLowStock={showLowStock}
                         setShowLowStock={handleLowStockChange}
+                        sortBy={sortBy}
+                        setSortBy={handleSortChange}
+                        showChart={showChart}
+                        setShowChart={handleShowChartChange}
                     />
                 );
             default:
@@ -323,19 +360,129 @@ const AdminStockReportsManager: React.FC = () => {
                                     </View>
                                 )}
                                 
-                                {/* Supplier Purchase Report */}
-                                {selectedReportType === 'supplier_purchase' && (
-                                    <View>
-                                        <Text style={styles.text}>Total Purchases: {reportData.totalPurchases}</Text>
-                                        <Text style={styles.text}>Suppliers: {reportData.suppliersCount}</Text>
-                                    </View>
-                                )}
-                                
                                 {/* Inventory Report */}
-                                {selectedReportType === 'inventory' && (
+                                {selectedReportType === 'inventory' && reportData && (
                                     <View>
-                                        <Text style={styles.text}>Total Items: {reportData.totalItems}</Text>
-                                        <Text style={styles.text}>Low Stock Items: {reportData.lowStockItems}</Text>
+                                        {/* Summary Section */}
+                                        <View style={{ marginBottom: 15 }}>
+                                            <Text style={[styles.text, { fontWeight: 'bold', fontSize: 14, marginBottom: 5 }]}>Inventory Summary</Text>
+                                            <Text style={styles.text}>Total Items: {reportData.totalItems}</Text>
+                                            <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+                                                <View style={{ flex: 1 }}>
+                                                    <Text style={styles.text}>Critical Stock: {reportData.criticalItems}</Text>
+                                                    <Text style={styles.text}>Low Stock: {reportData.lowItems}</Text>
+                                                </View>
+                                                <View style={{ flex: 1 }}>
+                                                    <Text style={styles.text}>Medium Stock: {reportData.mediumItems}</Text>
+                                                    <Text style={styles.text}>High Stock: {reportData.highItems}</Text>
+                                                </View>
+                                            </View>
+                                            <View style={{ marginTop: 10, paddingTop: 5, borderTopWidth: 1, borderTopColor: '#ccc' }}>
+                                                <Text style={[styles.text, { fontWeight: 'bold' }]}>Inventory Value: {formatCurrency(reportData.totalInventoryValue)}</Text>
+                                                <Text style={styles.text}>Purchase Value: {formatCurrency(reportData.totalPurchaseValue)}</Text>
+                                                <Text style={[styles.text, { fontWeight: 'bold', color: reportData.potentialProfit >= 0 ? 'green' : 'red' }]}>
+                                                    Potential Profit: {formatCurrency(reportData.potentialProfit)}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        
+                                        {/* Optional Stock Level Distribution Chart */}
+                                        {showChart && (
+                                            <>
+                                                <View style={{ marginBottom: 15, height: 50, flexDirection: 'row' }}>
+                                                    {reportData.criticalItems > 0 && (
+                                                        <View 
+                                                            style={{ 
+                                                                flex: reportData.criticalItems / reportData.totalItems, 
+                                                                backgroundColor: '#FF4136',
+                                                                height: '100%',
+                                                                marginRight: 1
+                                                            }} 
+                                                        />
+                                                    )}
+                                                    {reportData.lowItems > 0 && (
+                                                        <View 
+                                                            style={{ 
+                                                                flex: reportData.lowItems / reportData.totalItems, 
+                                                                backgroundColor: '#FF851B',
+                                                                height: '100%',
+                                                                marginRight: 1
+                                                            }} 
+                                                        />
+                                                    )}
+                                                    {reportData.mediumItems > 0 && (
+                                                        <View 
+                                                            style={{ 
+                                                                flex: reportData.mediumItems / reportData.totalItems, 
+                                                                backgroundColor: '#2ECC40',
+                                                                height: '100%',
+                                                                marginRight: 1
+                                                            }} 
+                                                        />
+                                                    )}
+                                                    {reportData.highItems > 0 && (
+                                                        <View 
+                                                            style={{ 
+                                                                flex: reportData.highItems / reportData.totalItems, 
+                                                                backgroundColor: '#0074D9',
+                                                                height: '100%'
+                                                            }} 
+                                                        />
+                                                    )}
+                                                </View>
+                                                <View style={{ flexDirection: 'row', marginBottom: 15 }}>
+                                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                                                        <View style={{ width: 10, height: 10, backgroundColor: '#FF4136', marginRight: 5 }} />
+                                                        <Text style={{ fontSize: 8 }}>Critical</Text>
+                                                    </View>
+                                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                                                        <View style={{ width: 10, height: 10, backgroundColor: '#FF851B', marginRight: 5 }} />
+                                                        <Text style={{ fontSize: 8 }}>Low</Text>
+                                                    </View>
+                                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                                                        <View style={{ width: 10, height: 10, backgroundColor: '#2ECC40', marginRight: 5 }} />
+                                                        <Text style={{ fontSize: 8 }}>Medium</Text>
+                                                    </View>
+                                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                                                        <View style={{ width: 10, height: 10, backgroundColor: '#0074D9', marginRight: 5 }} />
+                                                        <Text style={{ fontSize: 8 }}>High</Text>
+                                                    </View>
+                                                </View>
+                                            </>
+                                        )}
+                                        
+                                        {/* Items Table */}
+                                        <Text style={[styles.text, { fontWeight: 'bold', fontSize: 14, marginBottom: 5, marginTop: 10 }]}>
+                                            {showLowStock ? "Low Stock Items" : "All Items"}
+                                        </Text>
+                                        
+                                        {/* Table Header */}
+                                        <View style={styles.tableHeader}>
+                                            <Text style={styles.cellHeader}>Item Name</Text>
+                                            <Text style={styles.cellHeader}>Category</Text>
+                                            <Text style={styles.cellHeader}>Qty</Text>
+                                            <Text style={styles.cellHeader}>Reorder</Text>
+                                            <Text style={styles.cellHeader}>Level</Text>
+                                            <Text style={styles.cellHeader}>Value</Text>
+                                        </View>
+                                        
+                                        {/* Table Rows */}
+                                        {reportData.items.map((item: any, index: number) => (
+                                            <View style={styles.tableRow} key={index}>
+                                                <Text style={styles.cell}>{item.itemName}</Text>
+                                                <Text style={styles.cell}>{item.category}</Text>
+                                                <Text style={styles.cell}>{item.qtyAvailable}</Text>
+                                                <Text style={styles.cell}>{item.reorderLevel}</Text>
+                                                <Text style={styles.cell}>{item.stockLevel}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.inventoryValue)}</Text>
+                                            </View>
+                                        ))}
+                                        
+                                        {/* Summary section at the end */}
+                                        <View style={styles.summarySection}>
+                                            <Text style={styles.summaryText}>Total Inventory Value: {formatCurrency(reportData.totalInventoryValue)}</Text>
+                                            <Text style={styles.summaryText}>Items Count: {reportData.totalItems}</Text>
+                                        </View>
                                     </View>
                                 )}
 
