@@ -63,6 +63,24 @@ const styles = StyleSheet.create({
     cell: {
         flex: 1,
         fontSize: 10,
+        padding: 4,
+    },
+    cellHeader: {
+        flex: 1,
+        fontSize: 10,
+        fontWeight: 'bold',
+        padding: 4,
+    },
+    summarySection: {
+        marginTop: 15,
+        paddingTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#000',
+    },
+    summaryText: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginBottom: 5,
     }
 });
 
@@ -102,9 +120,10 @@ const AdminStockReportsManager: React.FC = () => {
             const requestBody: any = {};
             
             // Add common parameters
-            if (startDate) requestBody.startDate = startDate.toISOString();
-            if (endDate) requestBody.endDate = endDate.toISOString();
-            
+            // Convert Date objects to LocalDate format strings (YYYY-MM-DD)
+            if (startDate) requestBody.startDate = startDate.toISOString().split('T')[0]; // Just the date part
+            if (endDate) requestBody.endDate = endDate.toISOString().split('T')[0]; // Just the date part
+                        
             // Add report-specific parameters
             if (selectedReportType === 'inventory') {
                 requestBody.showLowStockOnly = showLowStock;
@@ -160,6 +179,11 @@ const AdminStockReportsManager: React.FC = () => {
         }
     };
 
+    // Function to format currency
+    const formatCurrency = (value: number): string => {
+        return `Rs. ${value.toFixed(2)}`;
+    };
+
     const ReportDocument = () => (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -172,14 +196,44 @@ const AdminStockReportsManager: React.FC = () => {
                         
                         {reportData && (
                             <View style={styles.content}>
-                                {/* report data based on report type */}
+                                {/* Sales Summary Report with Table */}
                                 {selectedReportType === 'sales summery' && (
                                     <View>
-                                        <Text style={styles.text}>Total Sales: {reportData.totalSales}</Text>
-                                        <Text style={styles.text}>Items Sold: {reportData.itemsSold}</Text>
+                                        {/* Table Header */}
+                                        <View style={styles.tableHeader}>
+                                            <Text style={styles.cellHeader}>Item Name</Text>
+                                            <Text style={styles.cellHeader}>Quantity</Text>
+                                            <Text style={styles.cellHeader}>Purchase Price</Text>
+                                            <Text style={styles.cellHeader}>Sold Price</Text>
+                                            <Text style={styles.cellHeader}>Revenue</Text>
+                                            <Text style={styles.cellHeader}>Expense</Text>
+                                            <Text style={styles.cellHeader}>Profit</Text>
+                                        </View>
+                                        
+                                        {/* Table Rows */}
+                                        {reportData.salesDetails?.map((item: any, index: number) => (
+                                            <View style={styles.tableRow} key={index}>
+                                                <Text style={styles.cell}>{item.itemName}</Text>
+                                                <Text style={styles.cell}>{item.soldQty}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.purchasePrice)}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.soldPrice)}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.revenue)}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.expense)}</Text>
+                                                <Text style={styles.cell}>{formatCurrency(item.revenue - item.expense)}</Text>
+                                            </View>
+                                        ))}
+                                        
+                                        {/* Summary Section */}
+                                        <View style={styles.summarySection}>
+                                            <Text style={styles.summaryText}>Total Items Sold: {reportData.itemsSold}</Text>
+                                            <Text style={styles.summaryText}>Total Sales: {formatCurrency(reportData.totalSales)}</Text>
+                                            <Text style={styles.summaryText}>Total Expenses: {formatCurrency(reportData.totalExpenses)}</Text>
+                                            <Text style={styles.summaryText}>Net Profit: {formatCurrency(reportData.totalSales - reportData.totalExpenses)}</Text>
+                                        </View>
                                     </View>
                                 )}
                                 
+                                {/* Supplier Purchase Report */}
                                 {selectedReportType === 'supplier_purchase' && (
                                     <View>
                                         <Text style={styles.text}>Total Purchases: {reportData.totalPurchases}</Text>
@@ -187,6 +241,7 @@ const AdminStockReportsManager: React.FC = () => {
                                     </View>
                                 )}
                                 
+                                {/* Inventory Report */}
                                 {selectedReportType === 'inventory' && (
                                     <View>
                                         <Text style={styles.text}>Total Items: {reportData.totalItems}</Text>
