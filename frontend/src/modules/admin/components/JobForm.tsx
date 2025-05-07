@@ -164,7 +164,7 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSuccess, onCancel }) =
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Service Section */}
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700 flex items-center">
+                                <label className="block text-sm font-medium text-gray-700 items-center">
                                     <WrenchScrewdriverIcon className="h-5 w-5 text-gray-400 mr-2" />
                                     Service Section
                                 </label>
