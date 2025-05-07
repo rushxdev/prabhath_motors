@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Combobox } from '@headlessui/react';
-import { Job, ServiceSection, JobStatus } from '../../../types/Job';
+import { Job, ServiceSection } from '../../../types/Job';
 import { Employee } from '../../../types/Employee';
 import { jobService } from '../../../services/jobService';
 import { getVehicleById } from '../../../services/vehicleService';
@@ -20,7 +20,7 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSuccess, onCancel }) =
 
     const [formData, setFormData] = useState<Partial<Job>>({
         serviceSection: ServiceSection.GARAGE,
-        status: JobStatus.IN_PROGRESS,
+        status: 'Ongoing',
         ...initialData
     });
 
@@ -57,14 +57,17 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSuccess, onCancel }) =
                 throw new Error('Vehicle and Employee are required');
             }
 
-            const jobData: Job = {
+            const jobData: Partial<Job> = {
                 jobId: `JOB-${Date.now()}`, // Generate a unique job ID
                 vehicleRegistrationNumber: vehicle.vehicleRegistrationNo,
                 serviceSection: formData.serviceSection || ServiceSection.GARAGE,
                 assignedEmployee: `${selectedEmployee.firstname} ${selectedEmployee.lastname}`,
                 tasks: [],
                 spareParts: [],
-                status: JobStatus.IN_PROGRESS
+                status: 'Ongoing',
+                totalCost: 0,
+                ownerName: vehicle.ownerName,
+                contactNumber: vehicle.contactNumber
             };
 
             await jobService.createJob(jobData);
