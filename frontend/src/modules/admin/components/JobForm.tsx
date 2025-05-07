@@ -183,7 +183,7 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSuccess, onCancel }) =
 
                             {/* Employee Selection */}
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700 flex items-center">
+                                <label className="block text-sm font-medium text-gray-700 items-center">
                                     <UserIcon className="h-5 w-5 text-gray-400 mr-2" />
                                     Assign Employee
                                 </label>
