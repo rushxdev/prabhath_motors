@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { Job, JobStatus, NamedCostItem } from '../../../types/Job';
-import { Task } from '../../../types/Task';
-import { StockItem } from '../../../types/Stock';
-import { jobService } from '../../../services/jobService';
-import * as taskService from '../../../services/taskService';
-import { itemService } from '../../../services/stockItemService';
-import AppointLayouts from '../layout/AppointmentLayouts/AppointLayouts';
-import Modal from '../../../components/Model';
+import { PencilIcon, PlusIcon, TrashIcon, DocumentTextIcon } from "@heroicons/react/24/solid";
+import { Job, NamedCostItem } from '../../../../types/Job';
+import { Task } from '../../../../types/Task';
+import { StockItem } from '../../../../types/Stock';
+import { jobService } from '../../../../services/jobService';
+import * as taskService from '../../../../services/taskService';
+import { itemService } from '../../../../services/stockItemService';
+import AppointLayouts from '../../layout/AppointmentLayouts/AppointLayouts';
+import Modal from '../../../../components/Model';
 import { Button } from "@headlessui/react";
+import { PDFViewer } from '@react-pdf/renderer';
+import ServiceReport from '../../components/Reports/ServiceReport';
 
 interface TaskFormErrors {
   description?: string;
@@ -69,6 +71,9 @@ const JobDetails: React.FC = () => {
 
   // Add new state for success message
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+
+  // Add new state for PDF viewer
+  const [showReport, setShowReport] = useState<boolean>(false);
 
   // Fetch job details and its tasks
   useEffect(() => {
@@ -645,6 +650,13 @@ const JobDetails: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Job Details</h1>
           <div className="flex space-x-2">
+            <button
+              onClick={() => setShowReport(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center"
+            >
+              <DocumentTextIcon className="w-5 h-5 mr-2" />
+              Service Report
+            </button>
             {job?.status !== "Done" && (
               <button 
                 onClick={handleMarkAsDone}
@@ -690,23 +702,93 @@ const JobDetails: React.FC = () => {
 
         {/* Job Information Card */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <h2 className="text-lg font-medium mb-4">Job Information</h2>
-              <div className="space-y-2">
-                <p><span className="font-medium">Job ID:</span> {job?.jobId}</p>
-                <p><span className="font-medium">Vehicle:</span> {job?.vehicleRegistrationNumber}</p>
-                <p><span className="font-medium">Service Section:</span> {job?.serviceSection}</p>
-                <p><span className="font-medium">Assigned Employee:</span> {job?.assignedEmployee}</p>
-                <p><span className="font-medium">Status:</span> 
-                  <span className={`ml-2 px-2 py-1 rounded-full text-sm ${
+          <div className="flex items-center mb-6">
+            <div className="bg-blue-100 p-3 rounded-full mr-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-gray-800">Job Information</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <div className="bg-gray-200 p-2 rounded-lg mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Job ID</p>
+                  <p className="font-medium text-gray-900">{job?.jobId}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <div className="bg-gray-200 p-2 rounded-lg mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Vehicle</p>
+                  <p className="font-medium text-gray-900">{job?.vehicleRegistrationNumber}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <div className="bg-gray-200 p-2 rounded-lg mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Service Section</p>
+                  <p className="font-medium text-gray-900">{job?.serviceSection}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <div className="bg-gray-200 p-2 rounded-lg mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Assigned Employee</p>
+                  <p className="font-medium text-gray-900">{job?.assignedEmployee}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <div className="bg-gray-200 p-2 rounded-lg mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Status</p>
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                     job?.status === "Done"
                       ? 'bg-green-100 text-green-800'
                       : 'bg-yellow-100 text-yellow-800'
                   }`}>
+                    {job?.status === "Done" ? (
+                      <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                      </svg>
+                    )}
                     {job?.status}
                   </span>
-                </p>
+                </div>
               </div>
             </div>
           </div>
@@ -1141,6 +1223,34 @@ const JobDetails: React.FC = () => {
               </Button>
             )}
           </div>
+        </div>
+      </Modal>
+
+      {/* PDF Viewer Modal */}
+      <Modal
+        isOpen={showReport}
+        onClose={() => setShowReport(false)}
+        title="Service Report"
+      >
+        <div className="h-[80vh] w-full">
+          <div className="flex justify-end mb-2">
+            <button
+              onClick={() => setShowReport(false)}
+              className="px-4 py-2 bg-red-400 text-white rounded-md hover:bg-red-600 flex items-center"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+              Close
+            </button>
+          </div>
+          <PDFViewer width="100%" height="100%">
+            <ServiceReport
+              job={job!}
+              tasks={tasks}
+              spareParts={spareParts}
+            />
+          </PDFViewer>
         </div>
       </Modal>
     </AppointLayouts>
