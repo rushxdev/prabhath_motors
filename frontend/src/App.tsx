@@ -6,6 +6,7 @@ import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
+
 //Appointment routes
 import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
 import AppointmentPage from "./modules/admin/pages/AdminAppointmentPages/AppointmentPage";
@@ -27,7 +28,13 @@ import UtilityBillForm from "./modules/admin/components/AdminUtility-page/Utilit
 import EmployeeDashboard from "./modules/admin/layout/EmployeeLayouts/EmployeeDashboard";
 import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
 import EmployeeUpdate from "./modules/admin/layout/EmployeeLayouts/EmployeeUpdate";
-
+//Auth routes
+import RegistrationPage from "./components/auth/RegistrationPage";
+import LogInPage from "./components/auth/LogInPage";
+import ProfilePage from "./modules/user/pages/UserProfilePages/ProfilePage";
+import UserManagementPage from "./modules/admin/pages/AdminUserManagementPages/UserManagementPage";
+import UpdateUser from "./modules/admin/pages/AdminUserManagementPages/UpdateUser";
+import UserService from "./services/userService";
 
 
 function App() {
@@ -73,6 +80,20 @@ function App() {
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
         {/* --------------------Admin Routes end--------------- */}
+        
+    
+        {/* --------------------Auth Routes------------------ */}
+        
+        <Route path="/login" element={<LogInPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/register" element={<RegistrationPage />} />
+        {/* --------------------User Management Routes------------------ */}
+        {UserService.adminOnly() && (
+          <>
+          {/* Add admin specific routes or components here */}
+          <Route path="/admin/user-management" element={<UserManagementPage />} />
+          <Route path="/admin/user-management/update-user/:id" element={<UpdateUser />} />
+          </>)}  
         </Route>
       </Routes>
     </Router>
