@@ -1,14 +1,14 @@
 export interface StockItem {
     itemID?: number;
-    itemName: string;
-    qtyAvailable: number;
-    unitPrice: number;
-    sellPrice: number;
     itemCtgryID: number;
     supplierId: number;
+    itemName: string;
     itemBarcode: string;
     recorderLevel: number;
+    qtyAvailable: number;
     itemBrand: string;
+    sellPrice: number;
+    unitPrice: number;
     stockLevel: string;
     rackNo: number;
     updatedDate: string;
