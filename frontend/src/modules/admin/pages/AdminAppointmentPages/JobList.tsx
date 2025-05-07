@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Job } from '../../../types/Job';
-import { jobService } from '../../../services/jobService';
-import AppointLayouts from '../layout/AppointmentLayouts/AppointLayouts';
+import { Job } from '../../../../types/Job';
+import { jobService } from '../../../../services/jobService';
+import AppointLayouts from '../../layout/AppointmentLayouts/AppointLayouts';
 import { TrashIcon } from "@heroicons/react/24/solid";
-import Modal from '../../../components/Model';
+import Modal from '../../../../components/Model';
 
 const JobList: React.FC = () => {
     const navigate = useNavigate();

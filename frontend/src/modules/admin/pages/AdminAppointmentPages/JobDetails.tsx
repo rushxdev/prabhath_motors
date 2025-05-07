@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { PencilIcon, PlusIcon, TrashIcon, DocumentTextIcon } from "@heroicons/react/24/solid";
-import { Job, NamedCostItem } from '../../../types/Job';
-import { Task } from '../../../types/Task';
-import { StockItem } from '../../../types/Stock';
-import { jobService } from '../../../services/jobService';
-import * as taskService from '../../../services/taskService';
-import { itemService } from '../../../services/stockItemService';
-import AppointLayouts from '../layout/AppointmentLayouts/AppointLayouts';
-import Modal from '../../../components/Model';
+import { Job, NamedCostItem } from '../../../../types/Job';
+import { Task } from '../../../../types/Task';
+import { StockItem } from '../../../../types/Stock';
+import { jobService } from '../../../../services/jobService';
+import * as taskService from '../../../../services/taskService';
+import { itemService } from '../../../../services/stockItemService';
+import AppointLayouts from '../../layout/AppointmentLayouts/AppointLayouts';
+import Modal from '../../../../components/Model';
 import { Button } from "@headlessui/react";
 import { PDFViewer } from '@react-pdf/renderer';
-import ServiceReport from '../components/Reports/ServiceReport';
+import ServiceReport from '../../components/Reports/ServiceReport';
 
 interface TaskFormErrors {
   description?: string;
