@@ -4,10 +4,9 @@ import { PlusIcon, PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/
 import StocksLayout from "../../layout/StockLayouts/StocksLayout";
 import Modal from "../../../../components/Model";
 import ItemForm from "../../components/AdminStocks-pages/ItemForm";
-import { StockItem, Stock_In, ItemCategory } from "../../../../types/Stock";
+import { StockItem, Stock_In, ItemCategory, Supplier } from "../../../../types/Stock";
 import { itemService } from '../../../../services/stockItemService';
 import { ErrorBoundary } from 'react-error-boundary';
-
 
 interface ErrorFallbackProps {
     error: Error;
@@ -32,12 +31,12 @@ const AdminItemsManager: React.FC = () => {
     const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
     const [selectedItem, setSelectedItem] = useState<StockItem | null>(null);
     const [categories, setCategories] = useState<ItemCategory[]>([]);
-    
+    const [suppliers, setSuppliers] = useState<Supplier[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            await Promise.all([fetchStocks(), fetchCategories()]);
+            await Promise.all([fetchStocks(), fetchCategories(), fetchSuppliers()]);
             setLoading(false);
         };
         fetchData();
@@ -55,7 +54,6 @@ const AdminItemsManager: React.FC = () => {
             setLoading(false);
         }
     };
-
 
     // Create or Update Item
     const handleCreateOrUpdateItem = async (item: Partial<StockItem>, stockInData: Partial<Stock_In>) => {
@@ -76,7 +74,7 @@ const AdminItemsManager: React.FC = () => {
             
             setIsModalOpen(false);
             setCurrentItem(undefined);
-            await Promise.all([fetchStocks(), fetchCategories()]);
+            await Promise.all([fetchStocks(), fetchCategories(), fetchSuppliers()]);
 
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An error occurred while saving the item';
@@ -85,7 +83,6 @@ const AdminItemsManager: React.FC = () => {
             setLoading(false);
         }
     };
-
 
     // Delete Item
     const handleDelete = (id: number) => {
@@ -144,9 +141,31 @@ const AdminItemsManager: React.FC = () => {
             setLoading(false);
         }
     };
+
+    // Fetch Suppliers
+    const fetchSuppliers = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/supplier/get');
+            if (!response.ok) {
+                throw new Error('Failed to fetch suppliers');
+            }
+            const data = await response.json();
+            setSuppliers(data);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Failed to fetch suppliers';
+            setError(message);
+            console.error('Error fetching suppliers:', error);
+        }
+    };
+
     const getCategoryName = (categoryId: number) => {
         const category = categories.find(cat => cat.itemCtgryId === categoryId);
         return category ? category.itemCtgryName : 'Unknown Category';
+    };
+
+    const getSupplierName = (supplierId: number) => {
+        const supplier = suppliers.find(sup => sup.supplierId === supplierId);
+        return supplier ? supplier.supplierName : 'Unknown Supplier';
     };
 
     // Add this helper function at the top of the component
@@ -319,10 +338,10 @@ const AdminItemsManager: React.FC = () => {
                                 <div className="col-span-2 bg-gray-50 dark:bg-gray-200 p-4 rounded-lg">
                                     <h3 className="text-lg font-semibold mb-4 text-primary">Basic Information</h3>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div>
+                                        {/*<div>
                                             <p className="text-sm font-medium text-gray-500">Item ID</p>
                                             <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.itemID}</p>
-                                        </div>
+                                        </div>*/}
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Item Name</p>
                                             <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.itemName}</p>
@@ -338,14 +357,13 @@ const AdminItemsManager: React.FC = () => {
                                             <p className="text-sm font-medium text-gray-500">Category</p>
                                             <p className="mt-1 text-gray-900 dark:text-green-700">
                                                 {getCategoryName(selectedItem.itemCtgryID)}
-                                                <span className="text-gray-500 text-sm ml-2">
-                                                    (ID: {selectedItem.itemCtgryID})
-                                                </span>
                                             </p>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-gray-500">Supplier ID</p>
-                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedItem.supplierId}</p>
+                                            <p className="text-sm font-medium text-gray-500">Supplier</p>
+                                            <p className="mt-1 text-gray-900 dark:text-green-700">
+                                                {getSupplierName(selectedItem.supplierId)}
+                                            </p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Barcode</p>
