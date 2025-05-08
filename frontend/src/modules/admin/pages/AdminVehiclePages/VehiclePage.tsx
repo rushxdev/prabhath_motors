@@ -183,8 +183,8 @@ const VehiclePage = () => {
 
         {/* Settings Modal */}
         {showSettings && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90">
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-[0_8px_40px_0_rgba(0,0,0,0.25)] p-8 w-full max-w-md relative">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-sm">
+            <div className="backdrop-blur-md bg-white/60 rounded-2xl shadow-2xl p-8 w-full max-w-md relative border border-gray-200">
               <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onClick={handleCancelSettings}>
                 <i className="fa fa-times"></i>
               </button>
