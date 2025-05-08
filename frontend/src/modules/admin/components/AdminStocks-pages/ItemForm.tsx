@@ -234,7 +234,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
     };
 
     const createNewCategory = async (categoryName: string): Promise<ItemCategory> => {
-        const response = await fetch('http://localhost:8081/itemCtgry/save', {
+        const response = await fetch('http://localhost:8080/itemCtgry/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

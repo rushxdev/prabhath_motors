@@ -39,7 +39,7 @@ const AdminSupplierManager: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:8081/supplier/get');
+            const response = await fetch('http://localhost:8080/supplier/get');
             if (!response.ok) {
                 throw new Error('Failed to fetch suppliers');
             }
@@ -57,8 +57,8 @@ const AdminSupplierManager: React.FC = () => {
         setError(null);
         try {
             const url = supplier.supplierId 
-                ? `http://localhost:8081/supplier/update/${supplier.supplierId}`
-                : 'http://localhost:8081/supplier/save';
+                ? `http://localhost:8080/supplier/update/${supplier.supplierId}`
+                : 'http://localhost:8080/supplier/save';
             
             const response = await fetch(url, {
                 method: supplier.supplierId ? 'PUT' : 'POST',
@@ -92,7 +92,7 @@ const AdminSupplierManager: React.FC = () => {
         
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8081/supplier/delete/${supplierToDelete}`, {
+            const response = await fetch(`http://localhost:8080/supplier/delete/${supplierToDelete}`, {
                 method: 'DELETE',
             });
 
