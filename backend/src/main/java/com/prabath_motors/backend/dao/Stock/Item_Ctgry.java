@@ -1,10 +1,8 @@
 package com.prabath_motors.backend.dao.Stock;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,5 +16,8 @@ public class Item_Ctgry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int itemCtgryId;
+    
+    @NotBlank(message = "Category name is required")
+    @Size(min = 2, max = 50, message = "Category name must be between 2 and 50 characters")
     private String itemCtgryName;
 }

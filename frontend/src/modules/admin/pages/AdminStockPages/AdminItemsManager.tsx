@@ -169,7 +169,7 @@ const AdminItemsManager: React.FC = () => {
         <ErrorBoundary FallbackComponent={ErrorFallback}>
             <StocksLayout>
                 {/* Sticky header container */}
-                <div className="sticky top-20 z-40 bg-white shadow-md pb-4">
+                <div className="sticky top-1 z-40 bg-white pb-4">
                     <div className="max-w-7xl mx-auto text-center">
                         <h2 className="text-2xl sm:text-2xl font-press font-semibold pt-10 text-primary">
                             Manage All Stock Items
