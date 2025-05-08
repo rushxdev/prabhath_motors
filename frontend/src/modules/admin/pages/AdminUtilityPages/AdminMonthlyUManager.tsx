@@ -4,17 +4,7 @@ import { PlusIcon, PencilIcon, TrashIcon, ChartBarIcon } from "@heroicons/react/
 import UtilityLayout from "../../layout/UtilityLayouts/UtilityLayouts";
 import MonthlyUtilityBillForm from "../../components/AdminUtility-page/MonthlyUtilityBillForm";
 import UtilityChartModal from "../../components/AdminUtility-page/UtilityChartModal";
-
-interface MonthlyUtilityBill {
-    id: number;
-    invoiceNo: number;
-    billingAccNo: number;
-    billingMonth: string;
-    billingYear: number;
-    units: number;
-    totalPayment: number;
-    generatedDate: string;
-}
+import { MonthlyUtilityBill } from "../../../../types/Utility"; // Import the interface from Utility.ts
 
 const AdminMonthlyUManager: React.FC = () => {
     const [monthlyBills, setMonthlyBills] = useState<MonthlyUtilityBill[]>([]);

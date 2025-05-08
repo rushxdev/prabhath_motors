@@ -4,9 +4,10 @@ import { View, Text, StyleSheet, Image } from '@react-pdf/renderer';
 // PDF styles
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 20,
-        paddingBottom: 40, // space for footer
-        paddingHorizontal: 30,
+        flex: 1,
+        padding: 0,
+        position: 'relative',
+        minHeight: '100%',
     },
     header: {
         marginBottom: 10,
@@ -76,12 +77,16 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 10,
         color: '#666',
+        borderTopWidth: 1,
+        borderTopColor: '#eaeaea',
+        paddingTop: 10,
     },
     pageNumber: {
         position: 'absolute',
         bottom: 20,
         right: 30,
         fontSize: 10,
+        color: '#666',
     },
 });
 
@@ -115,8 +120,10 @@ const ReportLayout: React.FC<ReportLayoutProps> = ({ children, title, pageNumber
                 <Text style={styles.titleText}>{title}</Text>
             </View>
 
+            {/* Content */}
             <View style={styles.content}>{children}</View>
 
+            {/* Fixed footer elements */}
             <Text fixed style={styles.footer}>
                 Generated on {new Date().toLocaleDateString()}
             </Text>

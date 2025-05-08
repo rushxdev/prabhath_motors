@@ -6,26 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Modal from "../../../../components/Model";
 import { toast } from "react-toastify";
-
-interface UtilityBill {
-  id: number;
-  billing_Acc_No: number;
-  type: string;
-  address: string;
-  meter_No: string;
-  unit_Price: number;
-}
-
-interface MonthlyUtilityBill {
-  id: number;
-  invoiceNo: number;
-  billingAccNo: number;
-  billingMonth: string;
-  billingYear: number;
-  units: number;
-  totalPayment: number;
-  generatedDate: string;
-}
+import { UtilityBill, MonthlyUtilityBill } from "../../../../types/Utility"; // Import interfaces from Utility.ts
 
 const AdminUtilityManager: React.FC = () => {
   const [utilities, setUtilities] = useState<UtilityBill[]>([]);

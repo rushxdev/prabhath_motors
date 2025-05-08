@@ -350,8 +350,18 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-black text-white" ref={ctaAnimation.ref}>
-        <div className="container mx-auto px-6 text-center">
+      <section 
+        className="py-16 bg-black text-white relative overflow-hidden group" 
+        ref={ctaAnimation.ref}
+      >
+        {/* Hover gradient overlay - curved effect starting from bottom middle */}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
+                       bg-gradient-to-t from-green-600/50 via-green-600/25 to-transparent 
+                       rounded-50 opacity-0 
+                       transition-all duration-700 ease-out 
+                       group-hover:w-[200%] group-hover:h-full group-hover:opacity-100"></div>
+        
+        <div className="container mx-auto px-6 text-center relative z-10">
           <motion.h2 
             className="text-3xl font-bold mb-6"
             initial="hidden"
