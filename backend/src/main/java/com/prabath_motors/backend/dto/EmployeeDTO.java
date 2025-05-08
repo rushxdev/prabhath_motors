@@ -4,6 +4,8 @@ import lombok.Data;
 
 import com.prabath_motors.backend.validation.MinAge;
 
+import java.time.LocalDate;
+
 @Data
 public class EmployeeDTO {
         @NotBlank(message = "First name is required")
@@ -24,7 +26,7 @@ public class EmployeeDTO {
         @NotNull(message = "Date of Birth is required")
         @Past(message = "Date of Birth must be in the past")
         @MinAge(value = 17, message = "Employee must be at least 17 years old")
-        private String dob;
+        private LocalDate dob;
 
         @Pattern(regexp = "Male|Female|Other", message = "Gender must be Male, Female, or Other")
         private String gender;
