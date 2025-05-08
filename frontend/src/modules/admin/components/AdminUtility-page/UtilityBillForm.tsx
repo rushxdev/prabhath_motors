@@ -59,11 +59,15 @@ interface FormValues {
   Billing_Acc_No?: string;
 }
 
-const UtilityBillForm: React.FC = () => {
+interface UtilityBillFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
-  const [isOpen, setIsOpen] = useState(true); // Modal state
 
   const [formValues, setFormValues] = useState<FormValues>({
     Type: "Electricity",
@@ -500,7 +504,10 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         await axios.post("/utilitybill/save", utilityBillData);
         toast.success("Utility bill saved successfully");
       }
-
+      
+      // First close the modal via the parent component's handler
+      onClose();
+      // Then navigate back to the utility page
       navigate("/admin/utility");
     } catch (error) {
       toast.error("Error saving utility bill");
@@ -510,9 +517,9 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     }
   };
 
-  // Handle modal close
+  // Update handleClose to use provided onClose prop
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
     navigate("/admin/utility");
   };
 
