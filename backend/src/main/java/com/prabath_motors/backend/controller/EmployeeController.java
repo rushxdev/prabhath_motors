@@ -1,18 +1,22 @@
 package com.prabath_motors.backend.controller;
 
 import com.prabath_motors.backend.dao.Employee;
+import com.prabath_motors.backend.dto.EmployeeDTO;
+import com.prabath_motors.backend.service.userService.EmployeeMapper;
 import com.prabath_motors.backend.service.userService.EmployeeService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 
 @RestController
-@RequestMapping("/api/dashboard/employee")
+@RequestMapping("/employee")
 @CrossOrigin(origins = "http://localhost:5173")
 public class EmployeeController {
 
@@ -20,23 +24,31 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping("/add")
-    public Employee addEmployee(@RequestBody Employee employee) {
-        return employeeService.addEmployee(employee);
+    public ResponseEntity<?> addEmployee(@Valid @RequestBody EmployeeDTO dto, BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        Employee emp = EmployeeMapper.toEntity(dto);
+        return ResponseEntity.ok(employeeService.addEmployee(emp));
     }
 
     @PutMapping("/update/{empId}")
-    public ResponseEntity<?> updateEmployee(@PathVariable int empId, @RequestBody Employee employee) {
+    public ResponseEntity<?> updateEmployee(@PathVariable int empId,@Valid @RequestBody EmployeeDTO dto, BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(errors);
+        }
         try {
-            Employee updatedEmployee = employeeService.updateEmployee(empId, employee);
-            return ResponseEntity.ok(updatedEmployee);
+            Employee updated = employeeService.updateEmployee(empId, dto);
+            return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found with ID: " + empId);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating employee: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found");
         }
     }
-
-
 
     @DeleteMapping("/delete/{empId}")
     public ResponseEntity<String> deleteEmployee(@PathVariable int empId) {
