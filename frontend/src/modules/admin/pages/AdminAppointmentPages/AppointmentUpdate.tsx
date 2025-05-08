@@ -1,35 +1,57 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   getAppointmentById,
   updateAppointment,
 } from "../../../../services/appointmentService";
-import Navbar from "../../../user/components/Navbar";
 import { useAppointment } from "../../../../hooks/useAppointment"; // Adjust import path as needed
+import Modal from "../../../../components/Model"; // Import the Modal component
+import AppointLayouts from "../../layout/AppointmentLayouts/AppointLayouts";
 
 const timeSlots = [
-  "09:00", "10:00", "11:00", "12:00", "13:00", 
-  "14:00", "15:00", "16:00", "17:00", "18:00"
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+  "18:00",
 ];
 
 const AppointmentUpdate = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { appointment, setAppointment, errors, handleChange, validateForm } = useAppointment();
+  const { appointment, setAppointment, errors, handleChange, validateForm } =
+    useAppointment();
 
-  const fetchAppointmentData = React.useCallback(async (appointmentId: string) => {
-    try {
-      const idNumber = parseInt(appointmentId, 10);
-      if (isNaN(idNumber)) {
-        console.error("Invalid appointment id");
-        return;
+  const [isSubmitting] = useState(false); // Form submission state
+  const [isOpen, setIsOpen] = useState(true); // Modal state
+
+  // Handle modal close
+  const handleClose = () => {
+    setIsOpen(false);
+    navigate("/admin/appointment-list"); // Redirect to appointment list
+  };
+
+  const fetchAppointmentData = React.useCallback(
+    async (appointmentId: string) => {
+      try {
+        const idNumber = parseInt(appointmentId, 10);
+        if (isNaN(idNumber)) {
+          console.error("Invalid appointment id");
+          return;
+        }
+        const data = await getAppointmentById(idNumber);
+        setAppointment(data);
+      } catch (error) {
+        console.error("Error while fetching appointment", error);
       }
-      const data = await getAppointmentById(idNumber);
-      setAppointment(data);
-    } catch (error) {
-      console.error("Error while fetching appointment", error);
-    }
-  }, [setAppointment]);
+    },
+    [setAppointment]
+  );
 
   useEffect(() => {
     if (id) {
@@ -61,82 +83,135 @@ const AppointmentUpdate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-          Update Appointment
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <AppointLayouts>
+      <div>
+        <Modal
+          isOpen={isOpen}
+          onClose={handleClose}
+          title="Reschedule Appointment"
+        >
           <div>
-            <input
-              type="text"
-              name="vehicleRegistrationNo"
-              placeholder="Vehicle Registration No."
-              value={appointment.vehicleRegistrationNo}
-              onChange={handleChange}
-              readOnly
-              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100"
-            />
-            {errors.vehicleRegistrationNo && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.vehicleRegistrationNo}
-              </p>
-            )}
+            <form onSubmit={handleSubmit} className="mt-4">
+              {/* Vehicle Registration Number */}
+              <div className="mb-6">
+                <label
+                  htmlFor="vehicleRegistrationNo"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Vehicle Registration No.
+                </label>
+                <input
+                  type="text"
+                  id="vehicleRegistrationNo"
+                  name="vehicleRegistrationNo"
+                  value={appointment.vehicleRegistrationNo}
+                  onChange={handleChange}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.vehicleRegistrationNo && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.vehicleRegistrationNo}
+                  </p>
+                )}
+              </div>
+
+              {/* Date */}
+              <div className="mb-6">
+                <label
+                  htmlFor="date"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Appointment Date
+                </label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={appointment.date}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.date && (
+                  <p className="mt-1 text-sm text-red-600">{errors.date}</p>
+                )}
+              </div>
+
+              {/* Time */}
+              <div className="mb-6">
+                <label
+                  htmlFor="time"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Appointment Time
+                </label>
+                <select
+                  id="time"
+                  name="time"
+                  value={appointment.time}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">{appointment.time}</option>
+                  {timeSlots.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
+                  ))}
+                </select>
+                {errors.time && (
+                  <p className="mt-1 text-sm text-red-600">{errors.time}</p>
+                )}
+              </div>
+
+              {/* Mileage */}
+              <div className="mb-6">
+                <label
+                  htmlFor="mileage"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Mileage
+                </label>
+                <input
+                  type="number"
+                  id="mileage"
+                  name="mileage"
+                  value={appointment.mileage}
+                  onChange={handleChange}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.mileage && (
+                  <p className="mt-1 text-sm text-red-600">{errors.mileage}</p>
+                )}
+              </div>
+
+              {/* Form Actions */}
+              <div className="flex justify-end mt-8 gap-4">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md shadow-sm hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className={`px-4 py-2 bg-green-600 text-white rounded-md shadow-sm hover:bg-green-700 transition ${
+                    isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Updating..." : "Reschedule Appointment"}
+                </button>
+              </div>
+            </form>
           </div>
-          
-          <div>
-            <input
-              type="date"
-              name="date"
-              value={appointment.date}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg"
-            />
-            {errors.date && (
-              <p className="text-red-500 text-sm mt-1">{errors.date}</p>
-            )}
-          </div>
-          
-          <select
-            name="time"
-            value={appointment.time}
-            onChange={handleChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-lg"
-          >
-            <option value="">{appointment.time}</option>
-            {timeSlots.map((slot) => (
-              <option key={slot} value={slot}>
-                {slot}
-              </option>
-            ))}
-          </select>
-          
-          <div>
-            <input
-              type="number"
-              name="mileage"
-              placeholder="Mileage"
-              value={appointment.mileage}
-              onChange={handleChange}
-              readOnly
-              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100"
-            />
-            {errors.mileage && (
-              <p className="text-red-500 text-sm mt-1">{errors.mileage}</p>
-            )}
-          </div>
-          
-          <button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium p-3 rounded-lg transition duration-300"
-          >
-            Reschedule Appointment
-          </button>
-        </form>
+        </Modal>
       </div>
-    </div>
+    </AppointLayouts>
   );
 };
 
