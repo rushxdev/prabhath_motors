@@ -3,29 +3,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Modal from "../../../../components/Model"; // Import the Modal component
+import { MonthlyUtilityBill, UtilityBill } from "../../../../types/Utility"; // Import types from Utility.ts
 
 // Configure axios base URL
 axios.defaults.baseURL = "http://localhost:8081";
-
-interface MonthlyUtilityBill {
-  id?: number;
-  invoiceNo: number;
-  billingAccNo: number;
-  billingMonth: string;
-  billingYear: number;
-  units: number;
-  totalPayment: number;
-  generatedDate: string;
-}
-
-interface UtilityBill {
-  id: number;
-  billing_Acc_No: number;
-  type: string;
-  address: string;
-  meter_No: string;
-  unit_Price: number;
-}
 
 interface MonthlyUtilityBillFormProps {
   isOpen: boolean;
