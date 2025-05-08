@@ -33,7 +33,6 @@ import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
 import EmployeeUpdate from "./modules/admin/layout/EmployeeLayouts/EmployeeUpdate";
 import VehicleDetails from "./modules/admin/pages/AdminVehiclePages/VehicleDetails";
 
-
 //Job routes
 import JobForm from "./modules/admin/components/JobForm";
 import JobList from "./modules/admin/pages/AdminAppointmentPages/JobList";
