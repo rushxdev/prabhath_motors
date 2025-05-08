@@ -2,6 +2,7 @@ package com.prabath_motors.backend.service.userService;
 
 
 import com.prabath_motors.backend.dao.Employee;
+import com.prabath_motors.backend.dto.EmployeeDTO;
 import com.prabath_motors.backend.repository.EmployeeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +28,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee updateEmployee(int empId, Employee employee) {
-        Optional<Employee> existingEmployee = employeeRepository.findById(empId);
-        if (existingEmployee.isEmpty()) {
-            throw new EntityNotFoundException("Employee not found with ID: " + empId);
-        }
+    public Employee updateEmployee(int empId, EmployeeDTO dto) {
+        Employee existing = employeeRepository.findById(empId)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
 
-        Employee updatedEmployee = existingEmployee.get();
-        updatedEmployee.setFirstname(employee.getFirstname());
-        updatedEmployee.setLastname(employee.getLastname());
-        updatedEmployee.setRole(employee.getRole());
-        updatedEmployee.setContact(employee.getContact());
-        updatedEmployee.setNic(employee.getNic());
-        updatedEmployee.setDob(employee.getDob());
-        updatedEmployee.setGender(employee.getGender());
-        updatedEmployee.setSalary(employee.getSalary());
-
-        return employeeRepository.save(updatedEmployee);
+        EmployeeMapper.updateEntity(existing, dto);
+        return employeeRepository.save(existing);
     }
-
 
     @Override
     public void deleteEmployee(int empId) {
