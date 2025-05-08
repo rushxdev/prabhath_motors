@@ -1,6 +1,7 @@
 import { apiClient } from '../axios.config';
 import { StockItem, ItemCategory, Stock_In } from '../types/Stock';
 
+
 class ItemService {
     private readonly baseUrl = '/item';
     private readonly categoryUrl = '/itemCtgry';
@@ -39,6 +40,7 @@ class ItemService {
     async getAllCategories(): Promise<ItemCategory[]> {
         const response = await apiClient.get<ItemCategory[]>(`${this.categoryUrl}/get`);
         return response.data;
+        
     }
 }
 

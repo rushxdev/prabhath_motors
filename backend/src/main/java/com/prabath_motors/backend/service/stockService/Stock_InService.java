@@ -11,4 +11,3 @@ public interface Stock_InService {
     public Stock_In UpdateStockInDetails(Integer id, Stock_In stock);
     public void DeleteStockById(Integer id);
 }
-
