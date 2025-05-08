@@ -7,7 +7,6 @@ import AboutPage from "./modules/user/pages/AboutPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
 //Appointment, Tasks routes
-
 import AppointmentPage from "./modules/admin/pages/AdminAppointmentPages/AppointmentPage";
 import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
 import AppointmentUpdate from "./modules/admin/pages/AdminAppointmentPages/AppointmentUpdate";
@@ -17,6 +16,7 @@ import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsM
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
 import AdminSupplierManager from "./modules/admin/pages/AdminStockPages/AdminSupplierManager";
 import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminStockOrderManager";
+import AdminRestockItems from "./modules/admin/pages/AdminStockPages/AdminRestockItems";
 import AdminStockReportsManager from "./modules/admin/pages/AdminStockPages/AdminStockReportsManager";
 // Utility routes
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
@@ -67,6 +67,7 @@ function App() {
           <Route path="stock-requests" element={<AdminStockReqManager />} />
           <Route path="supplier-details" element={<AdminSupplierManager />} />
           <Route path="order-stocks" element={<AdminStockOrderManager />} />
+          <Route path="restock-Items" element={<AdminRestockItems />} />
           <Route path="stock-reports" element={<AdminStockReportsManager />} />
           {/* vehicle routes */}
           {/*utility routes*/}

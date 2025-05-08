@@ -9,8 +9,9 @@ const StockNav: React.FC = () => {
   const navItems = [
     { path: '/admin/items', label: 'All Items' },
     { path: '/admin/stock-requests', label: 'Stock Requests' },
-    { path: '/admin/order-stocks', label: 'Order Stocks' },
+    { path: '/admin/order-stocks', label: 'Ordered Stocks' },
     { path: '/admin/supplier-details', label: 'Supplier Details' },
+    { path: '/admin/restock-Items', label: 'Restock Items' },
     { path: '/admin/stock-reports', label: 'Stock Reports' },
   ];
 
@@ -18,7 +19,7 @@ const StockNav: React.FC = () => {
     <div className="w-full bg-black text-white text-center py-5">
       <div className="container mx-auto">
         <LayoutGroup>
-          <div className="grid grid-cols-5 gap-4 justify-center relative">
+          <div className="grid grid-cols-6 gap-4 justify-center relative">
             {navItems.map((item, index) => {
               const isActive = location.pathname === item.path;
 
