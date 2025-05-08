@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Appointment } from "../types/Appointment";
 
-const API_URL = "http://localhost:8080/appointment";
+const API_URL = "http://localhost:8081/appointment";
 
 export const getAllAppointments = async (): Promise<Appointment[]> => {
   try {
