@@ -47,6 +47,7 @@ public class Item {
 
     @DecimalMin(value = "0.01", message = "Sell price must be greater than 0")
     private double sellPrice;
+    private double unitPrice;
 
     private String stockLevel;
 
