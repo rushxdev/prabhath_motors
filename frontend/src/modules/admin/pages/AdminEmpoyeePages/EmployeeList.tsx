@@ -19,18 +19,15 @@ const EmployeeList = () => {
   };
 
   return (
-    <div className="max-w-screen mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">Employee List</h2>
+    <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16">
+      <h2 className="text-2xl sm:text-2xl font-press font-semibold mb-4 mt-10 text-primary">
+        Employee List
+      </h2>
       <div className="flex justify-end mb-4">
         <button
-          onClick={() => navigate("/admin/employee/add")}
-          className="bg-green-500 text-white px-4 py-2 rounded mb-4">
-          Back To Form
-        </button>
-      </div>
-      <div className="mt-4">
-        <button onClick={()=>navigate("/admin/employee/add")} className="text-blue-500 hover:underline">
-          Back to Add a New Employee
+          onClick={() => navigate("/admin/employee/dashboard")}
+          className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300">
+          Back to Dashboard
         </button>
       </div>
       {employees.length > 0 ? (
