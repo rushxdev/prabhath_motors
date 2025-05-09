@@ -1,13 +1,22 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import { HiMenu } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../../../context/AuthContext";
 
 const Header: React.FC = () => {
   const [navOpen, setNavOpen] = useState(false);
   const [isServicesMenuOpen, setIsServicesMenuOpen] = useState(false);
   const [isAppointmentsMenuOpen, setIsAppointmentsMenuOpen] = useState(false);
+
+  const { isLoggedIn, isAdmin, user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const toggleAppointmentsMenu = () => {
     if (isAppointmentsMenuOpen) {
@@ -35,11 +44,11 @@ const Header: React.FC = () => {
 
   // Animation variants for dropdown menus - changed to support absolute positioning
   const dropdownVariants = {
-    hidden: { 
+    hidden: {
       opacity: 0,
       y: -20,
     },
-    visible: { 
+    visible: {
       opacity: 1,
       y: 0,
       transition: {
@@ -47,7 +56,7 @@ const Header: React.FC = () => {
         ease: "easeOut"
       }
     },
-    exit: { 
+    exit: {
       opacity: 0,
       y: -20,
       transition: {
@@ -92,13 +101,43 @@ const Header: React.FC = () => {
               <FiSearch size={18} />
             </button>
 
-            {/* Signup Button */}
-            <NavLink
-              to="/signup"
-              className="hidden md:block font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              SIGNUP
-            </NavLink>
+            {/* Auth Buttons */}
+            {isLoggedIn ? (
+              <div className="hidden md:flex items-center space-x-4">
+                <span className="font-medium text-gray-700 dark:text-gray-200">
+                  {user?.username}
+                </span>
+                {isAdmin && (
+                  <NavLink
+                    to="/admin"
+                    className="font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    ADMIN
+                  </NavLink>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  LOGOUT
+                </button>
+              </div>
+            ) : (
+              <div className="hidden md:flex items-center space-x-4">
+                <NavLink
+                  to="/login"
+                  className="font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  LOGIN
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  className="font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  SIGNUP
+                </NavLink>
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -199,7 +238,7 @@ const Header: React.FC = () => {
       {/* Appointments Menu - Change positioning to fixed instead of absolute */}
       <AnimatePresence>
         {isAppointmentsMenuOpen && (
-          <motion.div 
+          <motion.div
             className="fixed left-0 right-0 top-[125px] w-full bg-white border-b border-gray-200 z-40 shadow-lg"
             initial="hidden"
             animate="visible"
@@ -225,7 +264,7 @@ const Header: React.FC = () => {
                     </span>
                   </div>
                 </a>
-                
+
                 <a
                   href="/appointment/status"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
@@ -239,7 +278,7 @@ const Header: React.FC = () => {
                     </span>
                   </div>
                 </a>
-                
+
                 <a
                   href="/appointment/cancel"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
@@ -253,7 +292,7 @@ const Header: React.FC = () => {
                     </span>
                   </div>
                 </a>
-                
+
                 <a
                   href="/appointment/history"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
@@ -268,7 +307,7 @@ const Header: React.FC = () => {
                   </div>
                 </a>
               </div>
-              
+
               <div className="mt-4 pt-3 border-t border-gray-200">
                 <p className="text-sm text-gray-500">
                   Questions? Contact our service center at <span className="font-medium text-gray-700">+94 123 456 789</span>
@@ -282,7 +321,7 @@ const Header: React.FC = () => {
       {/* Services Menu - Change positioning to fixed instead of absolute */}
       <AnimatePresence>
         {isServicesMenuOpen && (
-          <motion.div 
+          <motion.div
             className="fixed left-0 right-0 top-[125px] w-full bg-white border-b border-gray-200 z-40 shadow-lg"
             initial="hidden"
             animate="visible"
@@ -308,7 +347,7 @@ const Header: React.FC = () => {
                     </span>
                   </div>
                 </a>
-                
+
                 <a
                   href="/services/repairs"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
@@ -322,7 +361,7 @@ const Header: React.FC = () => {
                     </span>
                   </div>
                 </a>
-                
+
                 <a
                   href="/services/body-shop"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
@@ -336,7 +375,7 @@ const Header: React.FC = () => {
                     </span>
                   </div>
                 </a>
-                
+
                 <a
                   href="/services/parts-catalog"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
@@ -350,7 +389,7 @@ const Header: React.FC = () => {
                     </span>
                   </div>
                 </a>
-                
+
                 <a
                   href="/services/accessories"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
@@ -365,7 +404,7 @@ const Header: React.FC = () => {
                   </div>
                 </a>
               </div>
-              
+
               <div className="mt-4 pt-3 border-t border-gray-200">
                 <p className="text-sm text-gray-500">
                   Need professional advice? Speak with our parts specialists at <span className="font-medium text-gray-700">+94 123 456 788</span>
@@ -391,17 +430,63 @@ const Header: React.FC = () => {
               </NavLink>
             ))}
             <div className="py-2 border-t dark:border-gray-700 mt-2">
-              <div 
+              <div
                 className="py-2 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                 onClick={toggleAppointmentsMenu}
               >
                 APPOINTMENTS
               </div>
-              <div 
+              <div
                 className="py-2 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                 onClick={toggleServicesMenu}
               >
                 SERVICE & SPARE PARTS
+              </div>
+
+              {/* Mobile Auth Links */}
+              <div className="border-t dark:border-gray-700 mt-2 pt-2">
+                {isLoggedIn ? (
+                  <>
+                    <div className="py-2 text-gray-700 dark:text-gray-200">
+                      Logged in as: {user?.username}
+                    </div>
+                    {isAdmin && (
+                      <NavLink
+                        to="/admin"
+                        className="block py-2 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+                        onClick={() => setNavOpen(false)}
+                      >
+                        ADMIN DASHBOARD
+                      </NavLink>
+                    )}
+                    <div
+                      className="py-2 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+                      onClick={() => {
+                        handleLogout();
+                        setNavOpen(false);
+                      }}
+                    >
+                      LOGOUT
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <NavLink
+                      to="/login"
+                      className="block py-2 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+                      onClick={() => setNavOpen(false)}
+                    >
+                      LOGIN
+                    </NavLink>
+                    <NavLink
+                      to="/register"
+                      className="block py-2 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+                      onClick={() => setNavOpen(false)}
+                    >
+                      SIGNUP
+                    </NavLink>
+                  </>
+                )}
               </div>
             </div>
           </div>

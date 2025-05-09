@@ -1,6 +1,13 @@
 import { useEffect } from "react";
 import { ScrollToTop } from "./utils/scrollToTop.util";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Auth pages
+import Login from "./modules/auth/pages/Login";
+import Register from "./modules/auth/pages/Register";
+import Unauthorized from "./modules/auth/pages/Unauthorized";
 
 import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
@@ -45,25 +52,34 @@ function App() {
     //document.documentElement.classList.add("dark");
   }, []);
   return (
+    <AuthProvider>
+      <Router>
+        <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
 
-    <Router>
-       
-      <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
+        <Routes>
+          {/* --------------------Auth Routes-------------------- */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
-      <Routes>
-        {/* --------------------User Routes-------------------- */}
+          {/* --------------------User Routes-------------------- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
           {/*Vehicle routes*/}
+
+          {/* --------------------Protected User Routes-------------------- */}
+          <Route element={<ProtectedRoute />}>
+            {/*Vehicle routes*/}
             <Route path="vehicle-page" element={<VehicleDashboard />} />
             <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
             <Route path="vehicle-page/:id" element={<VehicleDetails />} />
-        {/* --------------------User Routes end-----------------*/}
+          </Route>
+          {/* --------------------User Routes end-----------------*/}
 
-
-        {/* --------------------Admin Routes------------------ */}
-        <Route path="/admin" element={<AdminLayout />}>
+          {/* --------------------Admin Routes------------------ */}
+          <Route element={<ProtectedRoute requireAdmin={true} />}>
+            <Route path="/admin" element={<AdminLayout />}>
           {/* Items, stocks, supplier, order routes */}
           <Route path="items" element={<AdminItemsManager />} />
           <Route path="stock-requests" element={<AdminStockReqManager />} />
@@ -74,7 +90,10 @@ function App() {
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
-          <Route path="utility/add" element={<UtilityBillForm />} />
+          <Route
+            path="utility/add"
+            element={<UtilityBillForm isOpen={true} onClose={() => {}} />}
+          />
           <Route path="utility-reports" element={<AdminUtilityReportsManager />} />
           {/* Employee routes */}
           <Route path="employee/add" element={<EmployeeDashboard />} />
@@ -95,8 +114,10 @@ function App() {
           <Route path="jobs" element={<JobList />} />
           <Route path="jobs/:id" element={<JobDetails />} />
         </Route>
-      </Routes>
-    </Router>
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
