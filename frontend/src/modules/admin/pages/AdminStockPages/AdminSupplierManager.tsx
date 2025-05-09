@@ -4,9 +4,9 @@ import { PlusIcon, PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/
 import StocksLayout from "../../layout/StockLayouts/StocksLayout";
 import Modal from "../../../../components/Model";
 import { Supplier } from "../../../../types/Stock";
-//import { supplierService } from '../../../../services/stockSupplierService';
 import SupplierForm from "../../components/AdminStocks-pages/SupplierForm";
 import { ErrorBoundary } from 'react-error-boundary';
+import apiClient from "../../../../axios.config";
 
 interface ErrorFallbackProps {
     error: Error;
@@ -39,11 +39,7 @@ const AdminSupplierManager: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:8081/supplier/get');
-            if (!response.ok) {
-                throw new Error('Failed to fetch suppliers');
-            }
-            const data = await response.json();
+            const { data } = await apiClient.get('/supplier/get');
             setSuppliers(data);
         } catch (error) {
             setError(error instanceof Error ? error.message : "An unexpected error occurred.");
@@ -63,6 +59,7 @@ const AdminSupplierManager: React.FC = () => {
             const response = await fetch(url, {
                 method: supplier.supplierId ? 'PUT' : 'POST',
                 headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(supplier),
@@ -94,6 +91,10 @@ const AdminSupplierManager: React.FC = () => {
         try {
             const response = await fetch(`http://localhost:8081/supplier/delete/${supplierToDelete}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
             });
 
             if (!response.ok) {

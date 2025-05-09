@@ -5,6 +5,7 @@ import StocksLayout from "../../layout/StockLayouts/StocksLayout";
 import Modal from "../../../../components/Model";
 import { Stock_In, StockItem, ItemCategory, Supplier } from "../../../../types/Stock";
 import { ErrorBoundary } from 'react-error-boundary';
+import apiClient from "../../../../axios.config";
 
 interface ErrorFallbackProps {
     error: Error;
@@ -43,11 +44,7 @@ const AdminStockOrderManager: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:8081/stock_in/get');
-            if (!response.ok) {
-                throw new Error('Failed to fetch stocks');
-            }
-            const data = await response.json();
+            const { data } = await apiClient.get('/stock_in/get');
             setStocks(data);
         } catch (error) {
             setError(error instanceof Error ? error.message : "An unexpected error occurred.");
@@ -58,9 +55,7 @@ const AdminStockOrderManager: React.FC = () => {
 
     const fetchItems = async () => {
         try {
-            const response = await fetch('http://localhost:8081/item/get');
-            if (!response.ok) throw new Error('Failed to fetch items');
-            const data = await response.json();
+            const { data } = await apiClient.get('/item/get');
             setItems(data);
         } catch (error) {
             console.error('Error fetching items:', error);
@@ -69,9 +64,7 @@ const AdminStockOrderManager: React.FC = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('http://localhost:8081/itemCtgry/get');
-            if (!response.ok) throw new Error('Failed to fetch categories');
-            const data = await response.json();
+            const { data } = await apiClient.get('/itemCtgry/get');
             setCategories(data);
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -80,9 +73,7 @@ const AdminStockOrderManager: React.FC = () => {
 
     const fetchSuppliers = async () => {
         try {
-            const response = await fetch('http://localhost:8081/supplier/get');
-            if (!response.ok) throw new Error('Failed to fetch suppliers');
-            const data = await response.json();
+            const { data } = await apiClient.get('/supplier/get');
             setSuppliers(data);
         } catch (error) {
             console.error('Error fetching suppliers:', error);
@@ -118,13 +109,7 @@ const AdminStockOrderManager: React.FC = () => {
         setLoading(true);
         try {
             console.log('Attempting to delete stock:', stockToDelete);
-            const response = await fetch(`http://localhost:8081/stock_in/delete/${stockToDelete}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete stock');
-            }
+            await apiClient.delete(`/stock_in/delete/${stockToDelete}`);
 
             console.log('Stock deleted successfully');
             await fetchStocks();
@@ -170,16 +155,6 @@ const AdminStockOrderManager: React.FC = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full sm:w-1/2 p-2 border border-gray-500 rounded-md bg-transparent"
                             />
-                            {/*<HeadlessButton
-                                onClick={() => {
-                                    setCurrentStock(undefined);
-                                    setIsModalOpen(true);
-                                }}
-                                className="flex items-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600"
-                            >
-                                <PlusIcon className="w-5 h-5 mr-2" />
-                                Add Stock Order
-                            </HeadlessButton>*/}
                         </div>
                     </div>
                 </div>

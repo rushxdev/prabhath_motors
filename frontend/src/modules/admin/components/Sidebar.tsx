@@ -22,13 +22,13 @@ const Sidebar: React.FC = () => {
   }, [open]);
 
   const Menus: MenuItem[] = [
-    { title: "Vehicle", icon: <FaCar size={24} />, href: "/admin/vehicle", basePath: "/admin/vehicle" },
+    { title: "Vehicle", icon: <FaCar size={24} />, href: "/admin/vehicle-page", basePath: "/admin/vehicle-page" },
     { title: "Appointment", icon: <FaAddressBook size={24} />, href: "/admin/appointment-list", basePath: "/admin/appointment" },
-    { title: "Employee", icon: <FaBriefcase size={24} />, href: "/admin/employee/add", basePath: "/admin/employee" },
-    { 
-      title: "Stock", 
-      icon: <FaCartPlus size={24} />, 
-      href: "/admin/items", 
+    { title: "Employee", icon: <FaBriefcase size={24} />, href: "/admin/employee/dashboard", basePath: "/admin/employee" },
+    {
+      title: "Stock",
+      icon: <FaCartPlus size={24} />,
+      href: "/admin/items",
       basePath: "/admin/stock",
       additionalPaths: ["/admin/items", "/admin/stock-requests", "/admin/order-stocks", "/admin/supplier-details", "/admin/stock-reports"]
     },
@@ -59,20 +59,20 @@ const Sidebar: React.FC = () => {
         <ul className="mt-6 flex-1 pt-8">
           {Menus.map((menu, index) => {
             // Comprehensive check for active state
-            const isActive = 
+            const isActive =
               // Check exact path match
-              location.pathname === menu.href || 
+              location.pathname === menu.href ||
               // Check if path starts with basePath
               (menu.basePath && location.pathname.startsWith(menu.basePath)) ||
               // Check additional paths if they exist
               (menu.additionalPaths?.some(path => location.pathname.startsWith(path)) || false);
-            
+
             return (
               <li key={index} className="pt-2">
-                <Link 
-                  to={menu.href} 
+                <Link
+                  to={menu.href}
                   className={`flex items-center gap-x-4 p-2 rounded-md transition-all duration-300 ${
-                    isActive ? "bg-green-950 text-green-700" : "hover:bg-green-900" 
+                    isActive ? "bg-green-950 text-green-700" : "hover:bg-green-900"
                   }`}
                 >
                   <div className="min-w-[24px]">{menu.icon}</div>
@@ -84,7 +84,7 @@ const Sidebar: React.FC = () => {
             );
           })}
         </ul>
-      </div>  
+      </div>
     </div>
   );
 };

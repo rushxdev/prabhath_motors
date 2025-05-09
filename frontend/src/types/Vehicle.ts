@@ -8,6 +8,7 @@ export interface Vehicle {
     mileage: number;
     lastUpdate: string;
     contactNumber: string;
+    createdAt?: string;
 }
 
 export interface OwnershipHistory {

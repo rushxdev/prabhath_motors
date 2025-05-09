@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getVehicleById, deleteVehicle, transferVehicleOwnership, getOwnershipHistory, clearOwnershipHistory } from "../../../../services/vehicleService";
 import { Vehicle, OwnershipHistory } from "../../../../types/Vehicle";
-import Navbar from "../../../user/components/Navbar";
-import Sidebar from "../../components/Sidebar";
 import jsPDF from "jspdf";
+import { formatDistanceToNow } from "date-fns";
+import { PDFViewer } from '@react-pdf/renderer';
+import VehicleReport from '../../components/Reports/VehicleReport';
 
 const VehicleDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,6 +41,8 @@ const VehicleDetails = () => {
     logo: null as string | null
   });
 
+  const [showReport, setShowReport] = useState(false);
+
   useEffect(() => {
     if (id) {
       getVehicleById(Number(id)).then((data) => {
@@ -61,7 +64,7 @@ const VehicleDetails = () => {
       await clearOwnershipHistory(vehicle.id);
       // Then delete the vehicle
     await deleteVehicle(vehicle.id);
-    navigate("/vehicle-page");
+    navigate("/admin/vehicle-page");
     } catch (error) {
       console.error("Error deleting vehicle:", error);
       alert("Failed to delete vehicle. Please try again.");
@@ -179,103 +182,111 @@ const VehicleDetails = () => {
   if (!vehicle) return <div>Vehicle not found.</div>;
 
   return (
-    <>
-      <Navbar />
-      <div className="min-h-screen w-full flex flex-row bg-transparent" style={{background: 'linear-gradient(120deg, #f0f4ff 60%, #ede9fe 100%)'}}>
-        <Sidebar />
-        <div className="flex-1 flex flex-col items-center justify-start py-10 px-2">
-          <h1 className="text-4xl font-extrabold text-blue-700 text-center mb-4 tracking-tight">Vehicle Details</h1>
-          <div className="w-32 h-1 mx-auto mb-10 bg-gradient-to-r from-blue-500 to-violet-400 rounded-full"></div>
-          <div className="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-4xl mb-8">
-            <div className="flex items-center mb-8">
-              <span className="text-2xl text-blue-600 mr-2"><i className="fa fa-car"></i></span>
-              <h2 className="text-2xl font-semibold">Vehicle Information</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6 text-lg mb-8">
-              <div>
-                <span className="block text-blue-600 font-semibold">Vehicle Reg. No</span>
-                <span className="block font-bold text-xl">{vehicle.vehicleRegistrationNo}</span>
-              </div>
-              <div>
-                <span className="block text-blue-600 font-semibold">Vehicle Type</span>
-                <span className="block font-bold text-xl">{vehicle.vehicleType}</span>
-              </div>
-              <div>
-                <span className="block text-blue-600 font-semibold">Owner Name</span>
-                <span className="block font-bold text-lg">{vehicle.ownerName}</span>
-              </div>
-              <div>
-                <span className="block text-blue-600 font-semibold">Contact No</span>
-                <span className="block font-bold text-lg">{vehicle.contactNo}</span>
-              </div>
-              <div>
-                <span className="block text-blue-600 font-semibold">Mileage</span>
-                <span className="block font-bold">{vehicle.mileage}</span>
-              </div>
-              <div>
-                <span className="block text-blue-600 font-semibold">Last Updated Time</span>
-                <span className="block font-bold">{vehicle.lastUpdate}</span>
-              </div>
-          </div>
-            <div className="flex flex-col md:flex-row gap-4 justify-start ml-2">
-              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold shadow transition" onClick={() => navigate(`/vehicle-page/vehicle-update/${vehicle.id}`)}>
-                <i className="fa fa-pen"></i> Update
-              </button>
-              <button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-violet-500 hover:from-blue-700 hover:to-violet-600 text-white px-6 py-2 rounded-lg font-semibold shadow transition" onClick={() => setShowTransferForm(!showTransferForm)}>
-                <i className="fa fa-random"></i> Transfer Ownership
-              </button>
-              <button className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg font-semibold shadow transition" onClick={handleDelete}>
-                <i className="fa fa-trash"></i> Remove
-              </button>
-              <button
-                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold shadow transition"
-                onClick={handleGenerateServiceDuePDF}
-              >
-                <i className="fa fa-file-pdf-o"></i> Generate Next Service Due
-              </button>
-            </div>
-          {showTransferForm && (
-            <div className="mt-6 p-4 border rounded">
-              <h3 className="text-xl font-semibold mb-4">Transfer Ownership</h3>
-              <form onSubmit={handleTransferOwnership} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">New Owner Name</label>
-                  <input
-                    type="text"
-                    value={newOwner.name}
-                    onChange={(e) => setNewOwner({ ...newOwner, name: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">New Owner Contact</label>
-                  <input
-                    type="text"
-                    value={newOwner.contact}
-                    onChange={(e) => setNewOwner({ ...newOwner, contact: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-green-500 text-white px-4 py-2 rounded"
-                >
-                  Confirm Transfer
-                </button>
-              </form>
-            </div>
-          )}
+    <div className="flex-1 flex flex-col items-center justify-center py-10 px-2">
+      <div className="max-w-5xl w-full bg-white rounded-3xl shadow-xl p-10 border border-gray-100">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl sm:text-2xl font-press font-semibold mb-4 mt-10 text-primary w-full text-center">Vehicle Details</h2>
         </div>
-          <div className="w-full max-w-4xl">
-            <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          {/* Basic Information */}
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-100 shadow-md">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Basic Information</h3>
+            <div className="space-y-2">
+              <div><span className="text-gray-500">Registration No</span><div className="text-green-700 font-semibold text-lg">{vehicle?.vehicleRegistrationNo}</div></div>
+              <div><span className="text-gray-500">Type</span><div className="text-green-700 font-semibold text-lg">{vehicle?.vehicleType}</div></div>
+            </div>
+          </div>
+          {/* Identification */}
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-100 shadow-md">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Identification</h3>
+            <div className="space-y-2">
+              <div><span className="text-gray-500">Owner Name</span><div className="text-green-700 font-semibold text-lg">{vehicle?.ownerName}</div></div>
+              <div><span className="text-gray-500">Contact No</span><div className="text-green-700 font-semibold text-lg">{vehicle?.contactNo}</div></div>
+            </div>
+          </div>
+          {/* Status/Stock */}
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-100 shadow-md">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Status</h3>
+            <div className="space-y-2">
+              <div><span className="text-gray-500">Mileage</span><div className="text-green-700 font-semibold text-lg">{vehicle?.mileage} KM</div></div>
+              <div><span className="text-gray-500">Last Updated Time</span>
+                <div className="text-green-700 font-semibold text-lg">
+                  {(() => {
+                    if (!vehicle?.lastUpdate) return "-";
+                    const now = new Date();
+                    const [h, m, s] = vehicle.lastUpdate.split(":");
+                    const lastUpdateDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), Number(h), Number(m), Number(s || 0));
+                    return formatDistanceToNow(lastUpdateDate, { addSuffix: true });
+                  })()}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Divider */}
+        <div className="border-t border-gray-200 my-8"></div>
+        {/* Actions */}
+        <div className="flex flex-col md:flex-row gap-y-6 md:gap-x-12 justify-center items-center mb-8">
+          <button className="min-w-[120px] h-11 flex items-center justify-center rounded-full border-2 border-blue-300 text-blue-600 bg-white font-medium text-base shadow-sm hover:bg-blue-50 transition-all duration-200" onClick={() => navigate(`/admin/vehicle-page/vehicle-update/${vehicle?.id}`)}>
+            Update
+          </button>
+          <button className="min-w-[160px] h-11 flex items-center justify-center rounded-full border-2 border-violet-300 text-violet-600 bg-white font-medium text-base shadow-sm hover:bg-violet-50 transition-all duration-200" onClick={() => setShowTransferForm(!showTransferForm)}>
+            Transfer Ownership
+          </button>
+          <button className="min-w-[120px] h-11 flex items-center justify-center rounded-full border-2 border-red-300 text-red-600 bg-white font-medium text-base shadow-sm hover:bg-red-50 transition-all duration-200" onClick={handleDelete}>
+            Remove
+          </button>
+          <button className="min-w-[120px] h-11 flex items-center justify-center rounded-full border-2 border-green-300 text-green-700 bg-white font-medium text-base shadow-sm hover:bg-green-50 transition-all duration-200 text-center" onClick={() => setShowReport(true)}>
+            Report
+          </button>
+          <button className="min-w-[120px] h-11 flex items-center justify-center rounded-full border-2 border-emerald-300 text-emerald-700 bg-white font-medium text-base shadow-sm hover:bg-emerald-50 transition-all duration-200" onClick={() => navigate("/admin/job-form", { state: { vehicleId: vehicle?.id } })}>
+            Assign Job
+          </button>
+        </div>
+        {/* Divider */}
+        <div className="border-t border-gray-200 my-8"></div>
+        {/* Transfer Ownership Form */}
+        {showTransferForm && (
+          <div className="mt-6 p-6 border border-gray-100 rounded-xl bg-white shadow-sm">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Transfer Ownership</h3>
+            <form onSubmit={handleTransferOwnership} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">New Owner Name</label>
+                <input
+                  type="text"
+                  value={newOwner.name}
+                  onChange={(e) => setNewOwner({ ...newOwner, name: e.target.value })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">New Owner Contact</label>
+                <input
+                  type="text"
+                  value={newOwner.contact}
+                  onChange={(e) => setNewOwner({ ...newOwner, contact: e.target.value })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-5 py-2 rounded-full bg-emerald-500 text-white font-semibold shadow-sm hover:bg-emerald-600 transition"
+              >
+                Confirm Transfer
+              </button>
+            </form>
+          </div>
+        )}
+        {/* Ownership History */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 mt-8 border border-gray-100">
           <div className="flex items-center mb-4">
-                <span className="text-xl text-blue-600 mr-2"><i className="fa fa-history"></i></span>
-                <h3 className="text-xl font-semibold">Ownership History</h3>
+            <span className="text-xl text-blue-600 mr-2"><i className="fa fa-history"></i></span>
+            <h3 className="text-xl font-semibold">Ownership History</h3>
             {ownershipHistory.length > 0 && (
               <button
-                    className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-400 hover:from-pink-600 hover:to-pink-500 text-white px-6 py-2 rounded-lg font-semibold shadow transition ml-4"
+                className="ml-4 px-4 py-2 rounded-full bg-red-50 text-red-600 border border-red-200 font-semibold shadow-sm hover:bg-red-100 transition flex items-center gap-2"
                 onClick={async () => {
                   if (!vehicle?.id) return;
                   if (window.confirm("Are you sure you want to clear all ownership history?")) {
@@ -284,12 +295,12 @@ const VehicleDetails = () => {
                   }
                 }}
               >
-                    <i className="fa fa-trash"></i> Clear All Records
+                <i className="fa fa-trash"></i> Clear All Records
               </button>
             )}
           </div>
           {ownershipHistory.length === 0 ? (
-                <p className="text-gray-400 italic">No ownership history available</p>
+            <p className="text-gray-400 italic">No ownership history available</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -317,17 +328,34 @@ const VehicleDetails = () => {
             </div>
           )}
         </div>
-            <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-              <div className="flex items-center mb-4">
-                <span className="text-xl text-blue-600 mr-2"><i className="fa fa-tools"></i></span>
-                <h3 className="text-xl font-semibold">Service History</h3>
+        {/* Service History */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100">
+          <div className="flex items-center mb-4">
+            <span className="text-xl text-blue-600 mr-2"><i className="fa fa-tools"></i></span>
+            <h3 className="text-xl font-semibold">Service History</h3>
+          </div>
+          <p className="text-gray-400 italic">No service history available</p>
+        </div>
+        {/* PDF Viewer Modal */}
+        {showReport && vehicle && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+            <div className="bg-white rounded-lg shadow-lg p-4 w-full max-w-4xl relative">
+              <button
+                onClick={() => setShowReport(false)}
+                className="absolute top-2 right-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-700"
+              >
+                Close
+              </button>
+              <div className="h-[80vh] w-full mt-4">
+                <PDFViewer width="100%" height="100%">
+                  <VehicleReport vehicle={vehicle} />
+                </PDFViewer>
               </div>
-              <p className="text-gray-400 italic">No service history available</p>
             </div>
           </div>
-        </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

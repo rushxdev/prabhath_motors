@@ -5,6 +5,7 @@ import StocksLayout from "../../layout/StockLayouts/StocksLayout";
 import Modal from "../../../../components/Model";
 import { ErrorBoundary } from 'react-error-boundary';
 import { StockItem, Supplier } from "../../../../types/Stock";
+import apiClient from "../../../../axios.config";
 
 interface Restock {
     restockID: number;
@@ -277,11 +278,7 @@ const AdminRestockItems: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:8081/restock/get');
-            if (!response.ok) {
-                throw new Error('Failed to fetch restock items');
-            }
-            const data = await response.json();
+            const { data } = await apiClient.get('/restock/get');
             setRestocks(data);
         } catch (error) {
             setError(error instanceof Error ? error.message : "An unexpected error occurred.");
@@ -292,9 +289,7 @@ const AdminRestockItems: React.FC = () => {
 
     const fetchItems = async () => {
         try {
-            const response = await fetch('http://localhost:8081/item/get');
-            if (!response.ok) throw new Error('Failed to fetch items');
-            const data = await response.json();
+            const { data } = await apiClient.get('/item/get');
             setItems(data);
         } catch (error) {
             console.error('Error fetching items:', error);
@@ -303,9 +298,7 @@ const AdminRestockItems: React.FC = () => {
 
     const fetchSuppliers = async () => {
         try {
-            const response = await fetch('http://localhost:8081/supplier/get');
-            if (!response.ok) throw new Error('Failed to fetch suppliers');
-            const data = await response.json();
+            const { data } = await apiClient.get('/supplier/get');
             setSuppliers(data);
         } catch (error) {
             console.error('Error fetching suppliers:', error);
@@ -314,9 +307,7 @@ const AdminRestockItems: React.FC = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('http://localhost:8081/itemCtgry/get');
-            if (!response.ok) throw new Error('Failed to fetch categories');
-            const data = await response.json();
+            const { data } = await apiClient.get('/itemCtgry/get');
             setCategories(data);
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -328,20 +319,11 @@ const AdminRestockItems: React.FC = () => {
         setError(null);
         try {
             const isUpdate = restock.restockID !== undefined;
-            const url = isUpdate 
-                ? `http://localhost:8081/restock/update/${restock.restockID}`
-                : 'http://localhost:8081/restock/save';
             
-            const response = await fetch(url, {
-                method: isUpdate ? 'PUT' : 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(restock),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to ${isUpdate ? 'update' : 'create'} restock item`);
+            if (isUpdate) {
+                await apiClient.put(`/restock/update/${restock.restockID}`, restock);
+            } else {
+                await apiClient.post('/restock/save', restock);
             }
 
             setIsModalOpen(false);
@@ -364,14 +346,7 @@ const AdminRestockItems: React.FC = () => {
         
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8081/restock/delete/${restockToDelete}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete restock item');
-            }
-
+            await apiClient.delete(`/restock/delete/${restockToDelete}`);
             await fetchRestocks();
             setIsDeleteModalOpen(false);
             setRestockToDelete(null);
