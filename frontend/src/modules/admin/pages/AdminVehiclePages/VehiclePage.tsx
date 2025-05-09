@@ -4,6 +4,7 @@ import { deleteVehicle, getAllVehicles } from "../../../../services/vehicleServi
 import Navbar from "../../../user/components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { PlusIcon } from "@heroicons/react/24/solid";
+import { formatDistanceToNow, parse } from "date-fns";
 
 const VehiclePage = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -117,12 +118,14 @@ const VehiclePage = () => {
               <PlusIcon className="w-5 h-5 mr-2" />
               Add Vehicle
             </button>
+            {/*
             <button
               className="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-semibold shadow transition"
               onClick={() => setShowSettings(true)}
             >
               <i className="fa fa-cog"></i> Settings
             </button>
+            */}
           </div>
         </div>
 
@@ -135,7 +138,7 @@ const VehiclePage = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle Type</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact No.</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mileage</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mileage/KM</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated Time</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
@@ -151,11 +154,7 @@ const VehiclePage = () => {
                 filteredVehicles.map((vehicle, index) => (
                   <tr
                     key={vehicle.id}
-                    className="cursor-pointer hover:bg-gray-100"
-                    onClick={e => {
-                      if ((e.target as HTMLElement).closest('button')) return;
-                      navigate(`/vehicle-page/${vehicle.id}`);
-                    }}
+                    className="hover:bg-gray-100"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{vehicle.vehicleRegistrationNo}</td>
@@ -163,14 +162,27 @@ const VehiclePage = () => {
                     <td className="px-6 py-4 whitespace-nowrap">{vehicle.ownerName}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{vehicle.contactNo}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{vehicle.mileage}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{vehicle.lastUpdate}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {/* Show relative time for lastUpdate */}
+                      {(() => {
+                        if (!vehicle.lastUpdate) return "-";
+                        // Parse lastUpdate as today's time (HH:mm:ss or HH:mm)
+                        const now = new Date();
+                        const [h, m, s] = vehicle.lastUpdate.split(":");
+                        const lastUpdateDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), Number(h), Number(m), Number(s || 0));
+                        return formatDistanceToNow(lastUpdateDate, { addSuffix: true });
+                      })()}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <button
-                          className="bg-green-500 text-white px-3 py-1 rounded mr-2"
-                          onClick={() => navigate("/admin/job-form", { state: { vehicleId: vehicle.id } })}
+                          className="text-blue-600 hover:underline px-3 py-1 rounded mr-2"
+                          onClick={e => {
+                            e.stopPropagation();
+                            navigate(`/admin/vehicle-page/${vehicle.id}`);
+                          }}
                         >
-                          Assign Job
+                          View
                         </button>
                       </div>
                     </td>

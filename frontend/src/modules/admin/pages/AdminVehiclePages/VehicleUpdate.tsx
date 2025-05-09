@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getVehicleById, updateVehicle } from "../../../../services/vehicleService";
-import Navbar from "../../../user/components/Navbar";
-import Sidebar from "../../components/Sidebar";
 import { Vehicle } from "../../../../types/Vehicle"; // Ensure you're importing the Vehicle type
 
 const VehicleUpdate = () => {
@@ -16,6 +14,7 @@ const VehicleUpdate = () => {
     vehicleType: "",
     ownerName: "",
     contactNo: "",
+    contactNumber: "", // Added to match Vehicle type
     mileage: 0,
     lastUpdate: "", // Default empty value for lastUpdate
   });
@@ -40,6 +39,7 @@ const VehicleUpdate = () => {
       console.log("Fetched Vehicle Data:", data); // Debug log
       setVehicle({
         ...data,
+        contactNumber: data.contactNumber || data.contactNo || "", // Ensure contactNumber is set
         lastUpdate: data.lastUpdate || "", // Ensure fallback if lastUpdate is missing
       });
       setLoading(false); // Set loading to false when data is fetched
@@ -68,7 +68,7 @@ const VehicleUpdate = () => {
 
     try {
       await updateVehicle(idNumber, vehicle);
-      navigate(`/vehicle-page/${id}`);
+      navigate(`/admin/vehicle-page/${id}`);
     } catch (error) {
       console.error("Error while updating vehicle", error);
     }
@@ -80,9 +80,8 @@ const VehicleUpdate = () => {
   }
 
   return (
-    <div>
-      <Navbar />
-      <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+    <div className="flex-1 flex flex-col items-center justify-center py-10 px-2">
+      <div className="max-w-md w-full bg-white shadow-md rounded-md p-6 mt-10">
         <h2 className="text-2xl font-bold mb-4">Update Vehicle</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -108,7 +107,10 @@ const VehicleUpdate = () => {
             name="ownerName"
             placeholder="Owner Name"
             value={vehicle.ownerName}
-            onChange={handleChange}
+            onChange={e => {
+              const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+              setVehicle({ ...vehicle, ownerName: value });
+            }}
             required
             className="w-full p-2 border rounded"
           />
@@ -117,8 +119,12 @@ const VehicleUpdate = () => {
             name="contactNo"
             placeholder="Contact No."
             value={vehicle.contactNo}
-            onChange={handleChange}
+            onChange={e => {
+              const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+              setVehicle({ ...vehicle, contactNo: value });
+            }}
             required
+            maxLength={10}
             className="w-full p-2 border rounded"
           />
           <input
@@ -126,7 +132,10 @@ const VehicleUpdate = () => {
             name="mileage"
             placeholder="Mileage"
             value={vehicle.mileage}
-            onChange={handleChange}
+            onChange={e => {
+              const value = e.target.value.replace(/[^0-9]/g, '');
+              setVehicle({ ...vehicle, mileage: value === '' ? 0 : parseInt(value, 10) });
+            }}
             required
             className="w-full p-2 border rounded"
           />

@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Embeddable
 public class NamedCostItem {
+    private Long itemId; // Added ID field for both tasks and spare parts
     private String name;
     private double cost;
+    private int quantity; // Added quantity field for spare parts
 }

@@ -25,19 +25,19 @@ interface SparePartFormErrors {
 const JobDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+
   // Job state
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Task states
   const [tasks, setTasks] = useState<Task[]>([]);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [taskLoading, setTaskLoading] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<TaskFormErrors>({});
-  
+
   // Task deletion states
   const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -54,7 +54,7 @@ const JobDetails: React.FC = () => {
   const [isSparePartModalOpen, setIsSparePartModalOpen] = useState<boolean>(false);
   const [sparePartLoading, setSparePartLoading] = useState<boolean>(false);
   const [sparePartFormErrors, setSparePartFormErrors] = useState<SparePartFormErrors>({});
-  
+
   // Spare part deletion states
   const [sparePartToDelete, setSparePartToDelete] = useState<number | null>(null);
   const [isSparePartDeleteModalOpen, setIsSparePartDeleteModalOpen] = useState<boolean>(false);
@@ -64,7 +64,7 @@ const JobDetails: React.FC = () => {
   const [allSpareParts, setAllSpareParts] = useState<StockItem[]>([]);
   const [filteredSpareParts, setFilteredSpareParts] = useState<StockItem[]>([]);
   const [showSparePartDropdown, setShowSparePartDropdown] = useState<boolean>(false);
-  
+
   // Add new state for saving
   const [saving, setSaving] = useState<boolean>(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -85,35 +85,40 @@ const JobDetails: React.FC = () => {
           jobService.getAllOngoingJobs(),
           jobService.getAllDoneJobs()
         ]);
-        
+
         const allJobs = [...ongoingJobs, ...doneJobs];
         const foundJob = allJobs.find(job => job.id === Number(id));
-        
+
         if (foundJob) {
           setJob(foundJob);
-          
+
           // Convert NamedCostItems back to Tasks and StockItems
-          const taskItems: Task[] = foundJob.tasks.map((task: NamedCostItem, index: number) => ({
-            id: index + 1, // Generate a temporary ID
+          const taskItems: Task[] = foundJob.tasks.map((task: NamedCostItem) => ({
+            id: task.itemId || Math.floor(Math.random() * 1000) + 1, // Use the stored ID or generate a temporary one
             description: task.name,
             cost: task.cost
           }));
 
-          const sparePartItems: StockItem[] = foundJob.spareParts.map((part: NamedCostItem, index: number) => ({
-            itemID: index + 1, // Generate a temporary ID
-            itemName: part.name,
-            qtyAvailable: 1, // Default quantity
-            unitPrice: part.cost, // Since cost is total, we'll use it as unit price
-            sellPrice: part.cost, // Same as unit price
-            itemCtgryID: 0,
-            supplierId: 0,
-            itemBarcode: "",
-            recorderLevel: 0,
-            itemBrand: "",
-            stockLevel: "HIGH",
-            rackNo: 0,
-            updatedDate: new Date().toISOString().split('T')[0]
-          }));
+          const sparePartItems: StockItem[] = foundJob.spareParts.map((part: NamedCostItem) => {
+            // Use the quantity field if available, otherwise default to 1
+            const quantity = part.quantity || 1;
+
+            return {
+              itemID: part.itemId || Math.floor(Math.random() * 1000) + 1, // Use the stored ID or generate a temporary one
+              itemName: part.name,
+              qtyAvailable: quantity, // Use the quantity from the database
+              unitPrice: part.cost, // Cost is now the unit price (sell price)
+              sellPrice: part.cost, // Same for sell price
+              itemCtgryID: 0,
+              supplierId: 0,
+              itemBarcode: "",
+              recorderLevel: 0,
+              itemBrand: "",
+              stockLevel: "HIGH",
+              rackNo: 0,
+              updatedDate: new Date().toISOString().split('T')[0]
+            };
+          });
 
           setTasks(taskItems);
           setSpareParts(sparePartItems);
@@ -198,26 +203,30 @@ const JobDetails: React.FC = () => {
   };
 
   const closeTaskModal = () => {
+    console.log('Closing task modal');
     setIsTaskModalOpen(false);
     setCurrentTask(null);
     setError(null);
     setFormErrors({});
     setFilteredTasks([]);
     setShowDropdown(false);
+
+    // Log the current tasks state after closing the modal
+    console.log('Current tasks after closing modal:', tasks);
   };
 
   const handleTaskInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
+
     setCurrentTask(prev => ({
       ...prev!,
       [name]: name === 'cost' ? (value === '' ? 0 : parseFloat(value)) : value
     }));
-    
+
     // Handle autocomplete for description field
     if (name === 'description') {
       if (value.trim().length > 0) {
-        const filtered = allTasks.filter(task => 
+        const filtered = allTasks.filter(task =>
           task.description.toLowerCase().includes(value.toLowerCase())
         );
         setFilteredTasks(filtered);
@@ -227,7 +236,7 @@ const JobDetails: React.FC = () => {
         setShowDropdown(false);
       }
     }
-    
+
     // Clear error when user starts typing
     if (formErrors[name as keyof TaskFormErrors]) {
       setFormErrors(prev => ({
@@ -240,7 +249,8 @@ const JobDetails: React.FC = () => {
   const selectTask = (task: Task) => {
     setCurrentTask({
       ...task,
-      id: undefined // Remove the id to create a new task instance
+      // Keep the real task ID from the database
+      id: task.id
     });
     setFilteredTasks([]);
     setShowDropdown(false);
@@ -248,8 +258,10 @@ const JobDetails: React.FC = () => {
 
   const handleTaskSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    console.log('Task form submitted');
+
     if (!validateTaskForm() || !job?.id) {
+      console.log('Task form validation failed or job ID missing');
       return;
     }
 
@@ -257,35 +269,56 @@ const JobDetails: React.FC = () => {
     setError(null);
 
     try {
-      // Create a new task with an ID if it doesn't exist
-      const newTask = {
+      console.log('Current task before save:', currentTask);
+
+      // Use the real task ID if it exists (from the selected task)
+      // If it's a new custom task that doesn't exist in the database yet, we'll need to handle it differently
+      const newTask: Task = {
         ...currentTask!,
-        id: currentTask?.id || Math.floor(Math.random() * 1000) + 1 // Temporary ID for frontend
+        // For new tasks, we'll need to create them in the database first to get a real ID
+        // For now, we'll use a temporary ID for display purposes only
+        id: currentTask?.id || (Math.floor(Math.random() * -1000) - 1) // Use negative numbers for temporary IDs
       };
-      
+
+      console.log('New task to be added:', newTask);
+
       // For now, handle tasks locally until backend API is ready
-      if (currentTask?.id) {
-        // Update existing task
-        setTasks(tasks.map(t => t.id === currentTask.id ? newTask : t));
-      } else {
-        // Add new task
-        setTasks([...tasks, newTask]);
-        
-        // Optionally save to the global task list if it's a new unique task
-        if (!allTasks.some(t => t.description.toLowerCase() === newTask.description.toLowerCase())) {
-          try {
-            // This would save to backend in production
-            // await taskService.createTask(newTask);
-            
-            // For now, just update local state
-            setAllTasks([...allTasks, newTask]);
-          } catch (err) {
-            console.error('Error saving task to global list:', err);
-            // Non-blocking error - we can continue
-          }
+      // Use the same pattern as the working spare parts logic
+      setTasks(prevTasks => {
+        console.log('Previous tasks:', prevTasks);
+
+        // Check if the task already exists in the list
+        const existingIndex = prevTasks.findIndex(t => t.id === newTask.id);
+        console.log('Existing task index:', existingIndex);
+
+        if (existingIndex >= 0) {
+          // Update existing task
+          const updatedTasks = [...prevTasks];
+          updatedTasks[existingIndex] = newTask;
+          console.log('Updated tasks after edit:', updatedTasks);
+          return updatedTasks;
+        } else {
+          // Add new task
+          const updatedTasks = [...prevTasks, newTask];
+          console.log('Updated tasks after add:', updatedTasks);
+          return updatedTasks;
+        }
+      });
+
+      // Optionally save to the global task list if it's a new unique task
+      if (!allTasks.some(t => t.description.toLowerCase() === newTask.description.toLowerCase())) {
+        try {
+          // This would save to backend in production
+          // await taskService.createTask(newTask);
+
+          // For now, just update local state
+          setAllTasks([...allTasks, newTask]);
+        } catch (err) {
+          console.error('Error saving task to global list:', err);
+          // Non-blocking error - we can continue
         }
       }
-      
+
       // Uncomment below code when API endpoints are ready
       /*
       let updatedTask;
@@ -295,7 +328,7 @@ const JobDetails: React.FC = () => {
       } else {
         // Add new task to the job
         updatedTask = await jobService.addTask(job.id, currentTask!);
-        
+
         // Also save to global task list if it's new
         if (!allTasks.some(t => t.description.toLowerCase() === updatedTask.description.toLowerCase())) {
           await taskService.createTask({
@@ -304,7 +337,7 @@ const JobDetails: React.FC = () => {
           });
         }
       }
-      
+
       // Update tasks list
       if (currentTask?.id) {
         setTasks(tasks.map(t => t.id === updatedTask.id ? updatedTask : t));
@@ -312,7 +345,7 @@ const JobDetails: React.FC = () => {
         setTasks([...tasks, updatedTask]);
       }
       */
-      
+
       closeTaskModal();
     } catch (err) {
       console.error('Error saving task:', err);
@@ -330,12 +363,19 @@ const JobDetails: React.FC = () => {
 
   const handleDeleteTask = async () => {
     if (!taskToDelete || !job?.id) return;
-    
+
     try {
+      console.log('Deleting task with ID:', taskToDelete);
+
       // For now, handle deletion locally until the API is ready
-      setTasks(tasks.filter(task => task.id !== taskToDelete));
+      setTasks(prevTasks => {
+        const updatedTasks = prevTasks.filter(task => task.id !== taskToDelete);
+        console.log('Tasks after deletion:', updatedTasks);
+        return updatedTasks;
+      });
+
       setIsDeleteModalOpen(false);
-      
+
       // Uncomment when API endpoint is ready
       // await jobService.deleteJobTask(job.id, taskToDelete);
     } catch (err) {
@@ -369,8 +409,8 @@ const JobDetails: React.FC = () => {
     if (sparePart) {
       setCurrentSparePart(sparePart);
     } else {
-      setCurrentSparePart({ 
-        itemName: "", 
+      setCurrentSparePart({
+        itemName: "",
         qtyAvailable: 1,
         sellPrice: 0,
         unitPrice: 0,
@@ -404,21 +444,21 @@ const JobDetails: React.FC = () => {
   const handleSparePartInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     console.log('Input change:', name, value);
-    
+
     setCurrentSparePart(prev => {
       if (!prev) return null;
       return {
         ...prev,
-        [name]: name === 'qtyAvailable' || name === 'sellPrice' || name === 'unitPrice' 
-          ? (value === '' ? 0 : parseFloat(value)) 
+        [name]: name === 'qtyAvailable' || name === 'sellPrice' || name === 'unitPrice'
+          ? (value === '' ? 0 : parseFloat(value))
           : value
       };
     });
-    
+
     // Handle autocomplete for itemName field
     if (name === 'itemName') {
       if (value.trim().length > 0) {
-        const filtered = allSpareParts.filter(part => 
+        const filtered = allSpareParts.filter(part =>
           part.itemName.toLowerCase().includes(value.toLowerCase())
         );
         setFilteredSpareParts(filtered);
@@ -428,7 +468,7 @@ const JobDetails: React.FC = () => {
         setShowSparePartDropdown(false);
       }
     }
-    
+
     // Clear error when user starts typing
     if (sparePartFormErrors[name as keyof SparePartFormErrors]) {
       setSparePartFormErrors(prev => ({
@@ -442,7 +482,10 @@ const JobDetails: React.FC = () => {
     console.log('Selected spare part:', sparePart);
     setCurrentSparePart({
       ...sparePart,
-      qtyAvailable: 1 // Reset quantity to 1 when selecting from dropdown
+      // Keep the real item ID from the database
+      itemID: sparePart.itemID,
+      qtyAvailable: 1, // Reset quantity to 1 when selecting from dropdown
+      unitPrice: sparePart.sellPrice // Use sellPrice from the database as the unitPrice
     });
     setFilteredSpareParts([]);
     setShowSparePartDropdown(false);
@@ -450,7 +493,7 @@ const JobDetails: React.FC = () => {
 
   const handleSparePartSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateSparePartForm() || !job?.id) {
       return;
     }
@@ -460,20 +503,23 @@ const JobDetails: React.FC = () => {
 
     try {
       console.log('Current spare part before save:', currentSparePart);
-      
-      // Create a new spare part with an ID if it doesn't exist
-      const newSparePart = {
+
+      // Use the real item ID if it exists (from the selected spare part)
+      // If it's a custom spare part that doesn't exist in the database, we'll need to handle it differently
+      const newSparePart: StockItem = {
         ...currentSparePart!,
-        itemID: currentSparePart?.itemID || Math.floor(Math.random() * 1000) + 1 // Temporary ID for frontend
+        // For new items, we'll need to create them in the database first to get a real ID
+        // For now, we'll use a temporary ID for display purposes only
+        itemID: currentSparePart?.itemID || (Math.floor(Math.random() * -1000) - 1) // Use negative numbers for temporary IDs
       };
-      
+
       console.log('New spare part to be added:', newSparePart);
-      
+
       // For now, handle spare parts locally until backend API is ready
       setSpareParts(prevParts => {
         // Check if the spare part already exists in the list
         const existingIndex = prevParts.findIndex(p => p.itemID === newSparePart.itemID);
-        
+
         if (existingIndex >= 0) {
           // Update existing spare part
           const updatedParts = [...prevParts];
@@ -487,7 +533,7 @@ const JobDetails: React.FC = () => {
           return updatedParts;
         }
       });
-      
+
       // Uncomment below code when API endpoints are ready
       /*
       let updatedSparePart;
@@ -498,7 +544,7 @@ const JobDetails: React.FC = () => {
         // Add new spare part to the job
         updatedSparePart = await jobService.addSparePart(job.id, currentSparePart!);
       }
-      
+
       // Update spare parts list
       if (currentSparePart?.itemID) {
         setSpareParts(prevParts => prevParts.map(p => p.itemID === updatedSparePart.itemID ? updatedSparePart : p));
@@ -506,7 +552,7 @@ const JobDetails: React.FC = () => {
         setSpareParts(prevParts => [...prevParts, updatedSparePart]);
       }
       */
-      
+
       closeSparePartModal();
     } catch (err) {
       console.error('Error saving spare part:', err);
@@ -526,6 +572,16 @@ const JobDetails: React.FC = () => {
     console.log('Current spare part updated:', currentSparePart);
   }, [currentSparePart]);
 
+  // Add useEffect to log tasks state changes
+  useEffect(() => {
+    console.log('Tasks state updated:', tasks);
+  }, [tasks]);
+
+  // Add useEffect to log current task changes
+  useEffect(() => {
+    console.log('Current task updated:', currentTask);
+  }, [currentTask]);
+
   const promptDeleteSparePart = (id: number) => {
     setSparePartToDelete(id);
     setSparePartDeleteError(null);
@@ -534,12 +590,12 @@ const JobDetails: React.FC = () => {
 
   const handleDeleteSparePart = async () => {
     if (!sparePartToDelete || !job?.id) return;
-    
+
     try {
       // For now, handle deletion locally until the API is ready
       setSpareParts(spareParts.filter(part => part.itemID !== sparePartToDelete));
       setIsSparePartDeleteModalOpen(false);
-      
+
       // Uncomment when API endpoint is ready
       // await jobService.deleteJobSparePart(job.id, sparePartToDelete);
     } catch (err) {
@@ -557,13 +613,17 @@ const JobDetails: React.FC = () => {
   // Add function to convert tasks and spare parts to NamedCostItem
   const convertToNamedCostItems = () => {
     const taskItems: NamedCostItem[] = tasks.map(task => ({
+      itemId: task.id,
       name: task.description,
-      cost: task.cost
+      cost: task.cost,
+      quantity: 1 // Default quantity for tasks is 1
     }));
 
     const sparePartItems: NamedCostItem[] = spareParts.map(part => ({
+      itemId: part.itemID,
       name: part.itemName,
-      cost: part.qtyAvailable * part.unitPrice
+      cost: part.unitPrice, // Store the unit price (sell price) as the cost
+      quantity: part.qtyAvailable // Store the quantity in the dedicated field
     }));
 
     return { taskItems, sparePartItems };
@@ -571,16 +631,25 @@ const JobDetails: React.FC = () => {
 
   // Add function to handle saving the job
   const handleSaveJob = async () => {
-    if (!job?.id) return;
+    if (!job?.id) {
+      console.log('No job ID found, cannot save');
+      return;
+    }
 
     setSaving(true);
     setSaveError(null);
     setSaveSuccess(null);
 
     try {
+      console.log('Current tasks before conversion:', tasks);
+      console.log('Current spare parts before conversion:', spareParts);
+
       const { taskItems, sparePartItems } = convertToNamedCostItems();
+      console.log('Converted task items:', taskItems);
+      console.log('Converted spare part items:', sparePartItems);
+
       const totalCost = taskItems.reduce((sum, item) => sum + item.cost, 0) +
-                       sparePartItems.reduce((sum, item) => sum + item.cost, 0);
+                       sparePartItems.reduce((sum, item) => sum + (item.cost * (item.quantity || 1)), 0);
 
       const updatedJob: Job = {
         ...job,
@@ -589,7 +658,10 @@ const JobDetails: React.FC = () => {
         totalCost
       };
 
+      console.log('Updated job to be saved:', updatedJob);
+
       await jobService.updateJob(job.id.toString(), updatedJob);
+      console.log('Job saved successfully');
       setSaveSuccess("Job saved successfully!");
       setTimeout(() => setSaveSuccess(null), 500);
     } catch (err) {
@@ -633,7 +705,7 @@ const JobDetails: React.FC = () => {
             <strong className="font-bold">Error!</strong>
             <span className="block sm:inline"> {error || "Job not found"}</span>
           </div>
-          <button 
+          <button
             onClick={() => navigate('/admin/jobs', { state: { refresh: true } })}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
@@ -658,14 +730,14 @@ const JobDetails: React.FC = () => {
               Service Report
             </button>
             {job?.status !== "Done" && (
-              <button 
+              <button
                 onClick={handleMarkAsDone}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center"
               >
                 Mark as Done
               </button>
             )}
-            <button 
+            <button
               onClick={handleSaveJob}
               disabled={saving}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300 flex items-center"
@@ -679,7 +751,7 @@ const JobDetails: React.FC = () => {
                 "Save Job"
               )}
             </button>
-            <button 
+            <button
               onClick={() => navigate('/admin/jobs', { state: { refresh: true } })}
               className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
             >
@@ -710,7 +782,7 @@ const JobDetails: React.FC = () => {
             </div>
             <h2 className="text-xl font-semibold text-gray-800">Job Information</h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="flex items-center p-3 bg-gray-50 rounded-lg">
@@ -807,23 +879,25 @@ const JobDetails: React.FC = () => {
             </button>
           </div>
 
-          {tasks.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No tasks added to this job yet. Click "Add Task" to add one.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost (Rs.)</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {tasks.length === 0 ? (
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost (Rs.)</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                      No tasks added to this job yet. Click "Add Task" to add one.
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {tasks.map((task) => (
+                ) : (
+                  tasks.map((task) => (
                     <tr key={task.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">{task.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{task.description}</td>
@@ -847,11 +921,11 @@ const JobDetails: React.FC = () => {
                         </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Spare Parts Section */}
@@ -879,7 +953,7 @@ const JobDetails: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item ID</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price (Rs.)</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sell Price (Rs.)</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total (Rs.)</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
@@ -922,7 +996,7 @@ const JobDetails: React.FC = () => {
             <p className="text-lg font-medium">
               Total Cost: Rs. {(
                 tasks.reduce((sum, task) => sum + task.cost, 0) +
-                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0)
+                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0) // unitPrice is already set to sellPrice when selected
               ).toFixed(2)}
             </p>
           </div>
@@ -941,7 +1015,7 @@ const JobDetails: React.FC = () => {
               <p className="font-medium">{error}</p>
             </div>
           )}
-          
+
           <div className="mb-4 relative">
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
               Description
@@ -1083,7 +1157,7 @@ const JobDetails: React.FC = () => {
               <p className="font-medium">{error}</p>
             </div>
           )}
-          
+
           <div className="mb-4 relative">
             <label htmlFor="itemName" className="block text-sm font-medium text-gray-700 mb-1">
               Item Name
@@ -1110,7 +1184,7 @@ const JobDetails: React.FC = () => {
                       onClick={() => selectSparePart(part)}
                     >
                       <span>{part.itemName}</span>
-                      <span className="text-gray-500">Rs. {part.unitPrice}</span>
+                      <span className="text-gray-500">Rs. {part.sellPrice}</span>
                     </li>
                   ))}
                 </ul>
@@ -1143,7 +1217,7 @@ const JobDetails: React.FC = () => {
 
           <div className="mb-4">
             <label htmlFor="unitPrice" className="block text-sm font-medium text-gray-700 mb-1">
-              Unit Price (Rs.)
+              Sell Price (Rs.)
             </label>
             <input
               type="number"
@@ -1155,7 +1229,7 @@ const JobDetails: React.FC = () => {
               required
               min="0"
               step="0.01"
-              placeholder="Enter unit price"
+              placeholder="Enter sell price"
               disabled={sparePartLoading}
             />
           </div>

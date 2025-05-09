@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { ScrollToTop } from "./utils/scrollToTop.util";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+
+
+import { Route, BrowserRouter as Router, Routes,  Outlet } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -8,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./modules/auth/pages/Login";
 import Register from "./modules/auth/pages/Register";
 import Unauthorized from "./modules/auth/pages/Unauthorized";
+
 
 import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
@@ -34,6 +37,8 @@ import VehicleDashboard from "./modules/admin/layout/VehicleLayouts/VehicleDashb
 import VehicleRegistration from "./modules/user/pages/UserVehiclePages/VehicleRegistration";
 import VehicleUpdate from "./modules/admin/pages/AdminVehiclePages/VehicleUpdate";
 import UtilityBillForm from "./modules/admin/components/AdminUtility-page/UtilityBillForm";
+import VehicleOverview from "./modules/admin/pages/AdminVehiclePages/VehicleOverview";
+import VehiclePage from "./modules/admin/pages/AdminVehiclePages/VehiclePage";
 //Employee routes
 import EmployeeDashboard from "./modules/admin/layout/EmployeeLayouts/EmployeeDashboard";
 import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
@@ -65,6 +70,7 @@ function App() {
           {/* --------------------User Routes-------------------- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
+
           <Route path="/services" element={<ServicesPage />} />
           {/*Vehicle routes*/}
 
@@ -77,6 +83,7 @@ function App() {
           </Route>
           {/* --------------------User Routes end-----------------*/}
 
+
           {/* --------------------Admin Routes------------------ */}
           <Route element={<ProtectedRoute requireAdmin={true} />}>
             <Route path="/admin" element={<AdminLayout />}>
@@ -87,6 +94,16 @@ function App() {
           <Route path="order-stocks" element={<AdminStockOrderManager />} />
           <Route path="restock-Items" element={<AdminRestockItems />} />
           <Route path="stock-reports" element={<AdminStockReportsManager />} />
+
+          {/* vehicle routes */}
+          <Route path="vehicle-page" element={<VehicleDashboard><Outlet /></VehicleDashboard>}>
+            <Route index element={<VehiclePage />} />
+            <Route path="overview" element={<VehicleOverview />} />
+            <Route path="vehicle-registration" element={<VehicleRegistration />} />
+            <Route path="vehicle-update/:id" element={<VehicleUpdate />} />
+            <Route path=":id" element={<VehicleDetails />} />
+          </Route>
+
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
@@ -96,6 +113,7 @@ function App() {
           />
           <Route path="utility-reports" element={<AdminUtilityReportsManager />} />
           {/* Employee routes */}
+          <Route path="employee/dashboard" element={<EmployeeDashboard />} />
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
@@ -109,6 +127,7 @@ function App() {
           <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
         {/* --------------------Admin Routes end--------------- */}
           <Route path="task-list" element={<TaskList />} />
+          {/*Items, Stocks, Supplier, Order routes*/}s
           {/*Job routes*/}
           <Route path="job-form" element={<JobForm />} />
           <Route path="jobs" element={<JobList />} />
