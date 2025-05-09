@@ -191,17 +191,17 @@ const AdminStockOrderManager: React.FC = () => {
                                         >
                                             <td className="px-6 py-4 text-left whitespace-nowrap">
                                                 <div>
-                                                    <p className="text-sm font-medium text-gray-900">{getItemName(stock.itemID)}</p>
+                                                    <p className="text-medium font-medium text-gray-900">{getItemName(stock.itemID)}</p>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-left whitespace-nowrap">
                                                 <div>
-                                                    <p className="text-sm font-medium text-gray-900">{getCategoryName(stock.ctgryID)}</p>
+                                                    <p className="text-medium font-medium text-gray-900">{getCategoryName(stock.ctgryID)}</p>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-left whitespace-nowrap">
                                                 <div>
-                                                    <p className="text-sm font-medium text-gray-900">{getSupplierName(stock.supplierID)}</p>
+                                                    <p className="text-medium font-medium text-gray-900">{getSupplierName(stock.supplierID)}</p>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-left whitespace-nowrap">{stock.qtyAdded}</td>
@@ -211,7 +211,7 @@ const AdminStockOrderManager: React.FC = () => {
                                             <td className="px-6 py-4 text-center whitespace-nowrap">
                                                 <button
                                                     onClick={() => handleView(stock)}
-                                                    className="text-blue-600 hover:text-blue-900 font-medium"
+                                                    className="text-green-600 hover:text-green-900 font-medium"
                                                 >
                                                     View Details
                                                 </button>
@@ -244,24 +244,24 @@ const AdminStockOrderManager: React.FC = () => {
                                     <h3 className="text-lg font-semibold mb-4 text-primary">Stock Details</h3>
                                     <div className="space-y-4">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-500">Stock ID</p>
-                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedStock.stockInID}</p>
+                                            <p className="text-medium font-medium text-gray-500">Stock ID</p>
+                                            <p className="text-gray-900 dark:text-green-700">{selectedStock.stockInID}</p>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-gray-500">Item</p>
-                                            <p className="mt-1 text-gray-900 dark:text-green-700">
+                                            <p className="text-medium font-medium text-gray-500">Item</p>
+                                            <p className="text-gray-900 dark:text-green-700">
                                                 {getItemName(selectedStock.itemID)}
                                             </p>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-gray-500">Category</p>
-                                            <p className="mt-1 text-gray-900 dark:text-green-700">
+                                            <p className="text-medium font-medium text-gray-500">Category</p>
+                                            <p className="text-gray-900 dark:text-green-700">
                                                 {getCategoryName(selectedStock.ctgryID)}
                                             </p>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-gray-500">Supplier</p>
-                                            <p className="mt-1 text-gray-900 dark:text-green-700">
+                                            <p className="text-medium font-medium text-gray-500">Supplier</p>
+                                            <p className="text-gray-900 dark:text-green-700">
                                                 {getSupplierName(selectedStock.supplierID)}
                                             </p>
                                         </div>
@@ -273,19 +273,19 @@ const AdminStockOrderManager: React.FC = () => {
                                     <div className="space-y-4">
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Quantity Added</p>
-                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedStock.qtyAdded}</p>
+                                            <p className="text-gray-900 dark:text-green-700">{selectedStock.qtyAdded}</p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Unit Price</p>
-                                            <p className="mt-1 text-gray-900 dark:text-green-700">Rs.{selectedStock.unitPrice.toFixed(2)}</p>
+                                            <p className="text-gray-900 dark:text-green-700">Rs.{selectedStock.unitPrice.toFixed(2)}</p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Sell Price</p>
-                                            <p className="mt-1 text-gray-900 dark:text-green-700">Rs.{selectedStock.sellPrice.toFixed(2)}</p>
+                                            <p className="text-gray-900 dark:text-green-700">Rs.{selectedStock.sellPrice.toFixed(2)}</p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Date Added</p>
-                                            <p className="mt-1 text-gray-900 dark:text-green-700">{selectedStock.dateAdded}</p>
+                                            <p className="text-gray-900 dark:text-green-700">{selectedStock.dateAdded}</p>
                                         </div>
                                     </div>
                                 </div>
