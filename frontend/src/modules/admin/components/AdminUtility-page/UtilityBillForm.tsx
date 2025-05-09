@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import Modal from "../../../../components/Model"; // Import the Modal component
 
 // Configure axios base URL
-axios.defaults.baseURL = "http://localhost:8081";
+axios.defaults.baseURL = "http://localhost:8080";
 
 // Define the UtilityBill interface based on backend entity
 interface UtilityBill {
@@ -59,11 +59,16 @@ interface FormValues {
   Billing_Acc_No?: string;
 }
 
-const UtilityBillForm: React.FC = () => {
+interface UtilityBillFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess?: () => void;  // Add this callback prop
+}
+
+const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose, onSuccess }) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
-  const [isOpen, setIsOpen] = useState(true); // Modal state
 
   const [formValues, setFormValues] = useState<FormValues>({
     Type: "Electricity",
@@ -500,7 +505,15 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         await axios.post("/utilitybill/save", utilityBillData);
         toast.success("Utility bill saved successfully");
       }
-
+      
+      // Call the onSuccess callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
+        
+      // First close the modal via the parent component's handler
+      onClose();
+      // Then navigate back to the utility page
       navigate("/admin/utility");
     } catch (error) {
       toast.error("Error saving utility bill");
@@ -510,9 +523,9 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     }
   };
 
-  // Handle modal close
+  // Update handleClose to use provided onClose prop
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
     navigate("/admin/utility");
   };
 

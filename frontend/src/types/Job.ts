@@ -13,6 +13,7 @@ export interface Job {
 }
 
 export interface NamedCostItem {
+    itemId?: number; // Added ID field for both tasks and spare parts
     name: string;
     cost: number;
 }
@@ -34,4 +35,3 @@ export enum TaskStatus {
 
 
 
- 

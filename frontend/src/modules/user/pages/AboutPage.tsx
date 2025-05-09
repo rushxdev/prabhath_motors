@@ -1,29 +1,89 @@
 import React from "react";
 import HomeLayout from "../layout/HomeLayout";
 import { Link } from "react-router-dom";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+
+// Custom animation hook
+function useAnimationSection() {
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    threshold: 0.3,
+    triggerOnce: true
+  });
+
+  React.useEffect(() => {
+    if (inView) {
+      controls.start("visible");
+    }
+  }, [controls, inView]);
+
+  return { ref, controls, inView };
+}
 
 const AboutPage: React.FC = () => {
+  // Animation setup - similar to ServicesPage
+  const headerAnimation = useAnimationSection();
+
+  // Animation variants - matching the style in ServicesPage
+  const titleVariant = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i = 0) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    }),
+    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+  };
+
+  const paragraphVariant = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { delay: 0.3, duration: 0.6, ease: "easeOut" },
+    },
+    exit: { opacity: 0, transition: { duration: 0.3 } },
+  };
+
   return (
     <HomeLayout>
       {/* Hero Section */}
-      <section className="relative text-white overflow-hidden">
+      <section 
+        className="relative text-white overflow-hidden"
+        ref={headerAnimation.ref}
+      >
         {/* Background Image */}
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-50 z-1"></div>
         <img
           className="absolute top-0 left-0 w-full h-full object-cover opacity-100 z-0"
-          src="../../../../public/assets/images/img7.avif"
+          src="../../../../public/assets/images/img11.jpg"
           alt="Workshop"
         />
 
-        {/* Content Overlay */}
+        {/* Content Overlay - with animations */}
         <div className="relative z-10 container mx-auto px-6 py-20 md:py-32 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4 drop-shadow-lg">
+          <motion.h1 
+            className="text-4xl md:text-6xl font-bold leading-tight mb-4 drop-shadow-lg"
+            initial="hidden"
+            animate={headerAnimation.controls}
+            variants={titleVariant}
+          >
             Our Story
-          </h1>
-          <p className="text-lg md:text-xl max-w-3xl mx-auto mb-8 drop-shadow-md">
+          </motion.h1>
+          <motion.p 
+            className="text-lg md:text-xl max-w-3xl mx-auto mb-8 drop-shadow-md"
+            initial="hidden"
+            animate={headerAnimation.controls}
+            variants={paragraphVariant}
+          >
             Prabath Motors has been serving the automotive needs of Sri Lanka
             since 2005
-          </p>
+          </motion.p>
         </div>
       </section>
 
@@ -310,7 +370,7 @@ const leadership = [
     position: "Founder & CEO",
     description:
       "With over 25 years in the automotive industry, Prabath leads our team with passion and expertise.",
-    image: "../../../../public/assets/images/leader1.jpg",
+    image: "../../../../public/assets/images/photo3.jpg",
   },
   {
     id: 2,
@@ -318,7 +378,7 @@ const leadership = [
     position: "Operations Manager",
     description:
       "Chamara ensures our operations run smoothly and efficiently to deliver exceptional service.",
-    image: "../../../../public/assets/images/leader2.jpg",
+    image: "../../../../public/assets/images/photo2.png",
   },
   {
     id: 3,
@@ -326,7 +386,7 @@ const leadership = [
     position: "Customer Relations",
     description:
       "Amali oversees our customer experience, ensuring satisfaction at every touchpoint.",
-    image: "../../../../public/assets/images/leader3.jpg",
+    image: "../../../../public/assets/images/photo4.png",
   },
   {
     id: 4,
@@ -334,7 +394,7 @@ const leadership = [
     position: "Lead Technician",
     description:
       "With multiple certifications, Dinesh leads our technical team with precision and expertise.",
-    image: "../../../../public/assets/images/leader4.jpg",
+    image: "../../../../public/assets/images/photo1.png",
   },
 ];
 

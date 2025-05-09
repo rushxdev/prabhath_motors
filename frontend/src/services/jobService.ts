@@ -3,7 +3,7 @@ import { Job } from '../types/Job';
 import { Task } from '../types/Task';
 import { StockItem } from '../types/Stock';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = 'http://localhost:8081/api';
 
 export const jobService = {
     async createJob(jobData: Partial<Job>) {
@@ -47,12 +47,12 @@ export const jobService = {
     },
 
     async getAllEmployees() {
-        const response = await axios.get(`${API_URL}/dashboard/employee/getAll`);
+        const response = await axios.get(`http://localhost:8081/employee/getAll`);
         return response.data;
     },
 
     async getEmployeeById(id: string) {
-        const response = await axios.get(`${API_URL}/dashboard/employee/get/${id}`);
+        const response = await axios.get(`http://localhost:8081/employee/get/${id}`);
         return response.data;
     },
 
@@ -84,4 +84,4 @@ export const jobService = {
         const response = await axios.get<StockItem[]>(`${API_URL}/jobs/suggested-spare-parts?query=${query}`);
         return response.data;
     }
-}; 
+};
