@@ -67,7 +67,7 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSuccess, onCancel }) =
             }
 
             const jobData: Partial<Job> = {
-                jobId: `JOB-${Date.now()}`, // Generate a unique job ID
+                jobId: `JOB-${Date.now()}`, 
                 vehicleRegistrationNumber: vehicle.vehicleRegistrationNo,
                 serviceSection: formData.serviceSection || ServiceSection.GARAGE,
                 assignedEmployee: `${selectedEmployee.firstname} ${selectedEmployee.lastname}`,

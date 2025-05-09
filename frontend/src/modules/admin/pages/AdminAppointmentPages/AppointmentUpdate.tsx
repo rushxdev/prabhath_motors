@@ -4,8 +4,8 @@ import {
   getAppointmentById,
   updateAppointment,
 } from "../../../../services/appointmentService";
-import { useAppointment } from "../../../../hooks/useAppointment"; // Adjust import path as needed
-import Modal from "../../../../components/Model"; // Import the Modal component
+import { useAppointment } from "../../../../hooks/useAppointment"; 
+import Modal from "../../../../components/Model"; 
 import AppointLayouts from "../../layout/AppointmentLayouts/AppointLayouts";
 
 const timeSlots = [
@@ -27,13 +27,13 @@ const AppointmentUpdate = () => {
   const { appointment, setAppointment, errors, handleChange, validateForm } =
     useAppointment();
 
-  const [isSubmitting] = useState(false); // Form submission state
-  const [isOpen, setIsOpen] = useState(true); // Modal state
+  const [isSubmitting] = useState(false); 
+  const [isOpen, setIsOpen] = useState(true); 
 
   // Handle modal close
   const handleClose = () => {
     setIsOpen(false);
-    navigate("/admin/appointment-list"); // Redirect to appointment list
+    navigate("/admin/appointment-list"); 
   };
 
   const fetchAppointmentData = React.useCallback(
