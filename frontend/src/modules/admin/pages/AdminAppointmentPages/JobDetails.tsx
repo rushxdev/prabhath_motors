@@ -99,21 +99,26 @@ const JobDetails: React.FC = () => {
             cost: task.cost
           }));
 
-          const sparePartItems: StockItem[] = foundJob.spareParts.map((part: NamedCostItem) => ({
-            itemID: part.itemId || Math.floor(Math.random() * 1000) + 1, // Use the stored ID or generate a temporary one
-            itemName: part.name,
-            qtyAvailable: 1, // Default quantity
-            unitPrice: part.cost, // Since cost is total, we'll use it as unit price
-            sellPrice: part.cost, // Same as unit price
-            itemCtgryID: 0,
-            supplierId: 0,
-            itemBarcode: "",
-            recorderLevel: 0,
-            itemBrand: "",
-            stockLevel: "HIGH",
-            rackNo: 0,
-            updatedDate: new Date().toISOString().split('T')[0]
-          }));
+          const sparePartItems: StockItem[] = foundJob.spareParts.map((part: NamedCostItem) => {
+            // Use the quantity field if available, otherwise default to 1
+            const quantity = part.quantity || 1;
+
+            return {
+              itemID: part.itemId || Math.floor(Math.random() * 1000) + 1, // Use the stored ID or generate a temporary one
+              itemName: part.name,
+              qtyAvailable: quantity, // Use the quantity from the database
+              unitPrice: part.cost, // Cost is now the unit price (sell price)
+              sellPrice: part.cost, // Same for sell price
+              itemCtgryID: 0,
+              supplierId: 0,
+              itemBarcode: "",
+              recorderLevel: 0,
+              itemBrand: "",
+              stockLevel: "HIGH",
+              rackNo: 0,
+              updatedDate: new Date().toISOString().split('T')[0]
+            };
+          });
 
           setTasks(taskItems);
           setSpareParts(sparePartItems);
@@ -479,7 +484,8 @@ const JobDetails: React.FC = () => {
       ...sparePart,
       // Keep the real item ID from the database
       itemID: sparePart.itemID,
-      qtyAvailable: 1 // Reset quantity to 1 when selecting from dropdown
+      qtyAvailable: 1, // Reset quantity to 1 when selecting from dropdown
+      unitPrice: sparePart.sellPrice // Use sellPrice from the database as the unitPrice
     });
     setFilteredSpareParts([]);
     setShowSparePartDropdown(false);
@@ -609,13 +615,15 @@ const JobDetails: React.FC = () => {
     const taskItems: NamedCostItem[] = tasks.map(task => ({
       itemId: task.id,
       name: task.description,
-      cost: task.cost
+      cost: task.cost,
+      quantity: 1 // Default quantity for tasks is 1
     }));
 
     const sparePartItems: NamedCostItem[] = spareParts.map(part => ({
       itemId: part.itemID,
       name: part.itemName,
-      cost: part.qtyAvailable * part.unitPrice
+      cost: part.unitPrice, // Store the unit price (sell price) as the cost
+      quantity: part.qtyAvailable // Store the quantity in the dedicated field
     }));
 
     return { taskItems, sparePartItems };
@@ -641,7 +649,7 @@ const JobDetails: React.FC = () => {
       console.log('Converted spare part items:', sparePartItems);
 
       const totalCost = taskItems.reduce((sum, item) => sum + item.cost, 0) +
-                       sparePartItems.reduce((sum, item) => sum + item.cost, 0);
+                       sparePartItems.reduce((sum, item) => sum + (item.cost * (item.quantity || 1)), 0);
 
       const updatedJob: Job = {
         ...job,
@@ -945,7 +953,7 @@ const JobDetails: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item ID</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price (Rs.)</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sell Price (Rs.)</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total (Rs.)</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
@@ -988,7 +996,7 @@ const JobDetails: React.FC = () => {
             <p className="text-lg font-medium">
               Total Cost: Rs. {(
                 tasks.reduce((sum, task) => sum + task.cost, 0) +
-                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0)
+                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0) // unitPrice is already set to sellPrice when selected
               ).toFixed(2)}
             </p>
           </div>
@@ -1176,7 +1184,7 @@ const JobDetails: React.FC = () => {
                       onClick={() => selectSparePart(part)}
                     >
                       <span>{part.itemName}</span>
-                      <span className="text-gray-500">Rs. {part.unitPrice}</span>
+                      <span className="text-gray-500">Rs. {part.sellPrice}</span>
                     </li>
                   ))}
                 </ul>
@@ -1209,7 +1217,7 @@ const JobDetails: React.FC = () => {
 
           <div className="mb-4">
             <label htmlFor="unitPrice" className="block text-sm font-medium text-gray-700 mb-1">
-              Unit Price (Rs.)
+              Sell Price (Rs.)
             </label>
             <input
               type="number"
@@ -1221,7 +1229,7 @@ const JobDetails: React.FC = () => {
               required
               min="0"
               step="0.01"
-              placeholder="Enter unit price"
+              placeholder="Enter sell price"
               disabled={sparePartLoading}
             />
           </div>
