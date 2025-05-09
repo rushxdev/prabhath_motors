@@ -102,18 +102,31 @@ const VehicleUpdate = () => {
             readOnly
             className="w-full p-2 border rounded"
           />
-          <input
-            type="text"
-            name="ownerName"
-            placeholder="Owner Name"
-            value={vehicle.ownerName}
-            onChange={e => {
-              const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
-              setVehicle({ ...vehicle, ownerName: value });
-            }}
-            required
-            className="w-full p-2 border rounded"
-          />
+          <div>
+            <input
+              type="text"
+              name="ownerName"
+              placeholder="Owner Name"
+              value={vehicle.ownerName}
+              onChange={e => {
+                // Only allow letters and spaces - remove all numbers and symbols
+                const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                setVehicle({ ...vehicle, ownerName: value });
+              }}
+              onKeyPress={e => {
+                // Prevent entering numbers and symbols
+                const charCode = e.charCode;
+                if (!(charCode >= 65 && charCode <= 90) && // A-Z
+                    !(charCode >= 97 && charCode <= 122) && // a-z
+                    !(charCode === 32)) { // space
+                  e.preventDefault();
+                }
+              }}
+              required
+              className="w-full p-2 border rounded"
+            />
+            <p className="mt-1 text-xs text-gray-500">Only letters and spaces are allowed</p>
+          </div>
           <input
             type="text"
             name="contactNo"
@@ -127,18 +140,28 @@ const VehicleUpdate = () => {
             maxLength={10}
             className="w-full p-2 border rounded"
           />
-          <input
-            type="number"
-            name="mileage"
-            placeholder="Mileage"
-            value={vehicle.mileage}
-            onChange={e => {
-              const value = e.target.value.replace(/[^0-9]/g, '');
-              setVehicle({ ...vehicle, mileage: value === '' ? 0 : parseInt(value, 10) });
-            }}
-            required
-            className="w-full p-2 border rounded"
-          />
+          <div>
+            <input
+              type="text"
+              name="mileage"
+              placeholder="Mileage"
+              value={vehicle.mileage}
+              onChange={e => {
+                const value = e.target.value.replace(/[^0-9]/g, '');
+                setVehicle({ ...vehicle, mileage: value === '' ? 0 : parseInt(value, 10) });
+              }}
+              onKeyPress={e => {
+                // Prevent entering non-digits
+                const charCode = e.charCode;
+                if (charCode < 48 || charCode > 57) { // 0-9
+                  e.preventDefault();
+                }
+              }}
+              required
+              className="w-full p-2 border rounded"
+            />
+            <p className="mt-1 text-xs text-gray-500">Only numbers are allowed</p>
+          </div>
           <button
             type="submit"
             className="w-full bg-green-600 text-white p-2 rounded"
