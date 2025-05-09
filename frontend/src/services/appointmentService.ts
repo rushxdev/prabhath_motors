@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Appointment } from "../types/Appointment";
 
 const API_URL = "http://localhost:8081/appointment";
@@ -17,13 +17,32 @@ export const addAppointment = async (
   appointment: Appointment
 ): Promise<Appointment> => {
   try {
+    // Format the date and time for the backend
+    const formattedAppointment = {
+      ...appointment,
+      // Ensure date is in ISO format (YYYY-MM-DD)
+      date: appointment.date,
+      // Ensure time is in 24-hour format (HH:MM)
+      time: appointment.time
+    };
+
     const response = await axios.post<Appointment>(
       `${API_URL}/add`,
-      appointment
+      formattedAppointment
     );
     return response.data;
   } catch (error) {
     console.error("Error while adding appointment", error);
+
+    // Handle validation errors from the backend
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        // Return the validation errors from the backend
+        throw axiosError.response.data;
+      }
+    }
+
     throw error;
   }
 };
