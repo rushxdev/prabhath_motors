@@ -28,7 +28,7 @@ public class UtilityBill {
         private int Billing_Acc_No;
 
         @NotBlank(message = "Utility type is required")
-        @Pattern(regexp = "^(Electricity|Water|Internet|Telephone|Other)$", 
+        @Pattern(regexp = "^(Electricity|Water)$", 
                 message = "Type must be one of: Electricity, Water, Internet, Telephone, Other")
         @Column(nullable = false)
         private String Type;

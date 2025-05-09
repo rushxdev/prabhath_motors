@@ -246,7 +246,7 @@ const Header: React.FC = () => {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <a
-                  href="/appointment/book"
+                  href=""
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
                 >
                   <div className="flex flex-col">
@@ -260,7 +260,7 @@ const Header: React.FC = () => {
                 </a>
 
                 <a
-                  href="/appointment/status"
+                  href=""
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
                 >
                   <div className="flex flex-col">
@@ -274,7 +274,7 @@ const Header: React.FC = () => {
                 </a>
 
                 <a
-                  href="/appointment/cancel"
+                  href=""
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
                 >
                   <div className="flex flex-col">
@@ -288,7 +288,7 @@ const Header: React.FC = () => {
                 </a>
 
                 <a
-                  href="/appointment/history"
+                  href=""
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
                 >
                   <div className="flex flex-col">
@@ -304,7 +304,7 @@ const Header: React.FC = () => {
 
               <div className="mt-4 pt-3 border-t border-gray-200">
                 <p className="text-sm text-gray-500">
-                  Questions? Contact our service center at <span className="font-medium text-gray-700">+94 123 456 789</span>
+                  Questions? Contact our service center at <span className="font-medium text-gray-700">+94 77 406 789</span>
                 </p>
               </div>
             </div>
@@ -329,8 +329,9 @@ const Header: React.FC = () => {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <a
-                  href="/services/maintenance"
+                  href="/services#maintenance"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
+                  onClick={() => setIsServicesMenuOpen(false)}
                 >
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-800 mb-1 group-hover:text-green-600 transition-colors">
@@ -343,8 +344,9 @@ const Header: React.FC = () => {
                 </a>
 
                 <a
-                  href="/services/repairs"
+                  href="/services#repairs"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
+                  onClick={() => setIsServicesMenuOpen(false)}
                 >
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-800 mb-1 group-hover:text-green-600 transition-colors">
@@ -357,8 +359,9 @@ const Header: React.FC = () => {
                 </a>
 
                 <a
-                  href="/services/body-shop"
+                  href="/services#body-shop"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
+                  onClick={() => setIsServicesMenuOpen(false)}
                 >
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-800 mb-1 group-hover:text-green-600 transition-colors">
@@ -371,12 +374,13 @@ const Header: React.FC = () => {
                 </a>
 
                 <a
-                  href="/services/parts-catalog"
+                  href="/services#expert-care"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
+                  onClick={() => setIsServicesMenuOpen(false)}
                 >
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-800 mb-1 group-hover:text-green-600 transition-colors">
-                      Spare Parts Catalog
+                      Expert care
                     </span>
                     <span className="text-sm text-gray-600">
                       Browse our extensive catalog of genuine and OEM parts for all major vehicle makes and models with competitive pricing.
@@ -385,8 +389,9 @@ const Header: React.FC = () => {
                 </a>
 
                 <a
-                  href="/services/accessories"
+                  href="/services#accessories"
                   className="group p-3 rounded-md transition-all duration-300 hover:bg-gray-50"
+                  onClick={() => setIsServicesMenuOpen(false)}
                 >
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-800 mb-1 group-hover:text-green-600 transition-colors">

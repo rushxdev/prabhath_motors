@@ -5,7 +5,7 @@ import carVideo from "../../../../public/assets/car1.mp4";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
-// Animation variants for text elements
+// Animation for text
 const titleVariant = {
   hidden: { opacity: 0, y: 50 },
   visible: { 
@@ -99,10 +99,10 @@ const HomePage: React.FC = () => {
           Your browser does not support the video tag.
         </video>
 
-        {/* Black gradient overlay - bottom to top */}
+        {/* Black gradient */}
         <div className="absolute bottom-0 left-0 w-full h-50 bg-gradient-to-t from-black via-transparent to-transparent z-[1] pointer-events-none"></div>
 
-        {/* Content Overlay */}
+        {/* Content Texts*/}
         <div 
           className="relative z-10 container mx-auto px-6 py-20 md:py-32"
           ref={heroAnimation.ref}
@@ -150,7 +150,7 @@ const HomePage: React.FC = () => {
                 to="/appointment"
                 className="bg-white hover:bg-gray-100 text-blue-900 font-bold py-3 px-6 rounded-lg transition duration-300 text-center"
               >
-                Book Appointment
+                Contact Us
               </Link>
             </motion.div>
           </div>
@@ -236,7 +236,7 @@ const HomePage: React.FC = () => {
                 visible: { opacity: 1, x: 0, transition: { duration: 1.0 } }
               }}
             >
-              {/* Add overflow-hidden to contain the zoomed image and group for hover state targeting */}
+              {/*  zoomed image hover effect */}
               <div className="rounded-lg shadow-lg overflow-hidden group w-4/5 mx-auto">
                 <img
                   src="../../../../public/assets/images/img4.png"
@@ -354,7 +354,7 @@ const HomePage: React.FC = () => {
         className="py-16 bg-black text-white relative overflow-hidden group" 
         ref={ctaAnimation.ref}
       >
-        {/* Hover gradient overlay - curved effect starting from bottom middle */}
+        {/* Hover gradient*/}
         <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
                        bg-gradient-to-t from-green-600/50 via-green-600/25 to-transparent 
                        rounded-50 opacity-0 

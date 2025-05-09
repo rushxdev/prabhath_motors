@@ -14,6 +14,8 @@ import Unauthorized from "./modules/auth/pages/Unauthorized";
 
 import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
+import ServicesPage from "./modules/user/pages/ServicesPage";
+import SupportPage from "./modules/user/pages/SupportPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
 //Appointment, Tasks routes
@@ -50,7 +52,7 @@ import VehicleDetails from "./modules/admin/pages/AdminVehiclePages/VehicleDetai
 import JobForm from "./modules/admin/components/JobForm";
 import JobList from "./modules/admin/pages/AdminAppointmentPages/JobList";
 import JobDetails from "./modules/admin/pages/AdminAppointmentPages/JobDetails";
-import ServicesPage from "./modules/user/pages/ServicesPage";
+
 
 function App() {
   useEffect(() => {
@@ -71,8 +73,8 @@ function App() {
           {/* --------------------User Routes-------------------- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
-
           <Route path="/services" element={<ServicesPage />} />
+          <Route path="/support" element={<SupportPage />} />
           {/*Vehicle routes*/}
 
           {/* --------------------Protected User Routes-------------------- */}
