@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getVehicleById, deleteVehicle, transferVehicleOwnership, getOwnershipHistory, clearOwnershipHistory } from "../../../../services/vehicleService";
 import { Vehicle, OwnershipHistory } from "../../../../types/Vehicle";
+import { validateNewOwnerName, validateNewOwnerContact } from "../../../../hooks/useVehicle";
 import jsPDF from "jspdf";
 import { formatDistanceToNow } from "date-fns";
 import { PDFViewer } from '@react-pdf/renderer';
@@ -14,6 +15,11 @@ const VehicleDetails = () => {
   const [loading, setLoading] = useState(true);
   const [showTransferForm, setShowTransferForm] = useState(false);
   const [newOwner, setNewOwner] = useState({
+    name: "",
+    contact: ""
+  });
+
+  const [ownershipErrors, setOwnershipErrors] = useState({
     name: "",
     contact: ""
   });
@@ -58,7 +64,7 @@ const VehicleDetails = () => {
   const handleDelete = async () => {
     const isConfirmed = window.confirm("Are you sure you want to delete this vehicle?");
     if (!isConfirmed || !vehicle?.id) return;
-    
+
     try {
       // First clear ownership history
       await clearOwnershipHistory(vehicle.id);
@@ -75,6 +81,21 @@ const VehicleDetails = () => {
     e.preventDefault();
     if (!vehicle?.id) return;
 
+    // Validate form fields
+    const nameError = validateNewOwnerName(newOwner.name);
+    const contactError = validateNewOwnerContact(newOwner.contact);
+
+    // Update errors state
+    setOwnershipErrors({
+      name: nameError,
+      contact: contactError
+    });
+
+    // If there are any errors, don't submit the form
+    if (nameError || contactError) {
+      return;
+    }
+
     try {
       await transferVehicleOwnership(
         vehicle.id,
@@ -88,6 +109,7 @@ const VehicleDetails = () => {
       setOwnershipHistory(updatedHistory);
       setShowTransferForm(false);
       setNewOwner({ name: "", contact: "" });
+      setOwnershipErrors({ name: "", contact: "" });
     } catch (error) {
       console.error("Error transferring ownership:", error);
       alert("Failed to transfer ownership. Please try again.");
@@ -255,27 +277,82 @@ const VehicleDetails = () => {
                 <input
                   type="text"
                   value={newOwner.name}
-                  onChange={(e) => setNewOwner({ ...newOwner, name: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  onChange={(e) => {
+                    // Only allow letters and spaces - remove all numbers and symbols
+                    const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                    setNewOwner({ ...newOwner, name: value });
+                    setOwnershipErrors({
+                      ...ownershipErrors,
+                      name: validateNewOwnerName(value)
+                    });
+                  }}
+                  onKeyPress={e => {
+                    // Prevent entering numbers and symbols
+                    const charCode = e.charCode;
+                    if (!(charCode >= 65 && charCode <= 90) && // A-Z
+                        !(charCode >= 97 && charCode <= 122) && // a-z
+                        !(charCode === 32)) { // space
+                      e.preventDefault();
+                    }
+                  }}
+                  className={`mt-1 block w-full rounded-md ${ownershipErrors.name ? 'border-red-500' : 'border-gray-300'} shadow-sm focus:border-blue-500 focus:ring-blue-500`}
                   required
                 />
+                {ownershipErrors.name && (
+                  <p className="mt-1 text-sm text-red-600">{ownershipErrors.name}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">Only letters and spaces are allowed</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">New Owner Contact</label>
                 <input
                   type="text"
                   value={newOwner.contact}
-                  onChange={(e) => setNewOwner({ ...newOwner, contact: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  onChange={(e) => {
+                    // Only allow digits
+                    const value = e.target.value.replace(/\D/g, '');
+                    setNewOwner({ ...newOwner, contact: value });
+                    setOwnershipErrors({
+                      ...ownershipErrors,
+                      contact: validateNewOwnerContact(value)
+                    });
+                  }}
+                  onKeyPress={e => {
+                    // Prevent entering non-digits
+                    const charCode = e.charCode;
+                    if (charCode < 48 || charCode > 57) { // 0-9
+                      e.preventDefault();
+                    }
+                  }}
+                  maxLength={10}
+                  className={`mt-1 block w-full rounded-md ${ownershipErrors.contact ? 'border-red-500' : 'border-gray-300'} shadow-sm focus:border-blue-500 focus:ring-blue-500`}
                   required
                 />
+                {ownershipErrors.contact && (
+                  <p className="mt-1 text-sm text-red-600">{ownershipErrors.contact}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">Must be exactly 10 digits</p>
               </div>
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-full bg-emerald-500 text-white font-semibold shadow-sm hover:bg-emerald-600 transition"
-              >
-                Confirm Transfer
-              </button>
+              <div className="flex space-x-3">
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-full bg-emerald-500 text-white font-semibold shadow-sm hover:bg-emerald-600 transition"
+                  disabled={!!ownershipErrors.name || !!ownershipErrors.contact}
+                >
+                  Confirm Transfer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowTransferForm(false);
+                    setNewOwner({ name: "", contact: "" });
+                    setOwnershipErrors({ name: "", contact: "" });
+                  }}
+                  className="px-5 py-2 rounded-full bg-gray-300 text-gray-700 font-semibold shadow-sm hover:bg-gray-400 transition"
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         )}
@@ -359,4 +436,4 @@ const VehicleDetails = () => {
   );
 };
 
-export default VehicleDetails; 
+export default VehicleDetails;
