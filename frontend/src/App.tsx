@@ -87,6 +87,8 @@ function App() {
           <Route path="appointment-list" element={<AppointmentPage />} />
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+          <Route path="task-list" element={<TaskList />} />
+          {/*Items, Stocks, Supplier, Order routes*/}s
           {/*Job routes*/}
           <Route path="job-form" element={<JobForm />} />
           <Route path="jobs" element={<JobList />} />
