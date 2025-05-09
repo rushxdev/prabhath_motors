@@ -43,6 +43,7 @@ import VehiclePage from "./modules/admin/pages/AdminVehiclePages/VehiclePage";
 import EmployeeDashboard from "./modules/admin/layout/EmployeeLayouts/EmployeeDashboard";
 import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
 import EmployeeUpdate from "./modules/admin/layout/EmployeeLayouts/EmployeeUpdate";
+import EmployeeReportsManager from "./modules/admin/pages/AdminEmpoyeePages/EmployeeReportsManager";
 import VehicleDetails from "./modules/admin/pages/AdminVehiclePages/VehicleDetails";
 
 //Job routes
@@ -117,6 +118,7 @@ function App() {
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
+          <Route path="employee/reports" element={<EmployeeReportsManager />} />
           {/*Appointment, Tasks routes*/}
           <Route path="appointment-list" element={<AppointmentPage />} />
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />

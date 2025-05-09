@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaCar, FaAddressBook, FaBriefcase, FaCartPlus, FaChartLine, FaRegFilePdf, FaBars } from "react-icons/fa";
+import { FaCar, FaAddressBook, FaBriefcase, FaCartPlus, FaChartLine, FaBars } from "react-icons/fa";
 
 interface MenuItem {
   title: string;
@@ -33,7 +33,6 @@ const Sidebar: React.FC = () => {
       additionalPaths: ["/admin/items", "/admin/stock-requests", "/admin/order-stocks", "/admin/supplier-details", "/admin/stock-reports"]
     },
     { title: "Utilities", icon: <FaChartLine size={24} />, href: "/admin/utility", basePath: "/admin/utility" },
-    { title: "Reports", icon: <FaRegFilePdf size={24} />, href: "/admin/reports", basePath: "/admin/reports" },
   ];
 
   const toggleSidebar = () => {

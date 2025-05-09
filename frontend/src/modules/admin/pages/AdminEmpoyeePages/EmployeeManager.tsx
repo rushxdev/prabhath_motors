@@ -89,8 +89,8 @@ const EmployeeManager: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16">
-      <h2 className="text-2xl sm:text-2xl font-semibold mb-4 mt-10 text-primary">
-        Employee Management
+      <h2 className="text-2xl sm:text-2xl font-press font-semibold mb-4 mt-10 text-primary">
+        Manage All Employees
       </h2>
 
       <div className="flex items-center justify-between mt-12">
