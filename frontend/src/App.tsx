@@ -37,6 +37,7 @@ import VehicleDetails from "./modules/admin/pages/AdminVehiclePages/VehicleDetai
 import JobForm from "./modules/admin/components/JobForm";
 import JobList from "./modules/admin/pages/AdminAppointmentPages/JobList";
 import JobDetails from "./modules/admin/pages/AdminAppointmentPages/JobDetails";
+import ServicesPage from "./modules/user/pages/ServicesPage";
 
 function App() {
   useEffect(() => {
@@ -53,6 +54,7 @@ function App() {
         {/* --------------------User Routes-------------------- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/services" element={<ServicesPage />} />
           {/*Vehicle routes*/}
             <Route path="vehicle-page" element={<VehicleDashboard />} />
             <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
@@ -73,7 +75,6 @@ function App() {
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
           <Route path="utility/add" element={<UtilityBillForm />} />
-          <Route path="utility/edit/:id" element={<UtilityBillForm />} />
           <Route path="utility-reports" element={<AdminUtilityReportsManager />} />
           {/* Employee routes */}
           <Route path="employee/add" element={<EmployeeDashboard />} />

@@ -307,6 +307,7 @@ const AdminUtilityManager: React.FC = () => {
         <UtilityBillForm
           isOpen={utilityBillFormOpen}
           onClose={() => setUtilityBillFormOpen(false)}
+          onSuccess={fetchUtilities}  // Add this to refresh data when form is submitted successfully
         />
       )}
     </UtilityLayout>

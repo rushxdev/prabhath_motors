@@ -62,9 +62,10 @@ interface FormValues {
 interface UtilityBillFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;  // Add this callback prop
 }
 
-const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose }) => {
+const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose, onSuccess }) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
@@ -505,6 +506,11 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         toast.success("Utility bill saved successfully");
       }
       
+      // Call the onSuccess callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
+        
       // First close the modal via the parent component's handler
       onClose();
       // Then navigate back to the utility page
