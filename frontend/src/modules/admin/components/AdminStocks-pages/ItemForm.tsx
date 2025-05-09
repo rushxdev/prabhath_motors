@@ -7,7 +7,8 @@ import { SupplierCombobox } from './SupplierCombox';
 interface ItemFormProps {
     initialData?: Partial<StockItem>;
     categories: ItemCategory[];
-    existingItems: StockItem[]; // Add this prop
+    suppliers: Supplier[]; // Add this prop
+    existingItems: StockItem[];
     onSuccess: (item: Partial<StockItem>) => void;
     onCancel: () => void;
 }
@@ -15,6 +16,7 @@ interface ItemFormProps {
 const ItemForm: React.FC<ItemFormProps> = ({
     initialData,
     categories,
+    suppliers,
     existingItems,
     onSuccess,
     onCancel,
@@ -76,6 +78,26 @@ const ItemForm: React.FC<ItemFormProps> = ({
             }));
         }
     }, [selectedSupplier]);
+
+    useEffect(() => {
+        // Initialize selected category when editing an existing item
+        if (initialData && initialData.itemCtgryID) {
+            const existingCategory = categories.find(cat => cat.itemCtgryId === initialData.itemCtgryID);
+            if (existingCategory) {
+                setSelectedCategory(existingCategory);
+            }
+        }
+    }, [initialData, categories]);
+
+    useEffect(() => {
+        // Initialize selected supplier when editing an existing item
+        if (initialData && initialData.supplierId) {
+            const existingSupplier = suppliers.find(sup => sup.supplierId === initialData.supplierId);
+            if (existingSupplier) {
+                setSelectedSupplier(existingSupplier);
+            }
+        }
+    }, [initialData, suppliers]);
 
     const checkDuplicateName = (name: string): boolean => {
         // If we're editing an existing item, exclude it from the check

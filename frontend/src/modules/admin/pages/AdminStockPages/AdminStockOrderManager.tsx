@@ -144,7 +144,7 @@ const AdminStockOrderManager: React.FC = () => {
                 <div className="sticky top-1 z-40 bg-white pb-4">
                     <div className="max-w-7xl mx-auto text-center">
                         <h2 className="text-2xl sm:text-2xl font-press font-semibold pt-10 text-primary">
-                            Manage Stock Orders
+                            Ordered Stocks From Suppliers
                         </h2>
                         
                         <div className="flex items-center justify-between mt-8 px-4">
@@ -162,7 +162,7 @@ const AdminStockOrderManager: React.FC = () => {
                 <div className="max-w-7xl mx-auto text-center pt-4 mb-12 sm:mb-16">
                     {loading ? (
                         <div className="flex justify-center items-center mt-16">
-                            <p className="text-lg text-gray-700">Loading Stocks...</p>
+                            <p className="text-lg text-green-300">Loading Ordered Stocks...</p>
                         </div>
                     ) : error ? (
                         <div className="flex justify-center items-center mt-16">

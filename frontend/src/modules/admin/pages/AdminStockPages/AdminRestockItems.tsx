@@ -448,7 +448,7 @@ const AdminRestockItems: React.FC = () => {
                         
                         {loading ? (
                             <div className="flex justify-center items-center mt-4">
-                                <p className="text-gray-700">Loading low stock items...</p>
+                                <p className="text-lg text-green-300">Loading low stock items...</p>
                             </div>
                         ) : (
                             <div className="grid gap-4">
@@ -537,7 +537,7 @@ const AdminRestockItems: React.FC = () => {
                     {/* Restock Items */}
                     {loading ? (
                         <div className="flex justify-center items-center mt-4">
-                            <p className="text-lg text-gray-700">Loading Restock Items...</p>
+                            <p className="text-lg text-green-300">Loading Restock Items...</p>
                         </div>
                     ) : error ? (
                         <div className="flex justify-center items-center mt-4">
