@@ -1,16 +1,91 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode, Html5QrcodeScanner, Html5QrcodeScannerState } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeScannerState, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
 interface BarcodeScannerProps {
     onScanned: (barcode: string) => void;
     onClose: () => void;
 }
 
+// Supported barcode formats using library's constants
+const VALID_BARCODE_FORMATS = [
+    Html5QrcodeSupportedFormats.EAN_13,
+    Html5QrcodeSupportedFormats.EAN_8, 
+    Html5QrcodeSupportedFormats.UPC_A, 
+    Html5QrcodeSupportedFormats.UPC_E,
+    Html5QrcodeSupportedFormats.CODE_128, 
+    Html5QrcodeSupportedFormats.CODE_39, 
+    Html5QrcodeSupportedFormats.CODE_93, 
+    Html5QrcodeSupportedFormats.ITF,
+    Html5QrcodeSupportedFormats.CODABAR
+];
+
 export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClose }) => {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [lastScanned, setLastScanned] = useState<string | null>(null);
+    const [invalidAttempts, setInvalidAttempts] = useState(0);
     const scannerRef = useRef<HTMLDivElement>(null);
     const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
+    
+    // Validate barcode format and content
+    const validateBarcode = (barcode: string): boolean => {
+        // Don't process the same barcode multiple times in quick succession
+        if (barcode === lastScanned) {
+            return false;
+        }
+        
+        // Basic validation rules
+        if (!barcode || barcode.length < 8) {
+            console.log("Invalid barcode: too short");
+            setInvalidAttempts(prev => prev + 1);
+            return false;
+        }
+        
+        // EAN-13 validation (most common retail barcode)
+        if (barcode.length === 13 && /^\d{13}$/.test(barcode)) {
+            // Check EAN-13 checksum
+            let sum = 0;
+            for (let i = 0; i < 12; i++) {
+                sum += parseInt(barcode[i]) * (i % 2 === 0 ? 1 : 3);
+            }
+            const checkDigit = (10 - (sum % 10)) % 10;
+            if (parseInt(barcode[12]) !== checkDigit) {
+                console.log("Invalid EAN-13 checksum");
+                setInvalidAttempts(prev => prev + 1);
+                return false;
+            }
+            return true;
+        }
+        
+        // UPC-A validation
+        if (barcode.length === 12 && /^\d{12}$/.test(barcode)) {
+            // Check UPC-A checksum
+            let sum = 0;
+            for (let i = 0; i < 11; i++) {
+                sum += parseInt(barcode[i]) * (i % 2 === 0 ? 3 : 1);
+            }
+            const checkDigit = (10 - (sum % 10)) % 10;
+            if (parseInt(barcode[11]) !== checkDigit) {
+                console.log("Invalid UPC-A checksum");
+                setInvalidAttempts(prev => prev + 1);
+                return false;
+            }
+            return true;
+        }
+        
+        // Allow other numeric barcodes of reasonable length
+        if (/^\d{8,14}$/.test(barcode)) {
+            return true;
+        }
+        
+        // Allow alphanumeric barcodes for CODE-128, CODE-39 etc.
+        if (/^[A-Z0-9\-\.\/\+]{8,24}$/i.test(barcode)) {
+            return true;
+        }
+        
+        setInvalidAttempts(prev => prev + 1);
+        return false;
+    };
 
     useEffect(() => {
         const scannerId = "qr-reader";
@@ -44,14 +119,26 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
                         {
                             fps: 10,
                             qrbox: { width: 250, height: 250 },
-                            aspectRatio: 1.0
+                            aspectRatio: 1.0,
+                            /*formatsToSupport: VALID_BARCODE_FORMATS*/
                         },
                         (decodedText) => {
                             // Success callback
                             console.log("Scanned barcode:", decodedText);
-                            onScanned(decodedText);
-                            html5QrCode.stop();
-                            onClose();
+                            
+                            // Validate the barcode
+                            if (validateBarcode(decodedText)) {
+                                setLastScanned(decodedText);
+                                onScanned(decodedText);
+                                html5QrCode.stop();
+                                onClose();
+                            } else {
+                                // If it's an invalid barcode, just log it and continue scanning
+                                console.log("Invalid barcode format, continuing to scan...");
+                                if (invalidAttempts > 3) {
+                                    setError("Multiple invalid barcodes detected. Please ensure you're scanning a standard product barcode.");
+                                }
+                            }
                         },
                         (errorMessage) => {
                             // Just log the errors but don't update state to avoid too many re-renders
@@ -113,9 +200,9 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
                     </div>
                 )}
                 
-                <p className="text-sm text-gray-500 mt-2">
-                    Position the barcode in front of your camera
-                </p>
+                <div className="mt-2 text-sm text-gray-600 space-y-1">
+                    <p>Position the barcode in front of your camera</p>
+                </div>
                 
                 <div className="flex justify-end mt-4">
                     <button 
