@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Vehicle } from "../../../../types/Vehicle";
-import Navbar from "../../components/Navbar";
 import { addVehicle } from "../../../../services/vehicleService";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,6 +9,7 @@ import {
   validateMileage,
   validateLastUpdate
 } from "../../../../hooks/useVehicle";
+import Modal from "../../../../components/Model";
 
 const VehicleRegistration = () => {
   const [vehicle, setVehicle] = useState<Vehicle>({
@@ -18,6 +18,7 @@ const VehicleRegistration = () => {
     vehicleType: "",
     ownerName: "",
     contactNo: "",
+    contactNumber: "",
     mileage: 0,
     lastUpdate: "", // will be set dynamically
   });
@@ -31,6 +32,8 @@ const VehicleRegistration = () => {
   });
 
   const navigate = useNavigate();
+
+  const [isOpen, setIsOpen] = useState(true);
 
   // Function to get current time in HH:mm format
   const getCurrentTime = () => {
@@ -92,6 +95,7 @@ const VehicleRegistration = () => {
         ...vehicle,
         vehicleId: parseInt(vehicle.vehicleId.toString()),
         mileage: parseFloat(vehicle.mileage.toString()),
+        contactNumber: vehicle.contactNo,
       });
       alert("Vehicle registered successfully");
       setVehicle({
@@ -100,105 +104,148 @@ const VehicleRegistration = () => {
         vehicleType: "",
         ownerName: "",
         contactNo: "",
+        contactNumber: "",
         mileage: 0,
         lastUpdate: getCurrentTime(), // Reset to current time after successful submission
       });
-      navigate("/vehicle-page");
+      navigate("/admin/vehicle-page");
     } catch (error) {
       console.error("Error while registering vehicle", error);
       alert("Failed to register vehicle");
     }
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    navigate("/admin/vehicle-page");
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <div className="flex-1 flex items-center justify-center">
-        <div className="backdrop-blur-md bg-white/60 rounded-2xl shadow-2xl p-8 w-full max-w-md mt-10">
-          <h2 className="text-2xl font-bold mb-4">Register Vehicle</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Vehicle Registration No */}
-            <input
-              type="text"
-              name="vehicleRegistrationNo"
-              placeholder="Vehicle Registration No."
-              value={vehicle.vehicleRegistrationNo}
-              onChange={handleChange}
-              required
-              className={`w-full p-2 border rounded ${errors.vehicleRegistrationNo ? 'border-red-500' : ''}`}
-            />
-            {errors.vehicleRegistrationNo && <p className="text-red-500 text-sm">{errors.vehicleRegistrationNo}</p>}
-
-            {/* Vehicle Type Dropdown */}
-            <select
-              name="vehicleType"
-              value={vehicle.vehicleType}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded"
-            >
-              <option value="" disabled>Select Vehicle Type</option> {/* Default option */}
-              <option value="Car">CAR</option>
-              <option value="Jeep">JEEP</option>
-              <option value="Van">VAN</option>
-              <option value="SUV">SUV</option>
-            </select>
-            
-            {/* Owner Name */}
-            <input
-              type="text"
-              name="ownerName"
-              placeholder="Owner Name"
-              value={vehicle.ownerName}
-              onChange={handleChange}
-              required
-              className={`w-full p-2 border rounded ${errors.ownerName ? 'border-red-500' : ''}`}
-            />
-            {errors.ownerName && <p className="text-red-500 text-sm">{errors.ownerName}</p>}
-
-            {/* Contact No */}
-            <input
-              type="text"
-              name="contactNo"
-              placeholder="Contact No."
-              value={vehicle.contactNo}
-              onChange={handleChange}
-              required
-              className={`w-full p-2 border rounded ${errors.contactNo ? 'border-red-500' : ''}`}
-            />
-            {errors.contactNo && <p className="text-red-500 text-sm">{errors.contactNo}</p>}
-
-            {/* Mileage */}
-            <input
-              type="number"
-              name="mileage"
-              placeholder="Mileage"
-              value={vehicle.mileage}
-              onChange={handleChange}
-              required
-              className={`w-full p-2 border rounded ${errors.mileage ? 'border-red-500' : ''}`}
-            />
-            {errors.mileage && <p className="text-red-500 text-sm">{errors.mileage}</p>}
-
-            {/* Last Update (Time) */}
-            <input
-              type="time"
-              name="lastUpdate"
-              value={vehicle.lastUpdate}
-              readOnly
-              required
-              className={`w-full p-2 border rounded ${errors.lastUpdate ? 'border-red-500' : ''}`}
-            />
-            {errors.lastUpdate && <p className="text-red-500 text-sm">{errors.lastUpdate}</p>}
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white p-2 rounded"
-            >
-              Register Vehicle
-            </button>
-          </form>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <div className="flex-1 p-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl sm:text-2xl font-press font-semibold mb-4 mt-10 text-primary text-center">Register Vehicle</h2>
+          <Modal isOpen={isOpen} onClose={handleClose} title="Register Vehicle">
+            <form onSubmit={handleSubmit} className="mt-4">
+              {/* Vehicle Registration No */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Registration No</label>
+                <input
+                  type="text"
+                  name="vehicleRegistrationNo"
+                  placeholder="Vehicle Registration No."
+                  value={vehicle.vehicleRegistrationNo}
+                  onChange={handleChange}
+                  required
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.vehicleRegistrationNo ? 'border-red-500' : ''}`}
+                />
+                {errors.vehicleRegistrationNo && <p className="mt-1 text-sm text-red-600">{errors.vehicleRegistrationNo}</p>}
+              </div>
+              {/* Vehicle Type Dropdown */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Type</label>
+                <select
+                  name="vehicleType"
+                  value={vehicle.vehicleType}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="" disabled>Select Vehicle Type</option>
+                  <option value="Car">CAR</option>
+                  <option value="Jeep">JEEP</option>
+                  <option value="Van">VAN</option>
+                  <option value="SUV">SUV</option>
+                </select>
+              </div>
+              {/* Owner Name */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Owner Name</label>
+                <input
+                  type="text"
+                  name="ownerName"
+                  placeholder="Owner Name"
+                  value={vehicle.ownerName}
+                  onChange={e => {
+                    // Only allow letters and spaces
+                    const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                    setVehicle({ ...vehicle, ownerName: value });
+                    setErrors({ ...errors, ownerName: validateOwnerName(value) });
+                  }}
+                  required
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.ownerName ? 'border-red-500' : ''}`}
+                />
+                {errors.ownerName && <p className="mt-1 text-sm text-red-600">{errors.ownerName}</p>}
+              </div>
+              {/* Contact No */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Contact No</label>
+                <input
+                  type="text"
+                  name="contactNo"
+                  placeholder="Contact No."
+                  value={vehicle.contactNo}
+                  onChange={e => {
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setVehicle({ ...vehicle, contactNo: value });
+                    setErrors({ ...errors, contactNo: validateContactNo(value) });
+                  }}
+                  required
+                  maxLength={10}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.contactNo ? 'border-red-500' : ''}`}
+                />
+                {errors.contactNo && <p className="mt-1 text-sm text-red-600">{errors.contactNo}</p>}
+              </div>
+              {/* Mileage */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Mileage</label>
+                <input
+                  type="number"
+                  name="mileage"
+                  placeholder="Mileage"
+                  value={vehicle.mileage}
+                  onChange={e => {
+                    // Only allow numbers
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    setVehicle({ ...vehicle, mileage: value === '' ? '' : parseInt(value, 10) });
+                    setErrors({ ...errors, mileage: validateMileage(value === '' ? 0 : parseInt(value, 10)) });
+                  }}
+                  required
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.mileage ? 'border-red-500' : ''}`}
+                />
+                {errors.mileage && <p className="mt-1 text-sm text-red-600">{errors.mileage}</p>}
+              </div>
+              {/* Last Update (Time) */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Last Update (Time)</label>
+                <input
+                  type="time"
+                  name="lastUpdate"
+                  value={vehicle.lastUpdate}
+                  readOnly
+                  required
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.lastUpdate ? 'border-red-500' : ''}`}
+                />
+                {errors.lastUpdate && <p className="mt-1 text-sm text-red-600">{errors.lastUpdate}</p>}
+              </div>
+              {/* Form Actions */}
+              <div className="flex justify-end mt-8 gap-4">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow-sm hover:bg-gray-400 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-500 text-white rounded-md shadow-sm hover:bg-green-700 transition"
+                >
+                  Register Vehicle
+                </button>
+              </div>
+            </form>
+          </Modal>
         </div>
       </div>
     </div>
