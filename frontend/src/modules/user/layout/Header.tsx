@@ -130,12 +130,6 @@ const Header: React.FC = () => {
                 >
                   LOGIN
                 </NavLink>
-                <NavLink
-                  to="/register"
-                  className="font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
-                >
-                  SIGNUP
-                </NavLink>
               </div>
             )}
 
@@ -477,13 +471,6 @@ const Header: React.FC = () => {
                       onClick={() => setNavOpen(false)}
                     >
                       LOGIN
-                    </NavLink>
-                    <NavLink
-                      to="/register"
-                      className="block py-2 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
-                      onClick={() => setNavOpen(false)}
-                    >
-                      SIGNUP
                     </NavLink>
                   </>
                 )}
