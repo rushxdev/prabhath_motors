@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import React, { useEffect, useRef, useState } from 'react';
+import { Html5Qrcode, Html5QrcodeScanner, Html5QrcodeScannerState } from 'html5-qrcode';
 
 interface BarcodeScannerProps {
     onScanned: (barcode: string) => void;
@@ -7,41 +7,77 @@ interface BarcodeScannerProps {
 }
 
 export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClose }) => {
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const scannerRef = useRef<HTMLDivElement>(null);
+    const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
 
     useEffect(() => {
-        if (!scannerRef.current) return;
+        const scannerId = "qr-reader";
+        
+        // Make sure we have the DOM element
+        if (!document.getElementById(scannerId)) {
+            return;
+        }
 
-        const html5QrCode = new Html5Qrcode("qr-reader");
+        setIsLoading(true);
+        setError(null);
+        
+        // Create the scanner instance
+        const html5QrCode = new Html5Qrcode(scannerId);
+        html5QrCodeRef.current = html5QrCode;
 
-        const startScanning = async () => {
-            try {
-                await html5QrCode.start(
-                    { facingMode: "environment" },
-                    {
-                        fps: 10,
-                        qrbox: { width: 250, height: 250 },
-                    },
-                    (decodedText) => {
-                        onScanned(decodedText);
-                        html5QrCode.stop();
-                        onClose();
-                    },
-                    (error) => {
-                        console.error(error);
-                    }
-                );
-            } catch (err) {
-                console.error("Scanner initialization error:", err);
-            }
-        };
-
-        startScanning();
-
-        return () => {
-            html5QrCode.stop().catch(err => {
-                console.error("Failed to stop scanner:", err);
+        // Get available cameras
+        Html5Qrcode.getCameras()
+            .then(devices => {
+                if (devices && devices.length) {
+                    // Select the rear camera if available
+                    const rearCamera = devices.find(device => 
+                        device.label.toLowerCase().includes('back') || 
+                        device.label.toLowerCase().includes('rear'));
+                    
+                    const cameraId = rearCamera ? rearCamera.id : devices[0].id;
+                    
+                    // Start scanning
+                    return html5QrCode.start(
+                        cameraId,
+                        {
+                            fps: 10,
+                            qrbox: { width: 250, height: 250 },
+                            aspectRatio: 1.0
+                        },
+                        (decodedText) => {
+                            // Success callback
+                            console.log("Scanned barcode:", decodedText);
+                            onScanned(decodedText);
+                            html5QrCode.stop();
+                            onClose();
+                        },
+                        (errorMessage) => {
+                            // Just log the errors but don't update state to avoid too many re-renders
+                            console.log("QR scan error:", errorMessage);
+                        }
+                    );
+                } else {
+                    throw new Error("No cameras found on this device");
+                }
+            })
+            .then(() => {
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.error("Scanner error:", err);
+                setError(err.toString());
+                setIsLoading(false);
             });
+
+        // Cleanup function
+        return () => {
+            if (html5QrCodeRef.current && 
+                html5QrCodeRef.current.getState() !== Html5QrcodeScannerState.NOT_STARTED) {
+                html5QrCodeRef.current.stop()
+                    .catch(err => console.error("Failed to stop scanner:", err));
+            }
         };
     }, [onScanned, onClose]);
 
@@ -57,14 +93,38 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
                         ✕
                     </button>
                 </div>
+                
                 <div 
                     id="qr-reader"
                     ref={scannerRef}
                     className="w-full h-64 relative overflow-hidden rounded-md"
                 />
+                
+                {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700"></div>
+                    </div>
+                )}
+                
+                {error && (
+                    <div className="mt-2 p-2 bg-red-100 text-red-800 rounded">
+                        <p>Error: {error}</p>
+                        <p className="text-sm">Please make sure to allow camera access.</p>
+                    </div>
+                )}
+                
                 <p className="text-sm text-gray-500 mt-2">
                     Position the barcode in front of your camera
                 </p>
+                
+                <div className="flex justify-end mt-4">
+                    <button 
+                        onClick={onClose}
+                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                    >
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     );
