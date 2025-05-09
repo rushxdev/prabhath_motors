@@ -1,13 +1,22 @@
 import { useEffect } from "react";
 import { ScrollToTop } from "./utils/scrollToTop.util";
-import { Route, BrowserRouter as Router, Routes, Outlet } from "react-router-dom";
+
+
+import { Route, BrowserRouter as Router, Routes,  Outlet } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Auth pages
+import Login from "./modules/auth/pages/Login";
+import Register from "./modules/auth/pages/Register";
+import Unauthorized from "./modules/auth/pages/Unauthorized";
+
 
 import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
 //Appointment, Tasks routes
-
 import AppointmentPage from "./modules/admin/pages/AdminAppointmentPages/AppointmentPage";
 import BookAppointment from "./modules/user/pages/UserAppointmentPages/BookAppointment";
 import AppointmentUpdate from "./modules/admin/pages/AdminAppointmentPages/AppointmentUpdate";
@@ -17,10 +26,12 @@ import AdminItemsManager from "./modules/admin/pages/AdminStockPages/AdminItemsM
 import AdminStockReqManager from "./modules/admin/pages/AdminStockPages/AdminStockReqManager";
 import AdminSupplierManager from "./modules/admin/pages/AdminStockPages/AdminSupplierManager";
 import AdminStockOrderManager from "./modules/admin/pages/AdminStockPages/AdminStockOrderManager";
+import AdminRestockItems from "./modules/admin/pages/AdminStockPages/AdminRestockItems";
 import AdminStockReportsManager from "./modules/admin/pages/AdminStockPages/AdminStockReportsManager";
 // Utility routes
 import AdminUtilityManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityManager";
 import AdminMonthlyUManager from "./modules/admin/pages/AdminUtilityPages/AdminMonthlyUManager";
+import AdminUtilityReportsManager from "./modules/admin/pages/AdminUtilityPages/AdminUtilityReportsManager";
 // vehicle routes
 import VehicleDashboard from "./modules/admin/layout/VehicleLayouts/VehicleDashboard";
 import VehicleRegistration from "./modules/user/pages/UserVehiclePages/VehicleRegistration";
@@ -34,11 +45,11 @@ import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
 import EmployeeUpdate from "./modules/admin/layout/EmployeeLayouts/EmployeeUpdate";
 import VehicleDetails from "./modules/admin/pages/AdminVehiclePages/VehicleDetails";
 
-
 //Job routes
 import JobForm from "./modules/admin/components/JobForm";
 import JobList from "./modules/admin/pages/AdminAppointmentPages/JobList";
 import JobDetails from "./modules/admin/pages/AdminAppointmentPages/JobDetails";
+import ServicesPage from "./modules/user/pages/ServicesPage";
 
 function App() {
   useEffect(() => {
@@ -46,26 +57,44 @@ function App() {
     //document.documentElement.classList.add("dark");
   }, []);
   return (
+    <AuthProvider>
+      <Router>
+        <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
 
-    <Router>
-       
-      <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
+        <Routes>
+          {/* --------------------Auth Routes-------------------- */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
-      <Routes>
-        {/* --------------------User Routes-------------------- */}
+          {/* --------------------User Routes-------------------- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
-        {/* --------------------User Routes end-----------------*/}
+
+          <Route path="/services" element={<ServicesPage />} />
+          {/*Vehicle routes*/}
+
+          {/* --------------------Protected User Routes-------------------- */}
+          <Route element={<ProtectedRoute />}>
+            {/*Vehicle routes*/}
+            <Route path="vehicle-page" element={<VehicleDashboard />} />
+            <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
+            <Route path="vehicle-page/:id" element={<VehicleDetails />} />
+          </Route>
+          {/* --------------------User Routes end-----------------*/}
 
 
-        {/* --------------------Admin Routes------------------ */}
-        <Route path="/admin" element={<AdminLayout />}>
+          {/* --------------------Admin Routes------------------ */}
+          <Route element={<ProtectedRoute requireAdmin={true} />}>
+            <Route path="/admin" element={<AdminLayout />}>
           {/* Items, stocks, supplier, order routes */}
           <Route path="items" element={<AdminItemsManager />} />
           <Route path="stock-requests" element={<AdminStockReqManager />} />
           <Route path="supplier-details" element={<AdminSupplierManager />} />
           <Route path="order-stocks" element={<AdminStockOrderManager />} />
+          <Route path="restock-Items" element={<AdminRestockItems />} />
           <Route path="stock-reports" element={<AdminStockReportsManager />} />
+
           {/* vehicle routes */}
           <Route path="vehicle-page" element={<VehicleDashboard><Outlet /></VehicleDashboard>}>
             <Route index element={<VehiclePage />} />
@@ -74,11 +103,15 @@ function App() {
             <Route path="vehicle-update/:id" element={<VehicleUpdate />} />
             <Route path=":id" element={<VehicleDetails />} />
           </Route>
+
           {/*utility routes*/}
           <Route path="utility" element={<AdminUtilityManager />} />
           <Route path="monthly-utility" element={<AdminMonthlyUManager />} />
-          <Route path="utility/add" element={<UtilityBillForm />} />
-          <Route path="utility/edit/:id" element={<UtilityBillForm />} />
+          <Route
+            path="utility/add"
+            element={<UtilityBillForm isOpen={true} onClose={() => {}} />}
+          />
+          <Route path="utility-reports" element={<AdminUtilityReportsManager />} />
           {/* Employee routes */}
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
@@ -94,8 +127,10 @@ function App() {
           <Route path="jobs" element={<JobList />} />
           <Route path="jobs/:id" element={<JobDetails />} />
         </Route>
-      </Routes>
-    </Router>
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

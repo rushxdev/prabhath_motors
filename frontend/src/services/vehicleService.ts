@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Vehicle, OwnershipHistory } from "../types/Vehicle";
 
-const API_URL = "http://localhost:8080/vehicle";
+const API_URL = "http://localhost:8081/vehicle";
 
 export const getAllVehicles = async (): Promise<Vehicle[]> => {
   try {

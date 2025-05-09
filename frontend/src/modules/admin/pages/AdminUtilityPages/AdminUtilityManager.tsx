@@ -6,26 +6,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Modal from "../../../../components/Model";
 import { toast } from "react-toastify";
-
-interface UtilityBill {
-  id: number;
-  billing_Acc_No: number;
-  type: string;
-  address: string;
-  meter_No: string;
-  unit_Price: number;
-}
-
-interface MonthlyUtilityBill {
-  id: number;
-  invoiceNo: number;
-  billingAccNo: number;
-  billingMonth: string;
-  billingYear: number;
-  units: number;
-  totalPayment: number;
-  generatedDate: string;
-}
+import { UtilityBill, MonthlyUtilityBill } from "../../../../types/Utility"; // Import interfaces from Utility.ts
+import UtilityBillForm from "../../components/AdminUtility-page/UtilityBillForm"; // Import the form component
 
 const AdminUtilityManager: React.FC = () => {
   const [utilities, setUtilities] = useState<UtilityBill[]>([]);
@@ -42,6 +24,7 @@ const AdminUtilityManager: React.FC = () => {
   const [monthlyBills, setMonthlyBills] = useState<MonthlyUtilityBill[]>([]);
   const [isLoadingMonthlyBills, setIsLoadingMonthlyBills] =
     useState<boolean>(false);
+  const [utilityBillFormOpen, setUtilityBillFormOpen] = useState<boolean>(false); // State to control the form modal
 
   useEffect(() => {
     fetchUtilities();
@@ -169,7 +152,7 @@ const AdminUtilityManager: React.FC = () => {
           />
           <Button
             className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
-            onClick={() => navigate("/admin/utility/add")}
+            onClick={() => setUtilityBillFormOpen(true)}
           >
             <PlusIcon className="w-5 h-5 mr-2" />
             Add Utility Bill
@@ -318,6 +301,15 @@ const AdminUtilityManager: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Add Utility Bill Form Modal */}
+      {utilityBillFormOpen && (
+        <UtilityBillForm
+          isOpen={utilityBillFormOpen}
+          onClose={() => setUtilityBillFormOpen(false)}
+          onSuccess={fetchUtilities}  // Add this to refresh data when form is submitted successfully
+        />
+      )}
     </UtilityLayout>
   );
 };

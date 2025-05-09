@@ -35,7 +35,9 @@ export const useEmployee = () => {
 
     if (!/^[A-Za-z]+$/.test(employee.firstname)) newErrors.firstname = "First name must contain only letters.";
     if (!/^[A-Za-z]+$/.test(employee.lastname)) newErrors.lastname = "Last name must contain only letters.";
+    if (!employee.role) newErrors.role = "Role is required.";
     if (!/^\d{10}$/.test(employee.contact)) newErrors.contact = "Contact must be exactly 10 digits.";
+    if (!employee.gender) newErrors.gender = "Gender is required.";
     if (employee.salary < 0) newErrors.salary = "Salary cannot be negative.";
 
     const today = new Date();
