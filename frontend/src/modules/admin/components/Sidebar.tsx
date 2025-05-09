@@ -22,7 +22,7 @@ const Sidebar: React.FC = () => {
   }, [open]);
 
   const Menus: MenuItem[] = [
-    { title: "Vehicle", icon: <FaCar size={24} />, href: "/admin/vehicle", basePath: "/admin/vehicle" },
+    { title: "Vehicle", icon: <FaCar size={24} />, href: "/admin/vehicle-page", basePath: "/admin/vehicle-page" },
     { title: "Appointment", icon: <FaAddressBook size={24} />, href: "/admin/appointment-list", basePath: "/admin/appointment" },
     { title: "Employee", icon: <FaBriefcase size={24} />, href: "/admin/employee/add", basePath: "/admin/employee" },
     { 

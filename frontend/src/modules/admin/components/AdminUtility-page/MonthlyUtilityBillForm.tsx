@@ -6,7 +6,7 @@ import Modal from "../../../../components/Model"; // Import the Modal component
 import { MonthlyUtilityBill, UtilityBill } from "../../../../types/Utility"; // Import types from Utility.ts
 
 // Configure axios base URL
-axios.defaults.baseURL = "http://localhost:8081";
+axios.defaults.baseURL = "http://localhost:8080";
 
 interface MonthlyUtilityBillFormProps {
   isOpen: boolean;
