@@ -16,6 +16,7 @@ export interface NamedCostItem {
     itemId?: number; // Added ID field for both tasks and spare parts
     name: string;
     cost: number;
+    quantity?: number; // Added quantity field for spare parts
 }
 
 export type JobStatus = 'Ongoing' | 'Done';
