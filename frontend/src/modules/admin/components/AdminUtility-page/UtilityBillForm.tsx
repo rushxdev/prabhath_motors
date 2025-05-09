@@ -199,6 +199,7 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose, onSu
     const isDuplicate = existingUtilityBills.some(bill => 
       bill.billing_Acc_No === billingAccNo &&
       (!isEditMode || bill.id !== parseInt(id as string, 10)) 
+    ); 
 
     if (isDuplicate) {
       setErrors(prev => ({
