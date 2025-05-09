@@ -59,7 +59,7 @@ const UtilityChartModal: React.FC<UtilityChartModalProps> = ({
   const [utilityBills, setUtilityBills] = useState<UtilityBill[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch utility bills to get billing account numbers
+  //Error handling Fetch utility bills to get billing account numbers
   useEffect(() => {
     const fetchUtilityBills = async () => {
       setLoading(true);
@@ -101,9 +101,13 @@ const UtilityChartModal: React.FC<UtilityChartModalProps> = ({
     });
   }, [monthlyBills, startDate, endDate, selectedBillingAccNo]);
 
+
+
   // Prepare chart data
   const chartData = React.useMemo(() => {
-    // Group data by month and year for chronological order
+    
+    // Grouping data by month and year because the chart should appear in chronological order
+    //2025,jan,feb likewise
     const groupedData: Record<string, number> = {};
     
     filteredData.forEach((bill) => {

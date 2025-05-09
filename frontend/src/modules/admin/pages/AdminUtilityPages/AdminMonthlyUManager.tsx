@@ -68,6 +68,7 @@ const AdminMonthlyUManager: React.FC = () => {
         bill.billingMonth.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    //Monthly Utility Bill Layout
     return (
         <UtilityLayout>
             <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16">

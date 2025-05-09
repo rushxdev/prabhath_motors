@@ -4,12 +4,12 @@ import React, { useState, useEffect, FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Modal from "../../../../components/Model"; // Import the Modal component
+import Modal from "../../../../components/Model"; 
 
 // Configure axios base URL
 axios.defaults.baseURL = "http://localhost:8081";
 
-// Define the UtilityBill interface based on backend entity
+
 interface UtilityBill {
   id?: number;
   Billing_Acc_No: number;
@@ -19,7 +19,7 @@ interface UtilityBill {
   Unit_Price: number;
 }
 
-// Define the UtilityBillResponse interface
+
 interface UtilityBillResponse {
   id: number;
   billing_Acc_No: number;
@@ -29,7 +29,7 @@ interface UtilityBillResponse {
   unit_Price: number;
 }
 
-// For input masking of water billing account number
+// For input mask of water billing account number
 interface WaterBillingGroups {
   group2: string;
   group3: string;
@@ -37,7 +37,7 @@ interface WaterBillingGroups {
   group5: string;
 }
 
-// For input masking of electricity billing account number
+// input mask of electricity billing account number
 interface ElectricityBillingGroups {
   digit1: string;
   digit2: string;
@@ -62,7 +62,7 @@ interface FormValues {
 interface UtilityBillFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: () => void;  // Add this callback prop
+  onSuccess?: () => void;  
 }
 
 const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose, onSuccess }) => {
@@ -109,7 +109,7 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose, onSu
   const [existingUtilityBills, setExistingUtilityBills] = useState<UtilityBillResponse[]>([]);
   const [isLoadingExistingBills, setIsLoadingExistingBills] = useState<boolean>(false);
 
-  // Fetch utility bill data if in edit mode
+  // Fetch utility bill data 
   useEffect(() => {
     if (isEditMode) {
       const fetchUtilityBill = async () => {
@@ -129,7 +129,7 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose, onSu
 
           setBillingType(utilityBill.Type as "Electricity" | "Water");
 
-          // If water bill, break down the account number into groups
+          // water bill- account number - groups
           if (utilityBill.Type === "Water") {
             const accNoStr = String(utilityBill.Billing_Acc_No).padStart(
               12,
@@ -142,7 +142,7 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose, onSu
               group5: accNoStr.substring(10, 12),
             });
           }
-          // If electricity bill, break down the account number into digits
+          // electricity bill, account number - digits
           if (utilityBill.Type === "Electricity") {
             const accNoStr = String(utilityBill.Billing_Acc_No).padStart(
               10,
@@ -190,15 +190,15 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose, onSu
     fetchExistingUtilityBills();
   }, []);
 
+   // check for duplicates billing account number 
   const checkForDuplicateBillingAccNo = (billingAccNo: number): boolean => {
     if (!billingAccNo) {
-      return false; // Cannot check for duplicates if billing account number is missing
+      return false;
     }
 
     const isDuplicate = existingUtilityBills.some(bill => 
       bill.billing_Acc_No === billingAccNo &&
-      (!isEditMode || bill.id !== parseInt(id as string, 10)) // Exclude current record when editing
-    );
+      (!isEditMode || bill.id !== parseInt(id as string, 10)) 
 
     if (isDuplicate) {
       setErrors(prev => ({
@@ -327,7 +327,7 @@ const UtilityBillForm: React.FC<UtilityBillFormProps> = ({ isOpen, onClose, onSu
     }
   };
 
-  // Handle billing type change
+  
   // Handle billing type change
 const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const type = e.target.value as "Electricity" | "Water";
@@ -395,7 +395,7 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     groupName: keyof WaterBillingGroups,
     value: string
   ) => {
-    // Only allow digits
+
     const digitsOnly = value.replace(/\D/g, "");
 
     // Get the max length for each group
@@ -406,7 +406,7 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       group5: 2,
     }[groupName];
 
-    // Truncate if longer than max length
+   
     const truncated = digitsOnly.substring(0, maxLength);
 
     setWaterBillingGroups((prev) => ({
@@ -414,7 +414,7 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       [groupName]: truncated,
     }));
 
-    // Auto-focus next input if current one is filled to max length
+    // Move to the next digit after entering one digit
     if (digitsOnly.length >= maxLength) {
       const nextGroupMap: Record<string, keyof WaterBillingGroups | null> = {
         group2: "group3",
@@ -438,7 +438,7 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     digitName: keyof ElectricityBillingGroups,
     value: string
   ) => {
-    // Only allow digits
+   
     const digitOnly = value.replace(/\D/g, "");
 
     // Only set the first digit
@@ -506,14 +506,14 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         toast.success("Utility bill saved successfully");
       }
       
-      // Call the onSuccess callback if provided
+      // Call onSuccess callback 
       if (onSuccess) {
         onSuccess();
       }
         
-      // First close the modal via the parent component's handler
+      // First close the modal and navigate back to previous page
       onClose();
-      // Then navigate back to the utility page
+
       navigate("/admin/utility");
     } catch (error) {
       toast.error("Error saving utility bill");
@@ -529,7 +529,7 @@ const handleBillingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     navigate("/admin/utility");
   };
 
-  // Render using the Modal component
+  // Utility Bill Form
   return (
     <Modal
       isOpen={isOpen}
