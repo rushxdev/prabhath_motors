@@ -4,8 +4,8 @@ const EmployeeNavBar = () => {
   const location = useLocation();
 
   return (
-    <nav className='bg-gray-800 text-white p-4 flex justify-between'>
-      <h1 className='text-xl font-bold'>Prabath Motors</h1>
+    <nav className='bg-black text-white p-4 flex justify-between'>
+      <div className='flex-1'></div>
       <div className='flex space-x-6'>
         <Link
           to="/admin/employee/dashboard"
@@ -16,20 +16,12 @@ const EmployeeNavBar = () => {
           Dashboard
         </Link>
         <Link
-          to="/admin/employee/add"
+          to="/admin/employee/reports"
           className={`hover:text-green-400 transition-colors ${
-            location.pathname === '/admin/employee/add' ? 'text-green-400 font-medium' : ''
+            location.pathname === '/admin/employee/reports' ? 'text-green-400 font-medium' : ''
           }`}
         >
-          Add Employee
-        </Link>
-        <Link
-          to="/admin/employee/getAll"
-          className={`hover:text-green-400 transition-colors ${
-            location.pathname === '/admin/employee/getAll' ? 'text-green-400 font-medium' : ''
-          }`}
-        >
-          View Employees
+          Reports
         </Link>
       </div>
     </nav>

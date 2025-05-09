@@ -1,23 +1,21 @@
 import React from "react";
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, LayoutGroup } from "framer-motion";
 
-const UtilityNav: React.FC = () => {
+const EmployeeNavigation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const navItems = [
-    { path: '/admin/utility', label: 'Utiltiy Bills' },
-    { path: '/admin/monthly-utility', label: 'Monthly Utiltiy Bills' },
-    { path: '/admin/utility-reports', label: 'Utility Reports' },
-    
+    { path: '/admin/employee/dashboard', label: 'Employees' },
+    { path: '/admin/employee/reports', label: 'Salary Report' },
   ];
 
   return (
     <div className="w-full bg-black text-white text-center py-5">
       <div className="container mx-auto">
         <LayoutGroup>
-          <div className="grid grid-cols-6 gap-4 justify-center relative">
+          <div className="grid grid-cols-2 gap-4 justify-center relative">
             {navItems.map((item, index) => {
               const isActive = location.pathname === item.path;
 
@@ -26,7 +24,6 @@ const UtilityNav: React.FC = () => {
                   key={index}
                   onClick={() => navigate(item.path)}
                   className="relative text-center flex items-center justify-center cursor-pointer p-3 rounded hover:text-green-500 transition-colors duration-300"
-
                 >
                   <p className="uppercase tracking-wide text-xs relative z-10">
                     {item.label}
@@ -57,5 +54,4 @@ const UtilityNav: React.FC = () => {
   );
 };
 
-
-export default UtilityNav;
+export default EmployeeNavigation;
