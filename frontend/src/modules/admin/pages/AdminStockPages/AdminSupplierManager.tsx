@@ -124,73 +124,75 @@ const AdminSupplierManager: React.FC = () => {
     return (
         <ErrorBoundary FallbackComponent={ErrorFallback}>
             <StocksLayout>
-                <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16">
-                    <h2 className="text-2xl sm:text-2xl font-press font-semibold mb-4 mt-10 text-primary">
-                        Manage Suppliers
-                    </h2>
-                    <div className="flex items-center justify-between mt-12">
-                        <input
-                            type="text"
-                            placeholder="Search suppliers..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full sm:w-1/2 p-2 border border-gray-500 rounded-md mb-4 bg-transparent"
-                        />
-                        <Button
-                            onClick={() => {
-                                setCurrentSupplier(undefined);
-                                setIsModalOpen(true);
-                            }}
-                            className="flex items-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600"
-                        >
-                            <PlusIcon className="w-5 h-5 mr-2" />
-                            Add Supplier
-                        </Button>
-                    </div>
+                <div className="sticky top-1 z-40 bg-white pb-4">
+                    <div className="max-w-7xl mx-auto text-center">
+                        <h2 className="text-2xl sm:text-2xl font-press font-semibold pt-10 text-primary">
+                            Manage Suppliers
+                        </h2>
+                        <div className="flex items-center justify-between mt-12">
+                            <input
+                                type="text"
+                                placeholder="Search suppliers..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full sm:w-1/2 p-2 border border-gray-500 rounded-md mb-4 bg-transparent"
+                            />
+                            <Button
+                                onClick={() => {
+                                    setCurrentSupplier(undefined);
+                                    setIsModalOpen(true);
+                                }}
+                                className="flex items-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600"
+                            >
+                                <PlusIcon className="w-5 h-5 mr-2" />
+                                Add Supplier
+                            </Button>
+                        </div>
 
-                    {/* Suppliers Table */}
-                    {loading ? (
-                        <div className="flex justify-center items-center mt-16">
-                            <p className="text-lg text-gray-700">Loading Suppliers...</p>
-                        </div>
-                    ) : error ? (
-                        <div className="flex justify-center items-center mt-16">
-                            <p className="text-lg text-red-500">{error}</p>
-                        </div>
-                    ) : (
-                        <div className="mt-8 overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {filteredSuppliers.map((supplier, index) => (
-                                        <tr 
-                                            key={supplier.supplierId}
-                                            className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
-                                        >
-                                            <td className="px-6 py-4 text-left whitespace-nowrap">{supplier.supplierName}</td>
-                                            <td className="px-6 py-4 text-left whitespace-nowrap">{supplier.contactPerson}</td>
-                                            <td className="px-6 py-4 text-left whitespace-nowrap">{supplier.phoneNumber}</td>
-                                            <td className="px-6 py-4 text-center whitespace-nowrap">
-                                                <button
-                                                    onClick={() => handleView(supplier)}
-                                                    className="text-blue-600 hover:text-blue-900 font-medium"
-                                                >
-                                                    View Details
-                                                </button>
-                                            </td>
+                        {/* Suppliers Table */}
+                        {loading ? (
+                            <div className="flex justify-center items-center mt-16">
+                                <p className="text-lg text-gray-700">Loading Suppliers...</p>
+                            </div>
+                        ) : error ? (
+                            <div className="flex justify-center items-center mt-16">
+                                <p className="text-lg text-red-500">{error}</p>
+                            </div>
+                        ) : (
+                            <div className="mt-8 overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</th>
+                                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {filteredSuppliers.map((supplier, index) => (
+                                            <tr 
+                                                key={supplier.supplierId}
+                                                className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
+                                            >
+                                                <td className="px-6 py-4 text-left whitespace-nowrap">{supplier.supplierName}</td>
+                                                <td className="px-6 py-4 text-left whitespace-nowrap">{supplier.contactPerson}</td>
+                                                <td className="px-6 py-4 text-left whitespace-nowrap">{supplier.phoneNumber}</td>
+                                                <td className="px-6 py-4 text-center whitespace-nowrap">
+                                                    <button
+                                                        onClick={() => handleView(supplier)}
+                                                        className="text-blue-600 hover:text-blue-900 font-medium"
+                                                    >
+                                                        View Details
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* View Modal */}

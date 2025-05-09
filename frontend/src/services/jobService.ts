@@ -3,7 +3,7 @@ import { Job } from '../types/Job';
 import { Task } from '../types/Task';
 import { StockItem } from '../types/Stock';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = 'http://localhost:8081/api';
 
 export const jobService = {
     async createJob(jobData: Partial<Job>) {
