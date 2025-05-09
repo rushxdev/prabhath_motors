@@ -1,14 +1,33 @@
 import React from "react";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 interface TopNavbarProps {
   username?: string;
 }
 
 const TopNavbar: React.FC<TopNavbarProps> = ({ username = "Admin User" }) => {
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("roles");
+    navigate("/login");
+  };
+
   return (
-    <div className="bg-white dark:bg-black w-full flex justify-end items-center px-6 py-2">
-      {/* User Profile Section */}
+    <div className="bg-white dark:bg-black w-full flex justify-between items-center px-6 py-1">
+      {/* Logo on the left */}
+      <div className="flex items-center">
+        <img 
+          src="/assets/images/logo.png" 
+          alt="Prabhath Motors Logo"
+          className="h-10 w-auto"
+        />
+      </div>
+      
+      {/* User Profile Section on the right */}
       <div className="flex items-center space-x-4">
         {/* User info */}
         <div className="flex items-center">
@@ -21,7 +40,7 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ username = "Admin User" }) => {
         
         {/* Sign out button */}
         <button 
-          onClick={() => console.log("Logout clicked")}
+          onClick={handleLogout}
           className="flex items-center text-red-600 hover:text-red-700 transition-colors"
         >
           <FaSignOutAlt className="mr-1 h-4 w-4" />
