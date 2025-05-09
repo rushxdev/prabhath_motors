@@ -113,6 +113,7 @@ function App() {
           />
           <Route path="utility-reports" element={<AdminUtilityReportsManager />} />
           {/* Employee routes */}
+          <Route path="employee/dashboard" element={<EmployeeDashboard />} />
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
@@ -120,6 +121,11 @@ function App() {
           <Route path="appointment-list" element={<AppointmentPage />} />
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
           <Route path="appointment-list/update-appointment/:id" element={<AppointmentUpdate />} />
+          {/*Vehicle routes*/}
+          <Route path="vehicle-page" element={<VehicleDashboard />} />
+          <Route path="vehicle-page/vehicle-registration" element={<VehicleRegistration />} />
+          <Route path="vehicle-page/vehicle-update/:id" element={<VehicleUpdate />} />
+        {/* --------------------Admin Routes end--------------- */}
           <Route path="task-list" element={<TaskList />} />
           {/*Items, Stocks, Supplier, Order routes*/}s
           {/*Job routes*/}
