@@ -6,6 +6,7 @@ import ReportLayout from "../../components/Reports/ReportLayout";
 import DateRangeParameters from "../../components/Reports/parameters/DateRangeParameters";
 import InventoryParameters from "../../components/Reports/parameters/InventoryParameters";
 import ItemPurchaseHistoryParameters from "../../components/Reports/parameters/ItemPurchaseHistoryParameters";
+import apiClient from "../../../../axios.config";
 
 interface ErrorFallbackProps {
     error: Error
@@ -227,9 +228,8 @@ const AdminStockReportsManager: React.FC = () => {
             const requestBody: any = {};
             
             // Add common parameters
-            // Convert Date objects to LocalDate format strings (YYYY-MM-DD)
-            if (startDate) requestBody.startDate = startDate.toISOString().split('T')[0]; // Just the date part
-            if (endDate) requestBody.endDate = endDate.toISOString().split('T')[0]; // Just the date part
+            if (startDate) requestBody.startDate = startDate.toISOString().split('T')[0];
+            if (endDate) requestBody.endDate = endDate.toISOString().split('T')[0];
                         
             // Add report-specific parameters
             if (selectedReportType === 'inventory') {
@@ -242,15 +242,9 @@ const AdminStockReportsManager: React.FC = () => {
                 requestBody.itemId = selectedItemId;
             }
 
-            const response = await fetch(`http://localhost:8081/reports/${selectedReportType}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody),
-            });
-
-            const data = await response.json();
+            // Use apiClient instead of fetch
+            const { data } = await apiClient.post(`/reports/${selectedReportType}`, requestBody);
+            
             setReportData(data);
             setShowPDF(true);
         } catch (error) {
@@ -307,7 +301,10 @@ const AdminStockReportsManager: React.FC = () => {
     };
 
     // Function to format currency
-    const formatCurrency = (value: number): string => {
+    const formatCurrency = (value: number | undefined | null): string => {
+        if (value === undefined || value === null) {
+            return 'Rs. 0.00';
+        }
         return `Rs. ${value.toFixed(2)}`;
     };
 
@@ -338,10 +335,10 @@ const AdminStockReportsManager: React.FC = () => {
                                         </View>
                                         
                                         {/* Table Rows */}
-                                        {reportData.salesDetails?.map((item: any, index: number) => (
+                                        {reportData && reportData.salesDetails?.map((item: any, index: number) => (
                                             <View style={styles.tableRow} key={index}>
-                                                <Text style={styles.cell}>{item.itemName}</Text>
-                                                <Text style={styles.cell}>{item.soldQty}</Text>
+                                                <Text style={styles.cell}>{item.itemName || 'Unknown'}</Text>
+                                                <Text style={styles.cell}>{item.soldQty || 0}</Text>
                                                 <Text style={styles.cell}>{formatCurrency(item.purchasePrice)}</Text>
                                                 <Text style={styles.cell}>{formatCurrency(item.soldPrice)}</Text>
                                                 <Text style={styles.cell}>{formatCurrency(item.revenue)}</Text>
@@ -352,10 +349,12 @@ const AdminStockReportsManager: React.FC = () => {
                                         
                                         {/* Summary Section */}
                                         <View style={styles.summarySection}>
-                                            <Text style={styles.summaryText}>Total Items Sold: {reportData.itemsSold}</Text>
+                                            <Text style={styles.summaryText}>Total Items Sold: {reportData.itemsSold || 0}</Text>
                                             <Text style={styles.summaryText}>Total Sales: {formatCurrency(reportData.totalSales)}</Text>
                                             <Text style={styles.summaryText}>Total Expenses: {formatCurrency(reportData.totalExpenses)}</Text>
-                                            <Text style={styles.summaryText}>Net Profit: {formatCurrency(reportData.totalSales - reportData.totalExpenses)}</Text>
+                                            <Text style={styles.summaryText}>Net Profit: {formatCurrency(
+                                                (reportData.totalSales || 0) - (reportData.totalExpenses || 0)
+                                            )}</Text>
                                         </View>
                                     </View>
                                 )}

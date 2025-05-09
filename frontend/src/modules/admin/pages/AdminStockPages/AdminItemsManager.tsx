@@ -6,6 +6,7 @@ import Modal from "../../../../components/Model";
 import ItemForm from "../../components/AdminStocks-pages/ItemForm";
 import { StockItem, Stock_In, ItemCategory, Supplier } from "../../../../types/Stock";
 import { itemService } from '../../../../services/stockItemService';
+import { supplierService } from '../../../../services/stockSupplierService';
 import { ErrorBoundary } from 'react-error-boundary';
 
 interface ErrorFallbackProps {
@@ -145,11 +146,8 @@ const AdminItemsManager: React.FC = () => {
     // Fetch Suppliers
     const fetchSuppliers = async () => {
         try {
-            const response = await fetch('http://localhost:8081/supplier/get');
-            if (!response.ok) {
-                throw new Error('Failed to fetch suppliers');
-            }
-            const data = await response.json();
+            // Use the supplier service instead of direct fetch to handle authentication
+            const data = await supplierService.getAllSuppliers();
             setSuppliers(data);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to fetch suppliers';
