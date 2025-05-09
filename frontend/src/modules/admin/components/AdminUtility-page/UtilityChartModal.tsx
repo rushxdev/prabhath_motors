@@ -59,7 +59,7 @@ const UtilityChartModal: React.FC<UtilityChartModalProps> = ({
   const [utilityBills, setUtilityBills] = useState<UtilityBill[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch utility bills to get billing account numbers
+  //Error handling Fetch utility bills to get billing account numbers
   useEffect(() => {
     const fetchUtilityBills = async () => {
       setLoading(true);
@@ -101,9 +101,13 @@ const UtilityChartModal: React.FC<UtilityChartModalProps> = ({
     });
   }, [monthlyBills, startDate, endDate, selectedBillingAccNo]);
 
+
+
   // Prepare chart data
   const chartData = React.useMemo(() => {
-    // Group data by month and year for chronological order
+    
+    // Grouping data by month and year because the chart should appear in chronological order
+    //2025,jan,feb likewise
     const groupedData: Record<string, number> = {};
     
     filteredData.forEach((bill) => {
@@ -252,7 +256,7 @@ const UtilityChartModal: React.FC<UtilityChartModalProps> = ({
                     type="button"
                     className={`px-4 py-2 text-sm rounded-md ${
                       chartType === type
-                        ? "bg-blue-600 text-white"
+                        ? "bg-green-600 text-white"
                         : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                     }`}
                     onClick={() => setChartType(type as ChartType)}
@@ -271,7 +275,7 @@ const UtilityChartModal: React.FC<UtilityChartModalProps> = ({
                   type="button"
                   className={`px-4 py-2 text-sm rounded-md ${
                     dataVariable === "totalPayment"
-                      ? "bg-blue-600 text-white"
+                      ? "bg-green-600 text-white"
                       : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                   onClick={() => setDataVariable("totalPayment")}
@@ -282,7 +286,7 @@ const UtilityChartModal: React.FC<UtilityChartModalProps> = ({
                   type="button"
                   className={`px-4 py-2 text-sm rounded-md ${
                     dataVariable === "units"
-                      ? "bg-blue-600 text-white"
+                      ? "bg-green-600 text-white"
                       : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                   onClick={() => setDataVariable("units")}
@@ -409,7 +413,7 @@ const UtilityChartModal: React.FC<UtilityChartModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md shadow-sm hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+            className="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md shadow-sm hover:bg-gray-400 dark:hover:bg-gray-700 transition"
           >
             Close
           </button>

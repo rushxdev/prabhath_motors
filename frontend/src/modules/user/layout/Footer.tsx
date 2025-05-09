@@ -96,7 +96,13 @@ const Footer: React.FC = () => {
           
           {/* Logo */}
           <div className="flex items-center justify-end">
-            <h2 className="text-4xl font-bold tracking-wider">LOGO</h2>
+            <div className="w-36">
+              <img 
+                src="/assets/images/logo.png" 
+                alt="Prabath Motors Logo" 
+                className="w-full h-auto"
+              />
+            </div>
           </div>
         </div>
       </div>

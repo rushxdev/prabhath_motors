@@ -10,7 +10,7 @@ const ServicesPage = () => {
   const servicesAnimation = useAnimationSection();
   const ctaAnimation = useAnimationSection();
   
-  // Animation variants
+ 
   const titleVariant = {
     hidden: { opacity: 0, y: 20 },
     visible: (i = 0) => ({
@@ -59,7 +59,7 @@ const ServicesPage = () => {
         <div className="absolute top-0 left-0 w-full h-full bg-black opacity-50 z-1"></div>
         <img
           className="absolute top-0 left-0 w-full h-full object-cover opacity-100 z-0"
-          src="../../../../public/assets/images/img12.jpg"
+          src="/assets/images/img12.jpg"
           alt="Services Header"
         />
         
@@ -85,7 +85,7 @@ const ServicesPage = () => {
       </section>
 
       {/* Main Services Section */}
-      <section className="py-16" ref={servicesAnimation.ref}>
+      <section className="py-16" ref={servicesAnimation.ref} id="services-overview">
         <div className="container mx-auto px-6">
           <motion.h2 
             className="text-3xl font-bold mb-12 text-center"
@@ -116,7 +116,6 @@ const ServicesPage = () => {
                 <div className="p-6">
                   <h3 className="text-2xl font-bold mb-3 text-gray-800">{service.title}</h3>
                   <p className="text-gray-600 mb-4">{service.description}</p>
-                 
                 </div>
               </motion.div>
             ))}
@@ -132,7 +131,8 @@ const ServicesPage = () => {
           {detailedServices.map((service, index) => (
             <div 
               key={service.id}
-              className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center mb-20 last:mb-0`}
+              id={service.slug}
+              className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center mb-20 last:mb-0 scroll-mt-32`}
             >
               <div className={`md:w-1/2 mb-8 md:mb-0 ${index % 2 === 0 ? 'md:pr-10' : 'md:pl-10'}`}>
                 <h3 className="text-2xl font-bold mb-4 text-gray-800">{service.title}</h3>
@@ -146,8 +146,6 @@ const ServicesPage = () => {
                     </li>
                   ))}
                 </ul>
-                
-                
               </div>
               <div className="md:w-1/2">
                 <img 
@@ -163,7 +161,7 @@ const ServicesPage = () => {
 
       {/* CTA Section */}
       <section className="py-16 bg-black text-white relative overflow-hidden group" ref={ctaAnimation.ref}>
-        {/* Hover gradient overlay - curved effect starting from bottom middle */}
+        {/* Hover gradient overlay */}
         <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
                        bg-gradient-to-t from-green-600/50 via-green-600/25 to-transparent 
                        rounded-50 opacity-0 
@@ -206,7 +204,7 @@ const ServicesPage = () => {
   );
 };
 
-// Custom animation hook
+// Custom animation 
 function useAnimationSection() {
   const controls = useAnimation();
   const [ref, inView] = useInView({
@@ -229,53 +227,53 @@ const services = [
     id: 1,
     title: "Vehicle Maintenance",
     description: "Regular maintenance services including oil changes, filter replacements, and comprehensive vehicle inspections.",
-    image: "../../../../public/assets/images/img1.jpg",
+    image: "/assets/images/img1.jpg",
     slug: "maintenance"
   },
   {
     id: 2,
     title: "Repairs & Diagnostics",
     description: "Expert diagnosis and repair services for mechanical issues, electrical problems, and performance concerns.",
-    image: "../../../../public/assets/images/img7.jpg",
+    image: "/assets/images/img7.jpg",
     slug: "repairs"
   },
   {
     id: 3,
     title: "Body Shop & Painting",
     description: "Professional body repair services, dent removal, and premium quality painting for accident damage or cosmetic enhancements.",
-    image: "../../../../public/assets/images/img9.jpg",
+    image: "/assets/images/img9.jpg",
     slug: "body-shop"
   },
   {
     id: 4,
     title: "Expert Care",
     description: "Browse our extensive catalog of genuine and OEM parts for all major vehicle makes and models with competitive pricing.",
-    image: "../../../../public/assets/images/img8.jpg",
-    slug: "parts-catalog"
+    image: "/assets/images/img8.jpg",
+    slug: "expert-care"
   },
   {
     id: 5,
     title: "Accessories & Upgrades",
     description: "Enhance your vehicle with our selection of premium accessories, performance upgrades, and comfort features.",
-    image: "../../../../public/assets/images/img2.jpg",
+    image: "/assets/images/img2.jpg",
     slug: "accessories"
   },
   {
     id: 6,
     title: "Emergency Services",
     description: "24/7 emergency roadside assistance and towing services for unexpected breakdowns and accidents.",
-    image: "../../../../public/assets/images/img10.jpg",
+    image: "/assets/images/img10.jpg",
     slug: "emergency"
   }
 ];
 
-// Detailed information about each service
+// Info about each service
 const detailedServices = [
   {
     id: 1,
     title: "Vehicle Maintenance",
     description: "Our comprehensive maintenance services help extend your vehicle's life and maintain optimal performance. We follow manufacturer-recommended service schedules to keep your warranty valid.",
-    image: "../../../../public/assets/images/img1.jpg",
+    image: "/assets/images/img1.jpg",
     slug: "maintenance",
     features: [
       "Oil and filter changes",
@@ -290,7 +288,7 @@ const detailedServices = [
     id: 2,
     title: "Repairs & Diagnostics",
     description: "Using state-of-the-art diagnostic equipment, our certified technicians can quickly identify and resolve issues affecting your vehicle's performance, safety, and reliability.",
-    image: "../../../../public/assets/images/img10.jpg",
+    image: "/assets/images/img10.jpg",
     slug: "repairs",
     features: [
       "Engine diagnostics and repair",
@@ -305,7 +303,7 @@ const detailedServices = [
     id: 3,
     title: "Body Shop & Painting",
     description: "Our fully-equipped body shop handles everything from minor dents to major collision damage. We restore your vehicle to its pre-accident condition with precision and care.",
-    image: "../../../../public/assets/images/img9.jpg",
+    image: "/assets/images/img9.jpg",
     slug: "body-shop",
     features: [
       "Collision repair",
@@ -320,8 +318,8 @@ const detailedServices = [
     id: 4,
     title: "Expert Care",
     description: "We stock a wide range of genuine and OEM parts for all major vehicle makes and models. Our parts department ensures you get the right components for your specific vehicle.",
-    image: "../../../../public/assets/images/img8.jpg",
-    slug: "parts-catalog",
+    image: "/assets/images/img8.jpg",
+    slug: "expert-care",
     features: [
       "Genuine manufacturer parts",
       "OEM and aftermarket options",
@@ -335,7 +333,7 @@ const detailedServices = [
     id: 5,
     title: "Accessories & Upgrades",
     description: "Personalize your vehicle with our selection of premium accessories and performance upgrades. Our installation experts ensure proper fitting and functionality.",
-    image: "../../../../public/assets/images/img2.jpg",
+    image: "/assets/images/img2.jpg",
     slug: "accessories",
     features: [
       "Entertainment system upgrades",

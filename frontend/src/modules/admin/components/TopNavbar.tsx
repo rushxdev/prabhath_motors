@@ -1,6 +1,8 @@
 import React from "react";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+import { toast } from "react-toastify";
 
 interface TopNavbarProps {
   username?: string;
@@ -8,11 +10,18 @@ interface TopNavbarProps {
 
 const TopNavbar: React.FC<TopNavbarProps> = ({ username = "Admin User" }) => {
   const navigate = useNavigate();
-  
+  const { logout } = useAuth();
+
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("roles");
+    logout();
+    toast.success("Successfully signed out!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
     navigate("/login");
   };
 
@@ -34,12 +43,12 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ username = "Admin User" }) => {
           <FaUserCircle className="h-6 w-6 text-green-600 mr-2" />
           <span className="font-medium text-gray-700 dark:text-gray-200">{username}</span>
         </div>
-        
+
         {/* Divider */}
         <div className="h-6 border-r border-gray-300 dark:border-gray-700"></div>
-        
+
         {/* Sign out button */}
-        <button 
+        <button
           onClick={handleLogout}
           className="flex items-center text-red-600 hover:text-red-700 transition-colors"
         >

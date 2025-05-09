@@ -31,6 +31,7 @@ const AdminUtilityManager: React.FC = () => {
     fetchMonthlyBills();
   }, []);
 
+  //Get Utiltiy Bills
   const fetchUtilities = async () => {
     setLoading(true);
     setError(null);
@@ -63,7 +64,7 @@ const AdminUtilityManager: React.FC = () => {
     }
   };
 
-  // Prompt to delete a utility bill
+  // delete a utility bill
   const promptDelete = (id: number) => {
     setUtilityToDelete(id);
     setDeleteError(null);
@@ -72,11 +73,10 @@ const AdminUtilityManager: React.FC = () => {
 
   // Check if the utility bill can be deleted
   const canDeleteUtilityBill = (billingAccNo: number): boolean => {
-    // Check if there are any monthly bills with this billing account number
     return !monthlyBills.some((bill) => bill.billingAccNo === billingAccNo);
   };
 
-  // Delete function with validation
+  // Delete function validation
   const confirmDelete = async () => {
     if (!utilityToDelete) return;
 
@@ -84,7 +84,7 @@ const AdminUtilityManager: React.FC = () => {
     setDeleteError(null);
 
     try {
-      // Find the utility bill to delete
+
       const utilityToRemove = utilities.find(
         (utility) => utility.id === utilityToDelete
       );
@@ -102,7 +102,7 @@ const AdminUtilityManager: React.FC = () => {
         return;
       }
 
-      // Proceed with deletion
+      // Delete
       const response = await axios.delete(
         `http://localhost:8081/utilitybill/delete/${utilityToDelete}`
       );
@@ -307,7 +307,7 @@ const AdminUtilityManager: React.FC = () => {
         <UtilityBillForm
           isOpen={utilityBillFormOpen}
           onClose={() => setUtilityBillFormOpen(false)}
-          onSuccess={fetchUtilities}  // Add this to refresh data when form is submitted successfully
+          onSuccess={fetchUtilities} 
         />
       )}
     </UtilityLayout>

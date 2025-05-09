@@ -167,15 +167,25 @@ const VehicleRegistration = () => {
                   placeholder="Owner Name"
                   value={vehicle.ownerName}
                   onChange={e => {
-                    // Only allow letters and spaces
+                    // Only allow letters and spaces - remove all numbers and symbols
                     const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
                     setVehicle({ ...vehicle, ownerName: value });
                     setErrors({ ...errors, ownerName: validateOwnerName(value) });
+                  }}
+                  onKeyPress={e => {
+                    // Prevent entering numbers and symbols
+                    const charCode = e.charCode;
+                    if (!(charCode >= 65 && charCode <= 90) && // A-Z
+                        !(charCode >= 97 && charCode <= 122) && // a-z
+                        !(charCode === 32)) { // space
+                      e.preventDefault();
+                    }
                   }}
                   required
                   className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.ownerName ? 'border-red-500' : ''}`}
                 />
                 {errors.ownerName && <p className="mt-1 text-sm text-red-600">{errors.ownerName}</p>}
+                <p className="mt-1 text-xs text-gray-500">Only letters and spaces are allowed</p>
               </div>
               {/* Contact No */}
               <div className="mb-6">
@@ -200,7 +210,7 @@ const VehicleRegistration = () => {
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Mileage</label>
                 <input
-                  type="number"
+                  type="text"
                   name="mileage"
                   placeholder="Mileage"
                   value={vehicle.mileage}
@@ -210,10 +220,18 @@ const VehicleRegistration = () => {
                     setVehicle({ ...vehicle, mileage: value === '' ? '' : parseInt(value, 10) });
                     setErrors({ ...errors, mileage: validateMileage(value === '' ? 0 : parseInt(value, 10)) });
                   }}
+                  onKeyPress={e => {
+                    // Prevent entering non-digits
+                    const charCode = e.charCode;
+                    if (charCode < 48 || charCode > 57) { // 0-9
+                      e.preventDefault();
+                    }
+                  }}
                   required
                   className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.mileage ? 'border-red-500' : ''}`}
                 />
                 {errors.mileage && <p className="mt-1 text-sm text-red-600">{errors.mileage}</p>}
+                <p className="mt-1 text-xs text-gray-500">Only numbers are allowed</p>
               </div>
               {/* Last Update (Time) */}
               <div className="mb-6">

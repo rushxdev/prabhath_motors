@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { ScrollToTop } from "./utils/scrollToTop.util";
-
-
-import { Route, BrowserRouter as Router, Routes,  Outlet } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes, Outlet } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Auth pages
 import Login from "./modules/auth/pages/Login";
@@ -14,6 +14,8 @@ import Unauthorized from "./modules/auth/pages/Unauthorized";
 
 import HomePage from "./modules/user/pages/HomePage";
 import AboutPage from "./modules/user/pages/AboutPage";
+import ServicesPage from "./modules/user/pages/ServicesPage";
+import SupportPage from "./modules/user/pages/SupportPage";
 import AdminLayout from "./modules/admin/layout/AdminDashboardLayout";
 
 //Appointment, Tasks routes
@@ -43,13 +45,14 @@ import VehiclePage from "./modules/admin/pages/AdminVehiclePages/VehiclePage";
 import EmployeeDashboard from "./modules/admin/layout/EmployeeLayouts/EmployeeDashboard";
 import EmployeeShow from "./modules/admin/layout/EmployeeLayouts/EmployeeShow";
 import EmployeeUpdate from "./modules/admin/layout/EmployeeLayouts/EmployeeUpdate";
+import EmployeeReportsManager from "./modules/admin/pages/AdminEmpoyeePages/EmployeeReportsManager";
 import VehicleDetails from "./modules/admin/pages/AdminVehiclePages/VehicleDetails";
 
 //Job routes
 import JobForm from "./modules/admin/components/JobForm";
 import JobList from "./modules/admin/pages/AdminAppointmentPages/JobList";
 import JobDetails from "./modules/admin/pages/AdminAppointmentPages/JobDetails";
-import ServicesPage from "./modules/user/pages/ServicesPage";
+
 
 function App() {
   useEffect(() => {
@@ -60,18 +63,18 @@ function App() {
     <AuthProvider>
       <Router>
         <ScrollToTop /> {/* utillity to always scroll to top on URL change */}
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
 
         <Routes>
           {/* --------------------Auth Routes-------------------- */}
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* --------------------User Routes-------------------- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
-
           <Route path="/services" element={<ServicesPage />} />
+          <Route path="/support" element={<SupportPage />} />
           {/*Vehicle routes*/}
 
           {/* --------------------Protected User Routes-------------------- */}
@@ -113,9 +116,11 @@ function App() {
           />
           <Route path="utility-reports" element={<AdminUtilityReportsManager />} />
           {/* Employee routes */}
+          <Route path="employee/dashboard" element={<EmployeeDashboard />} />
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
+          <Route path="employee/reports" element={<EmployeeReportsManager />} />
           {/*Appointment, Tasks routes*/}
           <Route path="appointment-list" element={<AppointmentPage />} />
           <Route path="appointment-list/book-appointment" element={<BookAppointment />} />
