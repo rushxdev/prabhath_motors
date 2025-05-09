@@ -54,6 +54,13 @@ const BookAppointment = () => {
       title="Book Appointment"
     >
       <form onSubmit={handleSubmit} className="mt-4">
+        {/* General Error Message */}
+        {errors.general && (
+          <div className="mb-6 bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span className="block sm:inline">{errors.general}</span>
+          </div>
+        )}
+
         {/* Vehicle Registration Number */}
         <div className="mb-6">
           <label

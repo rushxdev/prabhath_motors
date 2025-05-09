@@ -46,10 +46,10 @@ export const useAppointment = () => {
         // Real-time validation for vehicle registration number
         if (name === "vehicleRegistrationNo") {
             const vehicleRegPattern = /^(?:[A-Z]{2,3}-\d{4}|\d{2,3}-\d{4})$/;
-            
+
             // Prevent non-alphanumeric and limit length
             const sanitizedValue = value.replace(/[^A-Za-z0-9-]/g, '').toUpperCase();
-            
+
             // Validate in real-time
             if (sanitizedValue && !vehicleRegPattern.test(sanitizedValue)) {
                 updatedErrors.vehicleRegistrationNo = "Invalid vehicle registration number format";
@@ -58,7 +58,7 @@ export const useAppointment = () => {
             }
 
             setAppointment((prev) => ({ ...prev, [name]: sanitizedValue }));
-        } 
+        }
         // Real-time validation for date
         else if (name === "date") {
             const today = new Date();
@@ -79,7 +79,7 @@ export const useAppointment = () => {
         else if (name === "mileage") {
             const numericValue = parseInt(value);
             setAppointment((prev) => ({ ...prev, [name]: isNaN(numericValue) ? 0 : numericValue }));
-        } 
+        }
         // Default handling for other fields
         else {
             setAppointment((prev) => ({ ...prev, [name]: value }));
@@ -100,16 +100,26 @@ export const useAppointment = () => {
             return true;
         } catch (error) {
             console.error("Error while booking appointment", error);
+
+            // Handle validation errors from the backend
+            if (error && typeof error === 'object' && !Array.isArray(error)) {
+                // If the error is an object of validation errors from the backend
+                setErrors(error as { [key: string]: string });
+            } else {
+                // Set a generic error message
+                setErrors({ general: "Failed to book appointment. Please try again." });
+            }
+
             return false;
         }
     };
 
-    return { 
-        appointment, 
-        setAppointment, 
-        errors, 
-        handleChange, 
+    return {
+        appointment,
+        setAppointment,
+        errors,
+        handleChange,
         handleSubmit,
-        validateForm 
+        validateForm
     };
 }
