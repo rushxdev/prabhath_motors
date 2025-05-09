@@ -113,6 +113,7 @@ function App() {
           />
           <Route path="utility-reports" element={<AdminUtilityReportsManager />} />
           {/* Employee routes */}
+          <Route path="employee/dashboard" element={<EmployeeDashboard />} />
           <Route path="employee/add" element={<EmployeeDashboard />} />
           <Route path="employee/getAll" element={<EmployeeShow />} />
           <Route path="employee/update/:id" element={<EmployeeUpdate />} />
