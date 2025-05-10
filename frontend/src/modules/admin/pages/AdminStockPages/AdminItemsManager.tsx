@@ -219,7 +219,7 @@ const AdminItemsManager: React.FC = () => {
                     {/* Stock Items Table */}
                     {loading ? (
                         <div className="flex justify-center items-center mt-16">
-                        <p className="text-lg text-gray-700 dark:text-gray-300">
+                        <p className="text-lg text-green-500 dark:text-green-300">
                             Loading Items...
                         </p>
                         </div>
@@ -288,6 +288,7 @@ const AdminItemsManager: React.FC = () => {
                     <ItemForm
                         initialData={currentItem}
                         categories={categories}
+                        suppliers={suppliers}
                         existingItems={stocks}
                         onSuccess={(itemData) => {
                             // stock object from item data

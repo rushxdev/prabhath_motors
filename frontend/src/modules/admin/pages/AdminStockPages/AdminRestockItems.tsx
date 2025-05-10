@@ -115,7 +115,6 @@ const RestockForm: React.FC<{
                 throw new Error("Quantity is required");
             }
 
-            // All validations passed, submit the form
             onSuccess(formData);
         } catch (error) {
             setError(error instanceof Error ? error.message : "An error occurred");
@@ -443,166 +442,170 @@ const AdminRestockItems: React.FC = () => {
                 <div className="max-w-7xl mx-auto text-center pt-4 mb-12">
                     {/* Low Stock Items Section */}
                     <div className="mb-8">
-                        <h3 className="text-xl font-semibold mb-4 text-left text-primary border-b pb-2">
+                        <h3 className="text-xl font-semibold mb-4 text-left text-primary pb-2">
                             Low Stock Items
                         </h3>
                         
                         {loading ? (
                             <div className="flex justify-center items-center mt-4">
-                                <p className="text-gray-700">Loading low stock items...</p>
+                                <p className="text-lg text-green-300">Loading low stock items...</p>
                             </div>
                         ) : (
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200 border">
-                                    <thead className="bg-gray-100">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Level</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reorder Level</th>
-                                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {items
-                                            .filter(item => item.stockLevel === "Low" || item.stockLevel === "Critical")
-                                            .map((item, index) => (
-                                                <tr 
-                                                    key={item.itemID}
-                                                    className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                            <div className="grid gap-4">
+                                {/* Header Row */}
+                                <div className="grid grid-cols-7 bg-gray-50 rounded-t-lg py-3">
+                                    <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</div>
+                                    <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</div>
+                                    <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</div>
+                                    <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Level</div>
+                                    <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available</div>
+                                    <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reorder Level</div>
+                                    <div className="px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</div>
+                                </div>
+
+                                {/* Item Rows */}
+                                {items
+                                    .filter(item => item.stockLevel === "Low" || item.stockLevel === "Critical")
+                                    .map((item, index) => (
+                                        <div 
+                                            key={item.itemID}
+                                            className={`grid grid-cols-7 ${index % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-100 transition-colors duration-150 ease-in-out`}
+                                        >
+                                            <div className="px-6 py-3 text-left whitespace-nowrap">
+                                                <p className="text-medium font-medium text-gray-900">{item.itemName}</p>
+                                            </div>
+                                            <div className="px-6 py-3 text-left whitespace-nowrap text-medium text-gray-600">
+                                                {item.itemBrand || 'N/A'}
+                                            </div>
+                                            <div className="px-6 py-3 text-left whitespace-nowrap text-medium text-gray-600">
+                                                {getCategoryName(item.itemCtgryID)}
+                                            </div>
+                                            <div className="px-6 py-3 text-left whitespace-nowrap">
+                                                <span 
+                                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-medium font-medium ${
+                                                        item.stockLevel === "Critical" ? " text-red-800" : " text-yellow-800"
+                                                    }`}
                                                 >
-                                                    <td className="px-6 py-3 text-left whitespace-nowrap">
-                                                        <p className="text-sm font-medium text-gray-900">{item.itemName}</p>
-                                                    </td>
-                                                    <td className="px-6 py-3 text-left whitespace-nowrap text-sm text-gray-600">
-                                                        {item.itemBrand || 'N/A'}
-                                                    </td>
-                                                    <td className="px-6 py-3 text-left whitespace-nowrap text-sm text-gray-600">
-                                                        {getCategoryName(item.itemCtgryID)}
-                                                    </td>
-                                                    <td className="px-6 py-3 text-left whitespace-nowrap">
-                                                        <span 
-                                                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                                item.stockLevel === "Critical" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"
-                                                            }`}
-                                                        >
-                                                            {item.stockLevel}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-3 text-left whitespace-nowrap text-sm text-gray-600">
-                                                        {item.qtyAvailable}
-                                                    </td>
-                                                    <td className="px-6 py-3 text-left whitespace-nowrap text-sm text-gray-600">
-                                                        {item.recorderLevel}
-                                                    </td>
-                                                    <td className="px-6 py-3 text-center whitespace-nowrap">
-                                                        <button
-                                                            onClick={() => {
-                                                                const suggestedQty = Math.max(
-                                                                    item.recorderLevel * 2 - item.qtyAvailable,
-                                                                    item.recorderLevel
-                                                                );
-                                                                setCurrentRestock({
-                                                                    itemID: item.itemID,
-                                                                    supplierID: item.supplierId,
-                                                                    restockStatus: "Pending",
-                                                                    restockedQty: suggestedQty,
-                                                                    date: new Date().toISOString().split('T')[0]
-                                                                });
-                                                                setIsModalOpen(true);
-                                                            }}
-                                                            className="text-blue-600 hover:text-blue-900 font-medium bg-blue-50 px-3 py-1 rounded"
-                                                        >
-                                                            Reorder
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        {items.filter(item => item.stockLevel === "Low" || item.stockLevel === "Critical").length === 0 && (
-                                            <tr>
-                                                <td colSpan={7} className="px-6 py-4 text-center text-sm text-gray-500">
-                                                    No low stock items found
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                                                    {item.stockLevel}
+                                                </span>
+                                            </div>
+                                            <div className="px-6 py-3 text-left whitespace-nowrap text-medium text-gray-600">
+                                                {item.qtyAvailable}
+                                            </div>
+                                            <div className="px-6 py-3 text-left whitespace-nowrap text-medium text-gray-600">
+                                                {item.recorderLevel}
+                                            </div>
+                                            <div className="px-6 py-3 text-center whitespace-nowrap">
+                                                <button
+                                                    onClick={() => {
+                                                        const suggestedQty = Math.max(
+                                                            item.recorderLevel * 2 - item.qtyAvailable,
+                                                            item.recorderLevel
+                                                        );
+                                                        setCurrentRestock({
+                                                            itemID: item.itemID,
+                                                            supplierID: item.supplierId,
+                                                            restockStatus: "Pending",
+                                                            restockedQty: suggestedQty,
+                                                            date: new Date().toISOString().split('T')[0]
+                                                        });
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                    className="text-green-600 hover:text-green-900 font-medium bg-blue-50 px-3 py-1 rounded"
+                                                >
+                                                    Mark Reorder
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                
+                                {/* Empty state message */}
+                                {items.filter(item => item.stockLevel === "Low" || item.stockLevel === "Critical").length === 0 && (
+                                    <div className="col-span-7 px-6 py-4 text-center text-sm text-gray-500 bg-white">
+                                        No low stock items found
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
 
                     {/* Existing Restock Items Table Header */}
-                    <h3 className="text-xl font-semibold mb-4 text-left text-primary border-b pb-2">
+                    <h3 className="text-xl font-semibold mb-4 text-left text-primary pb-2">
                         All Restock Orders
                     </h3>
 
-                    {/* Restock Items Table */}
+                    {/* Restock Items */}
                     {loading ? (
                         <div className="flex justify-center items-center mt-4">
-                            <p className="text-lg text-gray-700">Loading Restock Items...</p>
+                            <p className="text-lg text-green-300">Loading Restock Items...</p>
                         </div>
                     ) : error ? (
                         <div className="flex justify-center items-center mt-4">
                             <p className="text-lg text-red-500">{error}</p>
                         </div>
                     ) : (
-                        <div className="mt-4 overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {filteredRestocks.map((restock, index) => (
-                                        <tr 
-                                            key={restock.restockID}
-                                            className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
+                        <div className="grid gap-4">
+                            {/* Header Row */}
+                            <div className="grid grid-cols-7 bg-gray-50 rounded-t-lg py-3">
+                                <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</div>
+                                <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</div>
+                                <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</div>
+                                <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</div>
+                                <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</div>
+                                <div className="px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</div>
+                                <div className="px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</div>
+                            </div>
+
+                            {/* Restock Order Rows */}
+                            {filteredRestocks.map((restock, index) => (
+                                <div 
+                                    key={restock.restockID}
+                                    className={`grid grid-cols-7 ${index % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-100 transition-colors duration-150 ease-in-out`}
+                                >
+                                    <div className="px-6 py-3 text-left whitespace-nowrap">
+                                        <p className="text-medium font-medium text-gray-900">
+                                            {getItemName(restock.itemID)}
+                                        </p>
+                                    </div>
+                                    <div className="px-6 py-3 text-left whitespace-nowrap text-medium text-gray-600">
+                                        {getItemBrand(restock.itemID) || 'N/A'}
+                                    </div>
+                                    <div className="px-6 py-3 text-left whitespace-nowrap text-medium text-gray-600">
+                                        {getSupplierName(restock.supplierID)}
+                                    </div>
+                                    <div className="px-6 py-3 text-left whitespace-nowrap">
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-medium font-medium
+                                            ${restock.restockStatus === "Completed" ? " text-green-800" : 
+                                              restock.restockStatus === "In Progress" ? " text-blue-800" : 
+                                              restock.restockStatus === "Pending" ? " text-yellow-800" : 
+                                              "bg-red-100 text-red-800"}`}
                                         >
-                                            <td className="px-6 py-4 text-left whitespace-nowrap">
-                                                <p className="text-sm font-medium text-gray-900">
-                                                    {getItemName(restock.itemID)}
-                                                </p>
-                                            </td>
-                                            <td className="px-6 py-4 text-left whitespace-nowrap">
-                                                <p className="text-sm text-gray-600">
-                                                    {getItemBrand(restock.itemID) || 'N/A'}
-                                                </p>
-                                            </td>
-                                            <td className="px-6 py-4 text-left whitespace-nowrap">
-                                                {getSupplierName(restock.supplierID)}
-                                            </td>
-                                            <td className="px-6 py-4 text-left whitespace-nowrap">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(restock.restockStatus)}`}>
-                                                    {restock.restockStatus}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-left whitespace-nowrap">
-                                                {restock.restockedQty}
-                                            </td>
-                                            <td className="px-6 py-4 text-left whitespace-nowrap">
-                                                {restock.date}
-                                            </td>
-                                            <td className="px-6 py-4 text-center whitespace-nowrap">
-                                                <button
-                                                    onClick={() => handleView(restock)}
-                                                    className="text-blue-600 hover:text-blue-900 font-medium"
-                                                >
-                                                    View Details
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                            {restock.restockStatus}
+                                        </span>
+                                    </div>
+                                    <div className="px-6 py-3 text-left whitespace-nowrap text-medium text-gray-600">
+                                        {restock.restockedQty}
+                                    </div>
+                                    <div className="px-6 py-3 text-left whitespace-nowrap text-medium text-gray-600">
+                                        {restock.date}
+                                    </div>
+                                    <div className="px-6 py-3 text-center whitespace-nowrap">
+                                        <button
+                                            onClick={() => handleView(restock)}
+                                            className="text-green-600 hover:text-green-900 font-medium"
+                                        >
+                                            View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                            
+                            {/* Empty state message */}
+                            {filteredRestocks.length === 0 && (
+                                <div className="col-span-7 px-6 py-4 text-center text-medium text-gray-500 bg-white">
+                                    No restock orders found
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

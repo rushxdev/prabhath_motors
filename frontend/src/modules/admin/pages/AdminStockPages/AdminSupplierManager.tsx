@@ -153,7 +153,7 @@ const AdminSupplierManager: React.FC = () => {
                         {/* Suppliers Table */}
                         {loading ? (
                             <div className="flex justify-center items-center mt-16">
-                                <p className="text-lg text-gray-700">Loading Suppliers...</p>
+                                <p className="text-lg text-green-300">Loading Suppliers...</p>
                             </div>
                         ) : error ? (
                             <div className="flex justify-center items-center mt-16">
@@ -182,7 +182,7 @@ const AdminSupplierManager: React.FC = () => {
                                                 <td className="px-6 py-4 text-center whitespace-nowrap">
                                                     <button
                                                         onClick={() => handleView(supplier)}
-                                                        className="text-blue-600 hover:text-blue-900 font-medium"
+                                                        className="text-green-600 hover:text-green-900 font-medium"
                                                     >
                                                         View Details
                                                     </button>
@@ -215,10 +215,10 @@ const AdminSupplierManager: React.FC = () => {
                             <div className="bg-gray-50 dark:bg-gray-200 p-4 rounded-lg">
                                 <h3 className="text-lg font-semibold mb-4 text-primary">Basic Information</h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div>
+                                    {/*<div>
                                         <p className="text-sm font-medium text-gray-500">Supplier ID</p>
                                         <p className="mt-1 text-gray-900 dark:text-green-700">{selectedSupplier.supplierId}</p>
-                                    </div>
+                                    </div>*/}
                                     <div>
                                         <p className="text-sm font-medium text-gray-500">Name</p>
                                         <p className="mt-1 text-gray-900 dark:text-green-700">{selectedSupplier.supplierName}</p>
