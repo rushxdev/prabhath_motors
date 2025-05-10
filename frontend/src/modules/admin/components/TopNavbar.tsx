@@ -26,17 +26,8 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ username = "Admin User" }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-black w-full flex justify-between items-center px-6 py-1">
-      {/* Logo on the left */}
-      <div className="flex items-center">
-        <img 
-          src="/assets/images/logo.png" 
-          alt="Prabhath Motors Logo"
-          className="h-10 w-auto"
-        />
-      </div>
-      
-      {/* User Profile Section on the right */}
+    <div className="bg-white dark:bg-black w-full flex justify-end items-center px-6 py-2">
+      {/* User Profile Section */}
       <div className="flex items-center space-x-4">
         {/* User info */}
         <div className="flex items-center">
