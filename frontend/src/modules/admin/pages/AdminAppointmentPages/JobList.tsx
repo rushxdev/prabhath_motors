@@ -40,7 +40,7 @@ const JobList: React.FC = () => {
         fetchJobs();
     }, []);
 
-    // Filter jobs based on search query
+    
     useEffect(() => {
         if (searchQuery.trim() === '') {
             setFilteredJobs(jobs);
@@ -57,11 +57,11 @@ const JobList: React.FC = () => {
         setFilteredJobs(filtered);
     }, [searchQuery, jobs]);
 
-    // Refresh jobs when returning from job details
+    
     useEffect(() => {
         if (location.state?.refresh) {
             fetchJobs();
-            // Clear the refresh flag
+            
             navigate(location.pathname, { replace: true, state: {} });
         }
     }, [location.state]);

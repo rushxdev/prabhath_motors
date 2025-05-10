@@ -7,7 +7,7 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@headlessui/react";
-import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/solid"; // Adjust the path if necessary
+import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/solid"; 
 import AppointLayouts from "../../layout/AppointmentLayouts/AppointLayouts";
 import Modal from "../../../../components/Model";
 
@@ -36,7 +36,7 @@ const AppointmentPage = () => {
     fetchAppointments();
   }, []);
 
-  // Prompt to delete a utility bill
+
 
   const promptDelete = (id: number) => {
     setAppointmentToDelete(id);

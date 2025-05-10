@@ -26,61 +26,61 @@ const JobDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Job state
+  // Job 
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Task states
+  // Task 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [taskLoading, setTaskLoading] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<TaskFormErrors>({});
 
-  // Task deletion states
+  // Task deletion 
   const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  // Task autocomplete states
+  // Task autocomplete 
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
-  // Spare parts states
+  // Spare parts 
   const [spareParts, setSpareParts] = useState<StockItem[]>([]);
   const [currentSparePart, setCurrentSparePart] = useState<StockItem | null>(null);
   const [isSparePartModalOpen, setIsSparePartModalOpen] = useState<boolean>(false);
   const [sparePartLoading, setSparePartLoading] = useState<boolean>(false);
   const [sparePartFormErrors, setSparePartFormErrors] = useState<SparePartFormErrors>({});
 
-  // Spare part deletion states
+  // Spare part deletion
   const [sparePartToDelete, setSparePartToDelete] = useState<number | null>(null);
   const [isSparePartDeleteModalOpen, setIsSparePartDeleteModalOpen] = useState<boolean>(false);
   const [sparePartDeleteError, setSparePartDeleteError] = useState<string | null>(null);
 
-  // Spare part autocomplete states
+  // Spare part autocomplete 
   const [allSpareParts, setAllSpareParts] = useState<StockItem[]>([]);
   const [filteredSpareParts, setFilteredSpareParts] = useState<StockItem[]>([]);
   const [showSparePartDropdown, setShowSparePartDropdown] = useState<boolean>(false);
 
-  // Add new state for saving
+  // Add new 
   const [saving, setSaving] = useState<boolean>(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Add new state for success message
+  
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
 
-  // Add new state for PDF viewer
+  // PDF viewer
   const [showReport, setShowReport] = useState<boolean>(false);
 
-  // Fetch job details and its tasks
+  // details and its tasks
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
         setLoading(true);
-        // First, fetch all jobs and find the one with matching ID
+        
         const [ongoingJobs, doneJobs] = await Promise.all([
           jobService.getAllOngoingJobs(),
           jobService.getAllDoneJobs()
@@ -92,23 +92,23 @@ const JobDetails: React.FC = () => {
         if (foundJob) {
           setJob(foundJob);
 
-          // Convert NamedCostItems back to Tasks and StockItems
+         
           const taskItems: Task[] = foundJob.tasks.map((task: NamedCostItem) => ({
-            id: task.itemId || Math.floor(Math.random() * 1000) + 1, // Use the stored ID or generate a temporary one
+            id: task.itemId || Math.floor(Math.random() * 1000) + 1, 
             description: task.name,
             cost: task.cost
           }));
 
           const sparePartItems: StockItem[] = foundJob.spareParts.map((part: NamedCostItem) => {
-            // Use the quantity field if available, otherwise default to 1
+            
             const quantity = part.quantity || 1;
 
             return {
-              itemID: part.itemId || Math.floor(Math.random() * 1000) + 1, // Use the stored ID or generate a temporary one
+              itemID: part.itemId || Math.floor(Math.random() * 1000) + 1, 
               itemName: part.name,
-              qtyAvailable: quantity, // Use the quantity from the database
-              unitPrice: part.cost, // Cost is now the unit price (sell price)
-              sellPrice: part.cost, // Same for sell price
+              qtyAvailable: quantity, 
+              unitPrice: part.cost, 
+              sellPrice: part.cost, 
               itemCtgryID: 0,
               supplierId: 0,
               itemBarcode: "",
@@ -138,7 +138,7 @@ const JobDetails: React.FC = () => {
     }
   }, [id]);
 
-  // Fetch all tasks for autocomplete
+  
   useEffect(() => {
     const fetchAllTasks = async () => {
       try {
@@ -152,7 +152,7 @@ const JobDetails: React.FC = () => {
     fetchAllTasks();
   }, []);
 
-  // Fetch all spare parts for autocomplete
+  
   useEffect(() => {
     const fetchAllSpareParts = async () => {
       try {
@@ -211,7 +211,7 @@ const JobDetails: React.FC = () => {
     setFilteredTasks([]);
     setShowDropdown(false);
 
-    // Log the current tasks state after closing the modal
+    
     console.log('Current tasks after closing modal:', tasks);
   };
 
@@ -223,7 +223,7 @@ const JobDetails: React.FC = () => {
       [name]: name === 'cost' ? (value === '' ? 0 : parseFloat(value)) : value
     }));
 
-    // Handle autocomplete for description field
+    
     if (name === 'description') {
       if (value.trim().length > 0) {
         const filtered = allTasks.filter(task =>
@@ -237,7 +237,7 @@ const JobDetails: React.FC = () => {
       }
     }
 
-    // Clear error when user starts typing
+    
     if (formErrors[name as keyof TaskFormErrors]) {
       setFormErrors(prev => ({
         ...prev,
@@ -249,7 +249,7 @@ const JobDetails: React.FC = () => {
   const selectTask = (task: Task) => {
     setCurrentTask({
       ...task,
-      // Keep the real task ID from the database
+      
       id: task.id
     });
     setFilteredTasks([]);
@@ -271,51 +271,51 @@ const JobDetails: React.FC = () => {
     try {
       console.log('Current task before save:', currentTask);
 
-      // Use the real task ID if it exists (from the selected task)
-      // If it's a new custom task that doesn't exist in the database yet, we'll need to handle it differently
+     
+      
       const newTask: Task = {
         ...currentTask!,
-        // For new tasks, we'll need to create them in the database first to get a real ID
-        // For now, we'll use a temporary ID for display purposes only
-        id: currentTask?.id || (Math.floor(Math.random() * -1000) - 1) // Use negative numbers for temporary IDs
+        
+        
+        id: currentTask?.id || (Math.floor(Math.random() * -1000) - 1) 
       };
 
       console.log('New task to be added:', newTask);
 
-      // For now, handle tasks locally until backend API is ready
-      // Use the same pattern as the working spare parts logic
+      
+      
       setTasks(prevTasks => {
         console.log('Previous tasks:', prevTasks);
 
-        // Check if the task already exists in the list
+        
         const existingIndex = prevTasks.findIndex(t => t.id === newTask.id);
         console.log('Existing task index:', existingIndex);
 
         if (existingIndex >= 0) {
-          // Update existing task
+          
           const updatedTasks = [...prevTasks];
           updatedTasks[existingIndex] = newTask;
           console.log('Updated tasks after edit:', updatedTasks);
           return updatedTasks;
         } else {
-          // Add new task
+          
           const updatedTasks = [...prevTasks, newTask];
           console.log('Updated tasks after add:', updatedTasks);
           return updatedTasks;
         }
       });
 
-      // Optionally save to the global task list if it's a new unique task
+      
       if (!allTasks.some(t => t.description.toLowerCase() === newTask.description.toLowerCase())) {
         try {
-          // This would save to backend in production
-          // await taskService.createTask(newTask);
+          
+          
 
-          // For now, just update local state
+          
           setAllTasks([...allTasks, newTask]);
         } catch (err) {
           console.error('Error saving task to global list:', err);
-          // Non-blocking error - we can continue
+          
         }
       }
 
@@ -367,7 +367,7 @@ const JobDetails: React.FC = () => {
     try {
       console.log('Deleting task with ID:', taskToDelete);
 
-      // For now, handle deletion locally until the API is ready
+      
       setTasks(prevTasks => {
         const updatedTasks = prevTasks.filter(task => task.id !== taskToDelete);
         console.log('Tasks after deletion:', updatedTasks);
@@ -376,8 +376,8 @@ const JobDetails: React.FC = () => {
 
       setIsDeleteModalOpen(false);
 
-      // Uncomment when API endpoint is ready
-      // await jobService.deleteJobTask(job.id, taskToDelete);
+      
+      
     } catch (err) {
       console.error('Error deleting task:', err);
       setDeleteError("Failed to delete task. Please try again.");
@@ -390,7 +390,7 @@ const JobDetails: React.FC = () => {
     setDeleteError(null);
   };
 
-  // Spare part related functions
+  
   const validateSparePartForm = (): boolean => {
     const errors: SparePartFormErrors = {};
     let isValid = true;
@@ -455,7 +455,7 @@ const JobDetails: React.FC = () => {
       };
     });
 
-    // Handle autocomplete for itemName field
+    
     if (name === 'itemName') {
       if (value.trim().length > 0) {
         const filtered = allSpareParts.filter(part =>
@@ -469,7 +469,7 @@ const JobDetails: React.FC = () => {
       }
     }
 
-    // Clear error when user starts typing
+    
     if (sparePartFormErrors[name as keyof SparePartFormErrors]) {
       setSparePartFormErrors(prev => ({
         ...prev,
@@ -482,10 +482,10 @@ const JobDetails: React.FC = () => {
     console.log('Selected spare part:', sparePart);
     setCurrentSparePart({
       ...sparePart,
-      // Keep the real item ID from the database
+      
       itemID: sparePart.itemID,
-      qtyAvailable: 1, // Reset quantity to 1 when selecting from dropdown
-      unitPrice: sparePart.sellPrice // Use sellPrice from the database as the unitPrice
+      qtyAvailable: 1, 
+      unitPrice: sparePart.sellPrice 
     });
     setFilteredSpareParts([]);
     setShowSparePartDropdown(false);
@@ -504,37 +504,37 @@ const JobDetails: React.FC = () => {
     try {
       console.log('Current spare part before save:', currentSparePart);
 
-      // Use the real item ID if it exists (from the selected spare part)
-      // If it's a custom spare part that doesn't exist in the database, we'll need to handle it differently
+      
+      
       const newSparePart: StockItem = {
         ...currentSparePart!,
-        // For new items, we'll need to create them in the database first to get a real ID
-        // For now, we'll use a temporary ID for display purposes only
-        itemID: currentSparePart?.itemID || (Math.floor(Math.random() * -1000) - 1) // Use negative numbers for temporary IDs
+        
+        
+        itemID: currentSparePart?.itemID || (Math.floor(Math.random() * -1000) - 1) 
       };
 
       console.log('New spare part to be added:', newSparePart);
 
-      // For now, handle spare parts locally until backend API is ready
+      
       setSpareParts(prevParts => {
-        // Check if the spare part already exists in the list
+        
         const existingIndex = prevParts.findIndex(p => p.itemID === newSparePart.itemID);
 
         if (existingIndex >= 0) {
-          // Update existing spare part
+          
           const updatedParts = [...prevParts];
           updatedParts[existingIndex] = newSparePart;
           console.log('Updated spare parts after edit:', updatedParts);
           return updatedParts;
         } else {
-          // Add new spare part
+          
           const updatedParts = [...prevParts, newSparePart];
           console.log('Updated spare parts after add:', updatedParts);
           return updatedParts;
         }
       });
 
-      // Uncomment below code when API endpoints are ready
+      
       /*
       let updatedSparePart;
       if (currentSparePart?.itemID) {
@@ -562,22 +562,22 @@ const JobDetails: React.FC = () => {
     }
   };
 
-  // Add useEffect to log spare parts state changes
+  
   useEffect(() => {
     console.log('Spare parts state updated:', spareParts);
   }, [spareParts]);
 
-  // Add useEffect to log current spare part changes
+  
   useEffect(() => {
     console.log('Current spare part updated:', currentSparePart);
   }, [currentSparePart]);
 
-  // Add useEffect to log tasks state changes
+  
   useEffect(() => {
     console.log('Tasks state updated:', tasks);
   }, [tasks]);
 
-  // Add useEffect to log current task changes
+  
   useEffect(() => {
     console.log('Current task updated:', currentTask);
   }, [currentTask]);
@@ -592,12 +592,12 @@ const JobDetails: React.FC = () => {
     if (!sparePartToDelete || !job?.id) return;
 
     try {
-      // For now, handle deletion locally until the API is ready
+      
       setSpareParts(spareParts.filter(part => part.itemID !== sparePartToDelete));
       setIsSparePartDeleteModalOpen(false);
 
-      // Uncomment when API endpoint is ready
-      // await jobService.deleteJobSparePart(job.id, sparePartToDelete);
+      
+      
     } catch (err) {
       console.error('Error deleting spare part:', err);
       setSparePartDeleteError("Failed to delete spare part. Please try again.");
@@ -610,26 +610,26 @@ const JobDetails: React.FC = () => {
     setSparePartDeleteError(null);
   };
 
-  // Add function to convert tasks and spare parts to NamedCostItem
+  
   const convertToNamedCostItems = () => {
     const taskItems: NamedCostItem[] = tasks.map(task => ({
       itemId: task.id,
       name: task.description,
       cost: task.cost,
-      quantity: 1 // Default quantity for tasks is 1
+      quantity: 1 
     }));
 
     const sparePartItems: NamedCostItem[] = spareParts.map(part => ({
       itemId: part.itemID,
       name: part.itemName,
-      cost: part.unitPrice, // Store the unit price (sell price) as the cost
-      quantity: part.qtyAvailable // Store the quantity in the dedicated field
+      cost: part.unitPrice, 
+      quantity: part.qtyAvailable 
     }));
 
     return { taskItems, sparePartItems };
   };
 
-  // Add function to handle saving the job
+  
   const handleSaveJob = async () => {
     if (!job?.id) {
       console.log('No job ID found, cannot save');
@@ -677,7 +677,7 @@ const JobDetails: React.FC = () => {
 
     try {
       await jobService.markJobAsDone(job.id.toString());
-      // Update the job status locally
+      
       setJob(prev => prev ? { ...prev, status: "Done" } : null);
       setSaveSuccess("Job marked as completed successfully!");
       setTimeout(() => setSaveSuccess(null), 500);
@@ -996,7 +996,7 @@ const JobDetails: React.FC = () => {
             <p className="text-lg font-medium">
               Total Cost: Rs. {(
                 tasks.reduce((sum, task) => sum + task.cost, 0) +
-                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0) // unitPrice is already set to sellPrice when selected
+                spareParts.reduce((sum, part) => sum + (part.qtyAvailable * part.unitPrice), 0) 
               ).toFixed(2)}
             </p>
           </div>
