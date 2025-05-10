@@ -27,23 +27,21 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
     const scannerRef = useRef<HTMLDivElement>(null);
     const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
     
-    // Validate barcode format and content
+    
     const validateBarcode = (barcode: string): boolean => {
-        // Don't process the same barcode multiple times in quick succession
         if (barcode === lastScanned) {
             return false;
         }
         
-        // Basic validation rules
+        
         if (!barcode || barcode.length < 8) {
             console.log("Invalid barcode: too short");
             setInvalidAttempts(prev => prev + 1);
             return false;
         }
         
-        // EAN-13 validation (most common retail barcode)
+        // EAN-13 validation
         if (barcode.length === 13 && /^\d{13}$/.test(barcode)) {
-            // Check EAN-13 checksum
             let sum = 0;
             for (let i = 0; i < 12; i++) {
                 sum += parseInt(barcode[i]) * (i % 2 === 0 ? 1 : 3);
@@ -59,7 +57,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
         
         // UPC-A validation
         if (barcode.length === 12 && /^\d{12}$/.test(barcode)) {
-            // Check UPC-A checksum
             let sum = 0;
             for (let i = 0; i < 11; i++) {
                 sum += parseInt(barcode[i]) * (i % 2 === 0 ? 3 : 1);
@@ -73,12 +70,10 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
             return true;
         }
         
-        // Allow other numeric barcodes of reasonable length
         if (/^\d{8,14}$/.test(barcode)) {
             return true;
         }
         
-        // Allow alphanumeric barcodes for CODE-128, CODE-39 etc.
         if (/^[A-Z0-9\-\.\/\+]{8,24}$/i.test(barcode)) {
             return true;
         }
@@ -90,7 +85,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
     useEffect(() => {
         const scannerId = "qr-reader";
         
-        // Make sure we have the DOM element
         if (!document.getElementById(scannerId)) {
             return;
         }
@@ -98,11 +92,10 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
         setIsLoading(true);
         setError(null);
         
-        // Create the scanner instance
+        //scanner instance creation
         const html5QrCode = new Html5Qrcode(scannerId);
         html5QrCodeRef.current = html5QrCode;
 
-        // Get available cameras
         Html5Qrcode.getCameras()
             .then(devices => {
                 if (devices && devices.length) {
@@ -123,7 +116,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
                             /*formatsToSupport: VALID_BARCODE_FORMATS*/
                         },
                         (decodedText) => {
-                            // Success callback
                             console.log("Scanned barcode:", decodedText);
                             
                             // Validate the barcode
@@ -133,7 +125,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
                                 html5QrCode.stop();
                                 onClose();
                             } else {
-                                // If it's an invalid barcode, just log it and continue scanning
                                 console.log("Invalid barcode format, continuing to scan...");
                                 if (invalidAttempts > 3) {
                                     setError("Multiple invalid barcodes detected. Please ensure you're scanning a standard product barcode.");
@@ -141,7 +132,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
                             }
                         },
                         (errorMessage) => {
-                            // Just log the errors but don't update state to avoid too many re-renders
                             console.log("QR scan error:", errorMessage);
                         }
                     );
@@ -158,7 +148,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanned, onClo
                 setIsLoading(false);
             });
 
-        // Cleanup function
         return () => {
             if (html5QrCodeRef.current && 
                 html5QrCodeRef.current.getState() !== Html5QrcodeScannerState.NOT_STARTED) {
