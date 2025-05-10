@@ -112,7 +112,6 @@ const AdminStockReportsManager: React.FC = () => {
         showChart: true
     });
     
-    // Handler for report type changes
     const handleReportTypeChange = (newReportType: string) => {
         if (showPDF) {
             if (window.confirm('Changing the report type will reset current report. Do you want to continue?')) {
@@ -125,7 +124,6 @@ const AdminStockReportsManager: React.FC = () => {
         }
     };
     
-    // Handler for date changes
     const handleDateChange = (type: 'start' | 'end', newDate: Date | null) => {
         if (showPDF) {
             if (window.confirm('Changing the date range will reset current report. Do you want to continue?')) {
@@ -146,7 +144,6 @@ const AdminStockReportsManager: React.FC = () => {
         }
     };
     
-    // Handler for low stock setting change
     const handleLowStockChange = (newValue: boolean) => {
         if (showPDF) {
             if (window.confirm('Changing the low stock filter will reset current report. Do you want to continue?')) {
@@ -159,7 +156,6 @@ const AdminStockReportsManager: React.FC = () => {
         }
     };
 
-    // Add a handler for sort changes
     const handleSortChange = (newSortBy: string) => {
         if (showPDF) {
             if (window.confirm('Changing the sort order will reset current report. Do you want to continue?')) {
@@ -171,8 +167,6 @@ const AdminStockReportsManager: React.FC = () => {
             setSortBy(newSortBy);
         }
     };
-
-    // Add a handler for showChart changes
     const handleShowChartChange = (newValue: boolean) => {
         if (showPDF) {
             if (window.confirm('Changing the chart display will reset current report. Do you want to continue?')) {
@@ -189,7 +183,7 @@ const AdminStockReportsManager: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        // Store current settings when generating report
+        // Store current settings 
         setOriginalSettings({
             reportType: selectedReportType,
             startDate: startDate,
@@ -200,14 +194,12 @@ const AdminStockReportsManager: React.FC = () => {
             showChart: showChart
         });
         
-        // Validate required fields based on report type
         if (!selectedReportType) {
             alert('Please select a report type');
             setLoading(false);
             return;
         }
         
-        // Validate date range and item selection for item purchase history report
         if (selectedReportType === 'item_purchase_history' && 
             (!startDate || !endDate || !selectedItemId)) {
             alert('Please select an item and date range');
@@ -215,7 +207,6 @@ const AdminStockReportsManager: React.FC = () => {
             return;
         }
 
-        // Validate date range for reports that need it
         if (['sales summery'].includes(selectedReportType) && 
             (!startDate || !endDate)) {
             alert('Please select a date range');
@@ -224,25 +215,20 @@ const AdminStockReportsManager: React.FC = () => {
         }
 
         try {
-            // Build request body based on report type
             const requestBody: any = {};
             
-            // Add common parameters
             if (startDate) requestBody.startDate = startDate.toISOString().split('T')[0];
             if (endDate) requestBody.endDate = endDate.toISOString().split('T')[0];
                         
-            // Add report-specific parameters
             if (selectedReportType === 'inventory') {
                 requestBody.showLowStockOnly = showLowStock;
                 requestBody.sortBy = sortBy;
             }
 
-            // Add item-specific parameters
             if (selectedReportType === 'item_purchase_history') {
                 requestBody.itemId = selectedItemId;
             }
 
-            // Use apiClient instead of fetch
             const { data } = await apiClient.post(`/reports/${selectedReportType}`, requestBody);
             
             setReportData(data);
@@ -255,7 +241,6 @@ const AdminStockReportsManager: React.FC = () => {
         }
     };
 
-    // Function to render the appropriate parameter form based on report type
     const renderParameterForm = () => {
         if (!selectedReportType) return null;
         
