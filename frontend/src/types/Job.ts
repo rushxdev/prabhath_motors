@@ -1,0 +1,38 @@
+export interface Job {
+    id: number;
+    jobId: string;
+    vehicleRegistrationNumber: string;
+    serviceSection: string;
+    assignedEmployee: string;
+    status: string;
+    tasks: NamedCostItem[];
+    spareParts: NamedCostItem[];
+    totalCost: number;
+    ownerName: string;
+    contactNumber: string;
+}
+
+export interface NamedCostItem {
+    itemId?: number; // Added ID field for both tasks and spare parts
+    name: string;
+    cost: number;
+    quantity?: number; // Added quantity field for spare parts
+}
+
+export type JobStatus = 'Ongoing' | 'Done';
+
+export enum ServiceSection {
+    GARAGE = "GARAGE",
+    BODY_SHOP = "BODY_SHOP",
+    PAINT_SHOP = "PAINT_SHOP",
+    WASH_BAY = "WASH_BAY"
+}
+
+export enum TaskStatus {
+    PENDING = "PENDING",
+    IN_PROGRESS = "IN_PROGRESS",
+    COMPLETED = "COMPLETED"
+}
+
+
+

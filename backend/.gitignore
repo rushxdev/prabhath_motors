@@ -7,6 +7,10 @@ target/
 mvnw
 mvnw.cmd
 
+### Application Property ###
+/src/main/resources/application.properties
+*.properties
+
 ### STS ###
 .apt_generated
 .classpath
@@ -34,3 +38,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### certification ###
+
+src/main/resources/cert/*.crt
+src/main/resources/cert/*.pem
+src/main/resources/cert/*.key
